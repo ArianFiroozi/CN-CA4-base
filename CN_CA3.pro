@@ -10,10 +10,16 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    networksimulator.cpp
+    networksimulator.cpp \
+    packet.cpp \
+    router.cpp \
+    routingtable.cpp
 
 HEADERS += \
-    networksimulator.h
+    networksimulator.h \
+    packet.h \
+    router.h \
+    routingtable.h
 
 FORMS += \
     networksimulator.ui
