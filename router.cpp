@@ -1,5 +1,7 @@
 #include "router.h"
 
-Router::Router(QThread *parent)
+Router::Router(int _id, QThread *parent)
     : QThread{parent}
-{}
+{
+    id = _id;
+}

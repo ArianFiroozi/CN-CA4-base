@@ -3,6 +3,11 @@
 
 #include <QObject>
 #include <QThread>
+#include <QMutex>
+#include <QVector>
+
+#include "packet.h"
+#include "link.h"
 
 struct IP
 {
@@ -19,11 +24,22 @@ struct IPv6
 class Router : public QThread
 {
 public:
-    explicit Router(QThread *parent = nullptr);
+    explicit Router(int _id, QThread *parent = nullptr);
     IP* ip;
+    int id;
+    QVector<Packet*> inBuff;
+    QVector<Packet*> outBuff;
+    QVector<Link*> links;
 
-    void getPacket();
-    bool sendPacket();
+    QMutex* mutex;
+
+    void recievePacket(Packet* packet, int recieveID);
+    bool sendPacket(Packet* packet, int sendID);
+
+    void start();
+    void stop();
+    void queuePacket(Packet* packet);
+    void addLink(Link* link, int routerID);
 signals:
 };
 
