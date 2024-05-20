@@ -8,18 +8,7 @@
 
 #include "packet.h"
 #include "link.h"
-
-struct IP
-{
-};
-struct IPv4:IP
-{
-    int ip;
-};
-struct IPv6
-{
-    int ip;
-};  // may be class
+#include "ip.h"
 
 class Router : public QThread
 {
