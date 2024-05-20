@@ -1,7 +1,5 @@
 #include "ip.h"
 
-IP::IP() {}
-
 int IPv4::maskToInt()
 {
     int maskInt = 0;
@@ -31,4 +29,30 @@ QString IPv4::getIPStr()
     IPStr.append("/");
     IPStr.append(QString::number(maskToInt()));
     return IPStr;
+}
+
+IPAddr IPv4::broadcastAddr()
+{
+    IPAddr broadcastAddress;
+    broadcastAddress.netID1 = this->ipAddr.netID1 | (~this->ipAddr.netID1 & 0xFF);
+    broadcastAddress.netID2 = this->ipAddr.netID2 | (~this->ipAddr.netID2 & 0xFF);
+    broadcastAddress.netID3 = this->ipAddr.netID3 | (~this->ipAddr.netID3 & 0xFF);
+    broadcastAddress.hostID = this->ipAddr.hostID | (~this->ipAddr.hostID & 0xFF);
+    return broadcastAddress;
+}
+
+IPAddr IPv4::netAddr()
+{
+    IPAddr networkAddress;
+    networkAddress.netID1 = this->ipAddr.netID1 & this->ipAddr.netID1;
+    networkAddress.netID2 = this->ipAddr.netID2 & this->ipAddr.netID2;
+    networkAddress.netID3 = this->ipAddr.netID3 & this->ipAddr.netID3;
+    networkAddress.hostID = this->ipAddr.hostID & this->ipAddr.hostID;
+    return networkAddress;
+}
+
+bool IPv4::includes(IP* other)
+{
+    uint32_t otherAddr = other->ipAddr.addrToNum();
+    return (otherAddr < this->broadcastAddr().addrToNum() && otherAddr > this->netAddr().addrToNum());
 }
