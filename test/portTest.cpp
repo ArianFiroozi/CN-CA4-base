@@ -14,8 +14,7 @@ bool string_transfer_between_ports_correct()
     char *dummy_argv[1] = {&x};
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
-    Packet myPack;
-    myPack.string = "hello world";
+    Packet myPack("hello world");
 
     Port a, b;
     QThread bthread;
@@ -26,8 +25,7 @@ bool string_transfer_between_ports_correct()
     a.write(myPack);
     bthread.wait(10);
 
-    Packet bPack;
-    bPack.string = b.packet.getString();
+    Packet bPack(b.packet.getString());
 
     bthread.exit();
     bthread.wait(10);

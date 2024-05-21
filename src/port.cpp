@@ -8,12 +8,12 @@ Port::Port(QObject *parent)
 
 void Port::write(Packet _packet)
 {
-    emit getPacket(_packet.string);
+    emit getPacket(_packet);
 }
 
-void Port::read(QString _packet)
+void Port::read(Packet _packet)
 {
-    packet.string = _packet;
+    packet = _packet;
 }
 
 Port::~Port()

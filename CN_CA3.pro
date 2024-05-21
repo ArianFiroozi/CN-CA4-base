@@ -18,6 +18,7 @@ SOURCES += \
     src/routingtable.cpp \
     test/allTests.cpp \
     test/ipTest.cpp \
+    test/packetTest.cpp \
     test/portTest.cpp
 
 HEADERS += \

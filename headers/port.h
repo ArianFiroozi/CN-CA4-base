@@ -6,9 +6,6 @@
 
 #include <QThread>
 #include <QCoreApplication>
-#include <QThread>
-#include <QMutex>
-#include <QWaitCondition>
 
 #include "packet.h"
 
@@ -17,10 +14,8 @@ class Router;
 class Port : public QObject
 {
     Q_OBJECT
-private:
-    QMutex mutex;
-    QWaitCondition ready;
 
+private:
 public:
     Port(QObject *parent = nullptr);
     ~Port();
@@ -28,10 +23,10 @@ public:
     Packet packet;
 
     void write(Packet _packet);
-    void read(QString _packet);
+    void read(Packet _packet);
 
 signals:
-    void getPacket(QString);
+    void getPacket(Packet);
 };
 
 #endif // PORT_H

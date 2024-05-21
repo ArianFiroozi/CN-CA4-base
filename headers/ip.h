@@ -81,7 +81,7 @@ public:
     IPAddr broadcastAddr();
 
     bool includes(IP* other);
-    IPv4(QString maskStr, QString ipAddrStr);
+    IPv4(QString maskStr="0.0.0.0", QString ipAddrStr="0.0.0.0");
     QString getIPStr();
 };
 
