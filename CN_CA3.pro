@@ -11,18 +11,20 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     src/ip.cpp \
-    src/link.cpp \
     src/networksimulator.cpp \
     src/packet.cpp \
+    src/port.cpp \
     src/router.cpp \
     src/routingtable.cpp \
-    test/ipTest.cpp
+    test/allTests.cpp \
+    test/ipTest.cpp \
+    test/portTest.cpp
 
 HEADERS += \
     headers/ip.h \
-    headers/link.h \
     headers/networksimulator.h \
     headers/packet.h \
+    headers/port.h \
     headers/router.h \
     headers/routingtable.h \
     test/ipTest.h

@@ -8,9 +8,10 @@ enum IPVersion{IPv4, IPv6};
 class Packet
 {
 private:
-    QString packet;
 public:
     Packet();
+    QString string;
+
     IPVersion IPVer;
     QString getString();
 };

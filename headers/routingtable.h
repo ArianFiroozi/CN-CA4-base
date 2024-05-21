@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "ip.h"
-#include "link.h"
+#include "port.h"
 
 using namespace std;
 
@@ -21,7 +21,7 @@ struct Route
     IP* dest;
     Mask mask;
     IP* gateway;
-    Link* link;
+    Port* link;
     int metric; //not implemented
     void print()
     {

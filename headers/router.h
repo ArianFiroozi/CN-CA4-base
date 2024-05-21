@@ -7,7 +7,7 @@
 #include <QVector>
 
 #include "packet.h"
-#include "link.h"
+#include "port.h"
 #include "ip.h"
 #include "routingtable.h"
 
@@ -19,7 +19,8 @@ public:
     int id;
     QVector<Packet*> inBuff;
     QVector<Packet*> outBuff;
-    QVector<Link*> links;
+    QVector<Port*> links;
+    RoutingTable routingTable;
 
     QMutex* mutex;
 
@@ -29,7 +30,7 @@ public:
     void start();
     void stop();
     void queuePacket(Packet* packet);
-    void addLink(Link* link, int routerID);
+    void addLink(Port* link, int routerID);
 signals:
 };
 

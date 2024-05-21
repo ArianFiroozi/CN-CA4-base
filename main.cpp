@@ -4,16 +4,19 @@
 #include <iostream>
 #include <QApplication>
 
+#include "./headers/port.h"
+
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if(run_ip_tests() != 0)
+    if(run_all_tests() != 0)
     {
-        std::cout<<"failed tests!"<<std::endl;
+        cout<<"failed tests!"<<endl;
         exit(0);
     }
-
+    else
+        cout<<"tests passed!"<<endl;
     // QApplication a(argc, argv);
     // NetworkSimulator w;
     // w.show();
