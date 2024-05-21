@@ -5,6 +5,7 @@
 #include <QStringList>
 
 #include <math.h>
+
 struct Addr
 {
     int netID1;
@@ -65,6 +66,7 @@ public:
     virtual IPAddr netAddr()=0;
     virtual IPAddr broadcastAddr()=0;
     virtual bool includes(IP* other)=0;
+    virtual QString getIPStr()=0;
 
     IPAddr ipAddr;
 protected:

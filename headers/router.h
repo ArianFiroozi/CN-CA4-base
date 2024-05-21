@@ -9,6 +9,7 @@
 #include "packet.h"
 #include "link.h"
 #include "ip.h"
+#include "routingtable.h"
 
 class Router : public QThread
 {

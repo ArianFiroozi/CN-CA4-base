@@ -9,23 +9,23 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ip.cpp \
-    ipTest.cpp \
-    link.cpp \
     main.cpp \
-    networksimulator.cpp \
-    packet.cpp \
-    router.cpp \
-    routingtable.cpp
+    src/ip.cpp \
+    src/link.cpp \
+    src/networksimulator.cpp \
+    src/packet.cpp \
+    src/router.cpp \
+    src/routingtable.cpp \
+    test/ipTest.cpp
 
 HEADERS += \
-    ip.h \
-    ipTest.h \
-    link.h \
-    networksimulator.h \
-    packet.h \
-    router.h \
-    routingtable.h
+    headers/ip.h \
+    headers/link.h \
+    headers/networksimulator.h \
+    headers/packet.h \
+    headers/router.h \
+    headers/routingtable.h \
+    test/ipTest.h
 
 FORMS += \
     networksimulator.ui

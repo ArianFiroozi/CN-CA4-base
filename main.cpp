@@ -1,5 +1,5 @@
-#include "networksimulator.h"
-#include "ipTest.h"
+#include "./headers/networksimulator.h"
+#include "./test/ipTest.h"
 
 #include <iostream>
 #include <QApplication>

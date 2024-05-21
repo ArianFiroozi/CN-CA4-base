@@ -1,4 +1,4 @@
-#include "routingtable.h"
+#include "./headers/routingtable.h"
 
 RoutingTable::RoutingTable() {}
 
@@ -14,4 +14,10 @@ QVector<Route> RoutingTable::findRoutes(IP* ip)
         if (route.dest->includes(ip))
             compatibleRoutes.append(route);
     return compatibleRoutes;
+}
+
+void RoutingTable::print()
+{
+    for (Route route : routes)
+        route.print();
 }

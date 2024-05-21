@@ -1,5 +1,5 @@
-#include "networksimulator.h"
-#include "ui_networksimulator.h"
+#include "./headers/networksimulator.h"
+#include "./ui_networksimulator.h"
 
 NetworkSimulator::NetworkSimulator(QWidget *parent)
     : QMainWindow(parent)

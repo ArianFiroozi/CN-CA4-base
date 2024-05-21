@@ -1,4 +1,4 @@
-#include "link.h"
+#include "./headers/link.h"
 
 Link::Link(QObject *parent)
     : QThread{parent}
