@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     ip.cpp \
+    ipTest.cpp \
     link.cpp \
     main.cpp \
     networksimulator.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     ip.h \
+    ipTest.h \
     link.h \
     networksimulator.h \
     packet.h \
@@ -32,3 +34,5 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES +=

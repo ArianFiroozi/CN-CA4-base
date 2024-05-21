@@ -18,14 +18,7 @@ IPv4::IPv4(QString maskStr, QString ipAddrStr)
 
 QString IPv4::getIPStr()
 {
-    QString IPStr = "";
-    IPStr.append(QString::number(ipAddr.netID1));
-    IPStr.append(".");
-    IPStr.append(QString::number(ipAddr.netID2));
-    IPStr.append(".");
-    IPStr.append(QString::number(ipAddr.netID3));
-    IPStr.append(".");
-    IPStr.append(QString::number(ipAddr.hostID));
+    QString IPStr = ipAddr.toStr();
     IPStr.append("/");
     IPStr.append(QString::number(maskToInt()));
     return IPStr;
@@ -34,20 +27,20 @@ QString IPv4::getIPStr()
 IPAddr IPv4::broadcastAddr()
 {
     IPAddr broadcastAddress;
-    broadcastAddress.netID1 = this->ipAddr.netID1 | (~this->ipAddr.netID1 & 0xFF);
-    broadcastAddress.netID2 = this->ipAddr.netID2 | (~this->ipAddr.netID2 & 0xFF);
-    broadcastAddress.netID3 = this->ipAddr.netID3 | (~this->ipAddr.netID3 & 0xFF);
-    broadcastAddress.hostID = this->ipAddr.hostID | (~this->ipAddr.hostID & 0xFF);
+    broadcastAddress.netID1 = this->ipAddr.netID1 | (~this->mask.netID1 & 0xFF);
+    broadcastAddress.netID2 = this->ipAddr.netID2 | (~this->mask.netID2 & 0xFF);
+    broadcastAddress.netID3 = this->ipAddr.netID3 | (~this->mask.netID3 & 0xFF);
+    broadcastAddress.hostID = this->ipAddr.hostID | (~this->mask.hostID & 0xFF);
     return broadcastAddress;
 }
 
 IPAddr IPv4::netAddr()
 {
     IPAddr networkAddress;
-    networkAddress.netID1 = this->ipAddr.netID1 & this->ipAddr.netID1;
-    networkAddress.netID2 = this->ipAddr.netID2 & this->ipAddr.netID2;
-    networkAddress.netID3 = this->ipAddr.netID3 & this->ipAddr.netID3;
-    networkAddress.hostID = this->ipAddr.hostID & this->ipAddr.hostID;
+    networkAddress.netID1 = this->ipAddr.netID1 & this->mask.netID1;
+    networkAddress.netID2 = this->ipAddr.netID2 & this->mask.netID2;
+    networkAddress.netID3 = this->ipAddr.netID3 & this->mask.netID3;
+    networkAddress.hostID = this->ipAddr.hostID & this->mask.hostID;
     return networkAddress;
 }
 

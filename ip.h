@@ -16,10 +16,23 @@ struct Addr
     {
         uint32_t num = 0;
         num += hostID;
-        num += netID1 * pow(2, 8);
+        num += netID3 * pow(2, 8);
         num += netID2 * pow(2, 16);
-        num += netID3 * pow(2, 24);
+        num += netID1 * pow(2, 24);
         return num;
+    }
+
+    QString toStr()
+    {
+        QString addrStr = "";
+        addrStr.append(QString::number(netID1));
+        addrStr.append(".");
+        addrStr.append(QString::number(netID2));
+        addrStr.append(".");
+        addrStr.append(QString::number(netID3));
+        addrStr.append(".");
+        addrStr.append(QString::number(hostID));
+        return addrStr;
     }
 };
 
@@ -58,13 +71,13 @@ protected:
     Mask mask;
 };
 
-class IPv4:IP
+class IPv4:public IP
 {
+public:
     int maskToInt();
     IPAddr netAddr();
     IPAddr broadcastAddr();
 
-public:
     bool includes(IP* other);
     IPv4(QString maskStr, QString ipAddrStr);
     QString getIPStr();
