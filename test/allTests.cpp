@@ -13,10 +13,12 @@ QVector<QString> run_all_tests()
     errors += run_ip_tests();
     errors += run_packet_tests();
     errors += run_port_tests();
+    errors += run_routing_table_tests();
     errors += run_router_tests();
 
     QMutableVectorIterator<QString> i(errors);
-    while (i.hasNext()) {
+    while (i.hasNext())
+    {
         if (i.next() == "")
             i.remove();
     }

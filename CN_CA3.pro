@@ -20,7 +20,8 @@ SOURCES += \
     test/ipTest.cpp \
     test/packetTest.cpp \
     test/portTest.cpp \
-    test/routerTest.cpp
+    test/routerTest.cpp \
+    test/routingTableTest.cpp
 
 HEADERS += \
     headers/ip.h \

@@ -24,8 +24,8 @@ struct Route
     Port* port;
     int metric; //not implemented
 
-
     Route(RoutingProtocol protocol, IPv4 dest, const Mask &mask, IPv4 gateway, Port *port);
+
     void print()
     {
         cout << dest.getIPStr().toStdString() << " via " << gateway.getIPStr().toStdString() << endl;
@@ -34,15 +34,16 @@ struct Route
 
 class RoutingTable
 {
-    QVector<Route> routes;
-
 public:
     RoutingTable();
 
+    QVector<Route> routes;
     void addRoute(Route newRoute);
     QVector<Route> findAllRoutes(IPv4 ip);
-    Route findBestRoute(IPv4 ip); //based on metric
+    Route findBestRoute(IPv4 ip); //based on
+
     void print();
+    void initFromFile(QString address);
 };
 
 #endif // ROUTINGTABLE_H
