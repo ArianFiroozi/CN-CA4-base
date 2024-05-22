@@ -28,8 +28,7 @@ HEADERS += \
     headers/port.h \
     headers/router.h \
     headers/routingtable.h \
-    test/allTests.h \
-    test/errorsStr.h
+    test/allTests.h
 
 FORMS += \
     networksimulator.ui

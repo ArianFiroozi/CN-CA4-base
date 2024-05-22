@@ -1,12 +1,45 @@
 #include "./headers/packet.h"
 #include "./headers/ip.h"
 
+QVector<QString> Packet::getPath() const
+{
+    return path;
+}
+
+void Packet::addToPath(QString newRouterAdd)
+{
+    path.append(newRouterAdd);
+}
+
+int Packet::getQueueWaitCycles() const
+{
+    return queueWaitCycles;
+}
+
+void Packet::incQueueWaitCycles()
+{
+    queueWaitCycles++;
+}
+
+int Packet::getWaitCycles() const
+{
+    return waitCycles;
+}
+
+void Packet::incWaitCycles()
+{
+    waitCycles++;
+}
+
 Packet::Packet(QString _string, IPVersion _ipVer, IPv4 _source, IPv4 _dest)
 {
     string = _string;
     ipVer = _ipVer;
     source = _source;
     dest = _dest;
+    path.append(_source.getIPStr());
+    waitCycles = 0;
+    queueWaitCycles = 0;
 }
 
 void Packet::setString(const QString &newString)
