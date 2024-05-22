@@ -21,7 +21,7 @@ struct Route
     IP* dest;
     Mask mask;
     IP* gateway;
-    Port* link;
+    Port* port;
     int metric; //not implemented
     void print()
     {
@@ -36,7 +36,8 @@ public:
     RoutingTable();
 
     void addRoute(Route newRoute);
-    QVector<Route> findRoutes(IP* ip);
+    QVector<Route> findAllRoutes(IP* ip);
+    Route findBestRoute(IP* ip); //based on metric
     void print();
 };
 

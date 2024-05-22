@@ -17,9 +17,8 @@ public:
     explicit Router(int _id, QThread *parent = nullptr);
     IP* ip;
     int id;
-    QVector<Packet*> inBuff;
-    QVector<Packet*> outBuff;
-    QVector<Port*> links;
+    QVector<Packet*> buffer;
+    // QVector<Port*> ports;
     RoutingTable routingTable;
 
     QMutex* mutex;
