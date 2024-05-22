@@ -18,26 +18,30 @@ enum RoutingProtocol
 struct Route
 {
     RoutingProtocol protocol;
-    IP* dest;
+    IPv4 dest;
     Mask mask;
-    IP* gateway;
+    IPv4 gateway;
     Port* port;
     int metric; //not implemented
+
+
+    Route(RoutingProtocol protocol, IPv4 dest, const Mask &mask, IPv4 gateway, Port *port);
     void print()
     {
-        cout << dest->getIPStr().toStdString() << " via " << gateway->getIPStr().toStdString() << endl;
+        cout << dest.getIPStr().toStdString() << " via " << gateway.getIPStr().toStdString() << endl;
     }
 };
 
 class RoutingTable
 {
     QVector<Route> routes;
+
 public:
     RoutingTable();
 
     void addRoute(Route newRoute);
-    QVector<Route> findAllRoutes(IP* ip);
-    Route findBestRoute(IP* ip); //based on metric
+    QVector<Route> findAllRoutes(IPv4 ip);
+    Route findBestRoute(IPv4 ip); //based on metric
     void print();
 };
 

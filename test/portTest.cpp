@@ -16,7 +16,7 @@ QString string_transfer_between_ports_correct()
 
     Packet myPack("hello world");
 
-    Port a, b;
+    Port a(1), b(2);
     QThread bthread;
     b.moveToThread(&bthread);
     bthread.start();

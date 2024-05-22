@@ -49,7 +49,7 @@ QString ip_comparision_correct()
     IPv4 myIP("255.255.255.0", "192.168.1.12");
     IPv4 otherIP1("255.255.255.0", "192.168.1.94");
     IPv4 otherIP2("255.255.255.0", "192.168.10.12");
-    if (!myIP.includes(&otherIP1) || myIP.includes(&otherIP2))
+    if (!myIP.includes(otherIP1) || myIP.includes(otherIP2))
         return "incorrect ip comparision!";
 
     return "";

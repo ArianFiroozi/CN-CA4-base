@@ -19,7 +19,8 @@ SOURCES += \
     test/allTests.cpp \
     test/ipTest.cpp \
     test/packetTest.cpp \
-    test/portTest.cpp
+    test/portTest.cpp \
+    test/routerTest.cpp
 
 HEADERS += \
     headers/ip.h \
@@ -38,4 +39,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+        resources/routingTables/routingTable1.csv \
+        routingTable1.csv

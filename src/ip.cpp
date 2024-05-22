@@ -44,8 +44,8 @@ IPAddr IPv4::netAddr()
     return networkAddress;
 }
 
-bool IPv4::includes(IP* other)
+bool IPv4::includes(IPv4 other)
 {
-    uint32_t otherAddr = other->ipAddr.addrToNum();
+    uint32_t otherAddr = other.ipAddr.addrToNum();
     return (otherAddr < this->broadcastAddr().addrToNum() && otherAddr > this->netAddr().addrToNum());
 }

@@ -17,20 +17,21 @@ public:
     explicit Router(int _id, QThread *parent = nullptr);
     IP* ip;
     int id;
-    QVector<Packet*> buffer;
+    QVector<Packet> buffer;
     // QVector<Port*> ports;
     RoutingTable routingTable;
 
     QMutex* mutex;
 
-    void recievePacket(Packet* packet, int recieveID);
-    bool sendPacket(Packet* packet, int sendID);
+    void recievePacket(Packet packet);
+    bool sendPacket(Packet packet);
 
     void start();
     void stop();
-    void queuePacket(Packet* packet);
+    void queuePacket(Packet packet);
     void addLink(Port* link, int routerID);
 signals:
+    void packetSent();
 };
 
 #endif // ROUTER_H

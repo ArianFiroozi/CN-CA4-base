@@ -6,16 +6,20 @@ Router::Router(int _id, QThread *parent)
     id = _id;
 }
 
-void Router::recievePacket(Packet *packet, int recieveID)
+void Router::recievePacket(Packet packet)
 {
     // infinite buffer
     buffer.append(packet);
 }
 
-bool Router::sendPacket(Packet *packet, int sendID)
+bool Router::sendPacket(Packet packet)
 {
-    IPv4 dest = packet->getDest();
-    Route sendRoute = routingTable.findBestRoute(&dest);
-    sendRoute.port->write(*packet);
+    IPv4 dest = packet.getDest();
+    Route sendRoute = routingTable.findBestRoute(dest);
+
+    if (!packet.getDest().includes(sendRoute.dest))
+        return false;
+
+    sendRoute.port->write(packet);
     return true;
 }

@@ -2,9 +2,10 @@
 
 using namespace std;
 
-Port::Port(QObject *parent)
-    : QObject{parent}
-{}
+Port::Port(int _id)
+{
+    id = _id;
+}
 
 void Port::write(Packet _packet)
 {

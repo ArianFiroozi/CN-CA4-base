@@ -17,10 +17,11 @@ class Port : public QObject
 
 private:
 public:
-    Port(QObject *parent = nullptr);
+    Port(int id);
     ~Port();
 
     Packet packet;
+    int id;
 
     void write(Packet _packet);
     void read(Packet _packet);

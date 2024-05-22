@@ -65,11 +65,10 @@ public:
     virtual int maskToInt()=0;
     virtual IPAddr netAddr()=0;
     virtual IPAddr broadcastAddr()=0;
-    virtual bool includes(IP* other)=0;
+    // virtual bool includes(IPv4 other)=0;
     virtual QString getIPStr()=0;
 
     IPAddr ipAddr;
-protected:
     Mask mask;
 };
 
@@ -80,7 +79,7 @@ public:
     IPAddr netAddr();
     IPAddr broadcastAddr();
 
-    bool includes(IP* other);
+    bool includes(IPv4 other);
     IPv4(QString maskStr="0.0.0.0", QString ipAddrStr="0.0.0.0");
     QString getIPStr();
 };

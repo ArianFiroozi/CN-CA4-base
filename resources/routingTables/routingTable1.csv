@@ -1,0 +1,2 @@
+// protocol, dest, mask, gateway, portID
+OSPF, 192.168.20.1, 255.255.255.255, 20.0.0.1, 1
