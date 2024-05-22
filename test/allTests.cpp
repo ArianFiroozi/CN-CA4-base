@@ -1,19 +1,23 @@
 #include <iostream>
 #include <stdio.h>
+#include <QVector>
 
-#include "ipTest.cpp"
-#include "portTest.cpp"
-#include "packetTest.cpp"
+#include "allTests.h"
 
 using namespace std;
 
-int run_all_tests()
+QVector<QString> run_all_tests()
 {
-    int errors = 0;
+    QVector<QString> errors;
 
     errors += run_ip_tests();
     errors += run_packet_tests();
     errors += run_port_tests();
 
+    QMutableVectorIterator<QString> i(errors);
+    while (i.hasNext()) {
+        if (i.next() == "")
+            i.remove();
+    }
     return errors;
 }

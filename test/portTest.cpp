@@ -1,13 +1,13 @@
 #include <iostream>
 #include <stdio.h>
-
+#include <QVector>
 #include <QThread>
 
 #include "./headers/port.h"
 
 using namespace std;
 
-bool string_transfer_between_ports_correct()
+QString string_transfer_between_ports_correct()
 {
     int dummy_argc = 0;
     char x = 'b';
@@ -31,16 +31,16 @@ bool string_transfer_between_ports_correct()
     bthread.wait(10);
     bthread.deleteLater();
 
-    if (bPack.getString() == myPack.getString())
-        return true;
-    return false;
+    if (bPack.getString() != myPack.getString())
+        return "string does not transfer between ports correctly";
+    return "";
 }
 
-int run_port_tests()
+QVector<QString> run_port_tests()
 {
-    int errors = 0;
+    QVector<QString> errors;
 
-    errors += (string_transfer_between_ports_correct()==true)?0:1;
+    errors += string_transfer_between_ports_correct();
 
     return errors;
 }
