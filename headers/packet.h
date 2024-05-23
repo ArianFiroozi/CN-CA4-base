@@ -8,9 +8,12 @@
 
 enum IPVersion{IPV4, IPV6};
 
+enum PacketType{HELLO, MSG};
+
 class Packet
 {
 private:
+    PacketType type;
     QString string;
     IPv4 source, dest;
     QVector<QString> path;
@@ -18,7 +21,7 @@ private:
     int waitCycles;
 
 public:
-    Packet(QString _string="", IPVersion _ipVer=IPV4, IPv4 _source=IPv4(), IPv4 _dest=IPv4());
+    Packet(QString _string="", PacketType _type=MSG, IPVersion _ipVer=IPV4, IPv4 _source=IPv4(), IPv4 _dest=IPv4());
 
     IPVersion ipVer;
     void setString(const QString &newString);

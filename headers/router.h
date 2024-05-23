@@ -17,6 +17,7 @@ public:
     explicit Router(int _id, QThread *parent = nullptr);
     IP* ip;
     int id;
+    QVector<Port*> ports;
     QVector<Packet> buffer;
     // QVector<Port*> ports;
     RoutingTable routingTable;
@@ -29,9 +30,11 @@ public:
     void start();
     void stop();
     void queuePacket(Packet packet);
-    void addLink(Port* link, int routerID);
+    void addPort(Port* port);
+
+    QVector<Port*> getPortsWithID(int portID);
 signals:
-    void packetSent();
+    void packetSent(Port* newPort);
 };
 
 #endif // ROUTER_H

@@ -81,6 +81,7 @@ public:
 
     bool includes(IPv4 other);
     IPv4(QString maskStr="0.0.0.0", QString ipAddrStr="0.0.0.0");
+    IPv4(Mask _mask, IPAddr _ipAddr); // duplicate
     QString getIPStr();
 };
 

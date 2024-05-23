@@ -23,3 +23,19 @@ bool Router::sendPacket(Packet packet)
     sendRoute.port->write(packet);
     return true;
 }
+
+void Router::addPort(Port* newPort)
+{
+    ports.append(newPort);
+}
+
+QVector<Port*> Router::getPortsWithID(int portID)
+{
+    QVector<Port*> idPorts;
+    for (Port* port : ports)
+        if (port->id == portID)
+            idPorts.append(port);
+    return idPorts;
+}
+
+

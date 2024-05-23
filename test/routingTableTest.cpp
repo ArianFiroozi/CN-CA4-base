@@ -9,7 +9,7 @@
 
 QString routing_table_finds_path_correctly()
 {
-    Packet myPack("hello world", IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1"));
+    Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1"));
 
     Port a1(1);
     RoutingTable routingTable;

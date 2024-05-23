@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+    src/cluster.cpp \
     src/ip.cpp \
     src/networksimulator.cpp \
     src/packet.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
     test/routingTableTest.cpp
 
 HEADERS += \
+    headers/cluster.h \
     headers/ip.h \
     headers/networksimulator.h \
     headers/packet.h \

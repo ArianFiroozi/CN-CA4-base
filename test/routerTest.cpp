@@ -15,7 +15,7 @@ QString router_sends_packet_to_another()
     char *dummy_argv[1] = {&x};
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
-    Packet myPack("hello world", IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1"));
+    Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1"));
 
     Router a(1), b(2);
     a.routingTable.initFromFile("../resources/routingTables/routingTable1.csv");
