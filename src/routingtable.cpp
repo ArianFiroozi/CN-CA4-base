@@ -2,7 +2,8 @@
 
 #include <QFile>
 
-RoutingTable::RoutingTable() {}
+RoutingTable::RoutingTable()
+{}
 
 void RoutingTable::addRoute(Route newRoute)
 {
@@ -64,6 +65,34 @@ void RoutingTable::initFromFile(QString address)
 
         Route newRoute(protocol, dest, mask, gateway, new Port(portID));
         this->routes.append(newRoute);
+    }
+}
+
+void RoutingTable::initFromFile(QString address, Port* port)
+{
+    QFile file(address);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream in(&file);
+    while (!in.atEnd())
+    {
+        QString line = in.readLine();
+
+        if(line.startsWith("//")) continue;
+
+        QVector<QString> lineVec = line.split(",");
+        RoutingProtocol protocol = (lineVec[0] == "OSPF") ? OSPF : ((lineVec[0] == "MANUAL") ? MANUAL : BGP);
+        IPv4 dest(lineVec[2], lineVec[1]);
+        Mask mask;
+        mask.strToMask(lineVec[2]);
+        IPv4 gateway(lineVec[2], lineVec[3]);
+        int portID(lineVec[4].toInt());
+        if (port->id == portID)
+        {
+            Route newRoute(protocol, dest, mask, gateway, port);
+            this->routes.append(newRoute);
+        }
     }
 }
 

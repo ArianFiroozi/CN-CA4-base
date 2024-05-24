@@ -9,12 +9,18 @@ class Cluster
 {
 public:
     QVector<Router*> routers;
+
+    void printRoutingTables();
 };
 
 class Mesh:public Cluster
 {
 private:
     int x, y;
+    void connectRouters(int i, int j);
+    
+    void getStaticRoutingTables();
+
 public:
     Mesh(int _x, int _y, IPv4 netAddIP);
 };

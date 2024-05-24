@@ -18,6 +18,7 @@ SOURCES += \
     src/router.cpp \
     src/routingtable.cpp \
     test/allTests.cpp \
+    test/clusterTest.cpp \
     test/ipTest.cpp \
     test/packetTest.cpp \
     test/portTest.cpp \
@@ -43,5 +44,21 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+        resources/routingTables/manualMesh4x4/routingTable1.csv \
+        resources/routingTables/manualMesh4x4/routingTable10.csv \
+        resources/routingTables/manualMesh4x4/routingTable11.csv \
+        resources/routingTables/manualMesh4x4/routingTable12.csv \
+        resources/routingTables/manualMesh4x4/routingTable13.csv \
+        resources/routingTables/manualMesh4x4/routingTable14.csv \
+        resources/routingTables/manualMesh4x4/routingTable15.csv \
+        resources/routingTables/manualMesh4x4/routingTable16.csv \
+        resources/routingTables/manualMesh4x4/routingTable2.csv \
+        resources/routingTables/manualMesh4x4/routingTable3.csv \
+        resources/routingTables/manualMesh4x4/routingTable4.csv \
+        resources/routingTables/manualMesh4x4/routingTable5.csv \
+        resources/routingTables/manualMesh4x4/routingTable6.csv \
+        resources/routingTables/manualMesh4x4/routingTable7.csv \
+        resources/routingTables/manualMesh4x4/routingTable8.csv \
+        resources/routingTables/manualMesh4x4/routingTable9.csv \
         resources/routingTables/routingTable1.csv \
         routingTable1.csv

@@ -12,7 +12,8 @@ using namespace std;
 enum RoutingProtocol
 {
     BGP,
-    OSPF
+    OSPF,
+    MANUAL
 };
 
 struct Route
@@ -44,6 +45,7 @@ public:
 
     void print();
     void initFromFile(QString address);
+    void initFromFile(QString address, Port* port);
 };
 
 #endif // ROUTINGTABLE_H

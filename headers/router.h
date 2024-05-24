@@ -32,7 +32,7 @@ public:
     void queuePacket(Packet packet);
     void addPort(Port* port);
 
-    QVector<Port*> getPortsWithID(int portID);
+    Port* getPortWithID(int portID);
 signals:
     void packetSent(Port* newPort);
 };

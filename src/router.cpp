@@ -29,13 +29,11 @@ void Router::addPort(Port* newPort)
     ports.append(newPort);
 }
 
-QVector<Port*> Router::getPortsWithID(int portID)
+Port* Router::getPortWithID(int portID)
 {
-    QVector<Port*> idPorts;
     for (Port* port : ports)
         if (port->id == portID)
-            idPorts.append(port);
-    return idPorts;
+            return port;
 }
 
 
