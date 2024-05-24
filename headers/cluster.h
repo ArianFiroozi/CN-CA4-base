@@ -4,6 +4,7 @@
 #include "router.h"
 
 #include <QVector>
+#include <QCoreApplication>
 
 class Cluster
 {
@@ -17,7 +18,11 @@ public:
 class Mesh:public Cluster
 {
 private:
+    void makeDummyApp();
+
+    QCoreApplication* dummy;
     int x, y;
+    QVector<QThread*> threads;
     void connectRouters(int i, int j);
     
     void getStaticRoutingTables();

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <QVector>
 #include <QThread>
+#include <unistd.h>
 
 #include "./headers/cluster.h"
 
@@ -14,10 +15,16 @@ QString mesh_cluster_static_init_correct()
 
     Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                   IPv4("255.255.255.255", "192.168.20.3"));
+
+
+
     cluster.getRouter(1)->sendPacket(myPack);
 
     for (auto router:cluster.routers)
+    {
         router->forward();
+        usleep(1);
+    }
 
     // cout << cluster.getRouter(13)->buffer[0].toStr().toStdString() << endl;
     return "";

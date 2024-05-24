@@ -57,8 +57,18 @@ Router* Cluster::getRouter(int id)
     return id <= routers.size() ? routers[id-1] : NULL;
 }
 
+void Mesh::makeDummyApp()
+{
+    int dummy_argc = 0;
+    char x = 'b';
+    char *dummy_argv[1] = {&x};
+    dummy = new QCoreApplication(dummy_argc, dummy_argv);
+}
+
 Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version each up router is connected to one pc
 {
+    makeDummyApp();
+
     x = _x;
     y = _y;
 
@@ -81,10 +91,15 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version
             connectRouters(i, j);
         }
     }
-
-
     //TODO: get tables according to static/dynamic type
     getStaticRoutingTables();
+
+    for (Router* router:routers)
+    {
+        threads.append(new QThread());
+        router->moveToThread(threads.last());
+        threads.last()->start();
+    }
 }
 
 void Cluster::printRoutingTables()
