@@ -10,6 +10,13 @@ void Router::recievePacket(Packet packet)
 {
     // infinite buffer
     buffer.append(packet);
+    cout<<"buffer"<<id<<"recieved smt!"<<endl;
+}
+
+void Router::forward()
+{
+    for (Packet packet:buffer)
+        sendPacket(packet);
 }
 
 bool Router::sendPacket(Packet packet)

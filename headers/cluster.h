@@ -9,6 +9,7 @@ class Cluster
 {
 public:
     QVector<Router*> routers;
+    Router* getRouter(int id);
 
     void printRoutingTables();
 };

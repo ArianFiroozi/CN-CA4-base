@@ -52,6 +52,11 @@ void Mesh::getStaticRoutingTables()
     }
 }
 
+Router* Cluster::getRouter(int id)
+{
+    return id <= routers.size() ? routers[id-1] : NULL;
+}
+
 Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version each up router is connected to one pc
 {
     x = _x;

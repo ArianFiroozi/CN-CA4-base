@@ -26,6 +26,7 @@ public:
 
     void recievePacket(Packet packet);
     bool sendPacket(Packet packet);
+    void forward();
 
     void start();
     void stop();
