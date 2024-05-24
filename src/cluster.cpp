@@ -11,7 +11,7 @@ void Mesh::connectRouters(int i, int j)
             routers.last()->addPort(new Port(3));
 
         if (i != 0)
-            QObject::connect(routers[(i-1)*j+j]->getPortWithID(3), &Port::getPacket,
+            QObject::connect(routers[(i-1)*x+j]->getPortWithID(3), &Port::getPacket,
                              routers.last(), &Router::recievePacket);
     }
     else if (j==x-1)
@@ -22,7 +22,7 @@ void Mesh::connectRouters(int i, int j)
         QObject::connect(routers[i*x+j-1]->getPortWithID(2), &Port::getPacket,
                          routers.last(), &Router::recievePacket);
         if (i != 0)
-            QObject::connect(routers[(i-1)*j+j]->getPortWithID(3), &Port::getPacket,
+            QObject::connect(routers[(i-1)*x+j]->getPortWithID(3), &Port::getPacket,
                              routers.last(), &Router::recievePacket);
     }
     else
@@ -34,7 +34,7 @@ void Mesh::connectRouters(int i, int j)
         QObject::connect(routers[i*x+j-1]->getPortWithID(2),
                          &Port::getPacket, routers.last(), &Router::recievePacket);
         if (i != 0)
-            QObject::connect(routers[(i-1)*j+j]->getPortWithID(3),
+            QObject::connect(routers[(i-1)*x+j]->getPortWithID(3),
                              &Port::getPacket, routers.last(), &Router::recievePacket);
     }
 }

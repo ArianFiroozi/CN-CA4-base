@@ -47,7 +47,7 @@ IPAddr IPv4::netAddr()
 bool IPv4::includes(IPv4 other)
 {
     uint32_t otherAddr = other.ipAddr.addrToNum();
-    return (otherAddr < this->broadcastAddr().addrToNum() && otherAddr > this->netAddr().addrToNum());
+    return (otherAddr <= this->broadcastAddr().addrToNum() && otherAddr >= this->netAddr().addrToNum());
 }
 
 IPv4::IPv4(Mask _mask, IPAddr _ipAddr)
