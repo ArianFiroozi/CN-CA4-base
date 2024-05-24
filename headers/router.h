@@ -19,7 +19,6 @@ public:
     int id;
     QVector<Port*> ports;
     QVector<Packet> buffer;
-    // QVector<Port*> ports;
     RoutingTable routingTable;
 
     QMutex* mutex;

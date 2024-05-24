@@ -14,6 +14,7 @@ SOURCES += \
     src/ip.cpp \
     src/networksimulator.cpp \
     src/packet.cpp \
+    src/pc.cpp \
     src/port.cpp \
     src/router.cpp \
     src/routingtable.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     headers/ip.h \
     headers/networksimulator.h \
     headers/packet.h \
+    headers/pc.h \
     headers/port.h \
     headers/router.h \
     headers/routingtable.h \

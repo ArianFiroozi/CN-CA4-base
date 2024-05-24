@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "./headers/cluster.h"
+#include "./headers/pc.h"
 
 using namespace std;
 
@@ -14,19 +15,30 @@ QString mesh_cluster_static_init_correct()
     // cluster.printRoutingTables();
 
     Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
-                  IPv4("255.255.255.255", "192.168.20.3"));
+                  IPv4("255.255.255.255", "192.168.20.4"));
 
+    PC sender(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1));
+    PC receiver(2, new IPv4("255.255.255.255", "192.168.20.4"), new Port(2));
 
+    cluster.routers.last()->addPort(new Port(3));
+    QString path("../resources/routingTables/manualMesh4x4/routingTable16.csv");
+    cluster.routers.last()->routingTable.initFromFile(path, cluster.routers.last()->getPortWithID(3));
 
-    cluster.getRouter(1)->sendPacket(myPack);
+    QObject::connect(sender.port, &Port::getPacket,
+                     cluster.routers[0], &Router::recievePacket);
+    QObject::connect(cluster.routers.last()->getPortWithID(3), &Port::getPacket,
+                     &receiver, &PC::recievePacket);
+
+    sender.sendPacket(myPack);
 
     for (auto router:cluster.routers)
     {
+        usleep(10);
         router->forward();
-        usleep(1);
     }
 
-    // cout << cluster.getRouter(13)->buffer[0].toStr().toStdString() << endl;
+    if (receiver.buffer[0].getString() != "hello world")
+        return "message did not reach other pc in mesh!";
     return "";
 }
 

@@ -1,5 +1,50 @@
 #include "../headers/cluster.h"
 
+Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version each up router is connected to one pc
+{
+    makeDummyApp();
+
+    x = _x;
+    y = _y;
+
+    //this is a test. later this should be done with PC entity
+    QVector<QString> upPcIPs;
+    upPcIPs.append("192.168.20.1");
+    upPcIPs.append("192.168.20.2");
+    upPcIPs.append("192.168.20.3");
+    upPcIPs.append("192.168.20.4");
+
+    for(int i=0;i<y;i++)
+    {
+        for (int j=0;j<x;j++)
+        {
+            routers.append(new Router(i*x+j+1));
+
+            IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
+            newIP.ipAddr.hostID += i*x + j + 1;
+            routers.last()->ip = new IPv4(netAddrIP.mask, netAddrIP.ipAddr);
+            connectRouters(i, j);
+        }
+    }
+    //TODO: get tables according to static/dynamic type
+    getStaticRoutingTables();
+
+    for (Router* router:routers)
+    {
+        threads.append(new QThread());
+        router->moveToThread(threads.last());
+        threads.last()->start();
+    }
+}
+
+void Mesh::makeDummyApp()
+{
+    int dummy_argc = 0;
+    char x = 'b';
+    char *dummy_argv[1] = {&x};
+    dummy = new QCoreApplication(dummy_argc, dummy_argv);
+}
+
 void Mesh::connectRouters(int i, int j)
 {
     //only down can send to up TODO:make it both ways for dynamic
@@ -43,7 +88,7 @@ void Mesh::getStaticRoutingTables()
 {
     for (Router* router:routers) //static
     {
-        QString path("/home/arian/Documents/CN_P3/CN_CHomeworks_3/resources/routingTables/manualMesh4x4/routingTable");
+        QString path("../resources/routingTables/manualMesh4x4/routingTable");
         path.append(QString::number(router->id));
         path.append(".csv");
 
@@ -55,51 +100,6 @@ void Mesh::getStaticRoutingTables()
 Router* Cluster::getRouter(int id)
 {
     return id <= routers.size() ? routers[id-1] : NULL;
-}
-
-void Mesh::makeDummyApp()
-{
-    int dummy_argc = 0;
-    char x = 'b';
-    char *dummy_argv[1] = {&x};
-    dummy = new QCoreApplication(dummy_argc, dummy_argv);
-}
-
-Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version each up router is connected to one pc
-{
-    makeDummyApp();
-
-    x = _x;
-    y = _y;
-
-    //this is a test. later this should be done with PC entity
-    QVector<QString> upPcIPs;
-    upPcIPs.append("192.168.20.1");
-    upPcIPs.append("192.168.20.2");
-    upPcIPs.append("192.168.20.3");
-    upPcIPs.append("192.168.20.4");
-
-    for(int i=0;i<y;i++)
-    {
-        for (int j=0;j<x;j++)
-        {
-            routers.append(new Router(i*x+j+1));
-
-            IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
-            newIP.ipAddr.hostID += i*x + j + 1;
-            routers.last()->ip = new IPv4(netAddrIP.mask, netAddrIP.ipAddr);
-            connectRouters(i, j);
-        }
-    }
-    //TODO: get tables according to static/dynamic type
-    getStaticRoutingTables();
-
-    for (Router* router:routers)
-    {
-        threads.append(new QThread());
-        router->moveToThread(threads.last());
-        threads.last()->start();
-    }
 }
 
 void Cluster::printRoutingTables()

@@ -22,7 +22,10 @@ QVector<Route> RoutingTable::findAllRoutes(IPv4 ip)
 Route RoutingTable::findBestRoute(IPv4 ip)
 {
     if (!routes.size())
-        throw exception();
+        return Route(MANUAL, IPv4("255.255.255.255", "255.255.255.255"),
+                     Mask(), IPv4("255.255.255.255", "255.255.255.255"),
+                     new Port(0));
+
     QVector<Route> maxRoutes = findAllRoutes(ip);
     int maxMetric = -1;
     for (Route route : maxRoutes)

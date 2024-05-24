@@ -15,8 +15,10 @@ void Router::recievePacket(Packet packet)
 
 void Router::forward()
 {
-    for (Packet packet:buffer)
-        sendPacket(packet);
+    if (buffer.size()==0) return;
+
+    sendPacket(buffer[0]);
+    buffer.removeFirst();
 }
 
 bool Router::sendPacket(Packet packet)

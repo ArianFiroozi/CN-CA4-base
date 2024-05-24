@@ -45,7 +45,7 @@ QVector<QString> run_router_tests()
 {
     QVector<QString> errors;
 
-    // errors += router_sends_packet_to_another();
+    errors += router_sends_packet_to_another();
 
     return errors;
 }
