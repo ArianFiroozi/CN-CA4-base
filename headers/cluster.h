@@ -29,6 +29,7 @@ private:
 
 public:
     Mesh(int _x, int _y, IPv4 netAddIP);
+    ~Mesh();
 };
 
 class RingStar:public Cluster

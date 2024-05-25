@@ -37,6 +37,15 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version
     }
 }
 
+Mesh::~Mesh()
+{
+    for (auto thread : threads)
+    {
+        thread->exit();
+        thread->deleteLater();
+    }
+}
+
 void Mesh::makeDummyApp()
 {
     int dummy_argc = 0;
