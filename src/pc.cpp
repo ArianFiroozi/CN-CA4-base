@@ -2,7 +2,8 @@
 
 using namespace std;
 
-PC::PC(int _id, IP* _ip, Port* _port)
+PC::PC(int _id, IP* _ip, Port* _port, QThread *parent)
+    : QThread{parent}
 {
     id = _id;
     ip = _ip;

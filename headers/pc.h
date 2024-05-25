@@ -1,15 +1,16 @@
 #ifndef PC_H
 #define PC_H
 
+#include <QThread>
+
 #include "packet.h"
 #include "port.h"
 #include "ip.h"
 
-class PC : public QObject
+class PC : public QThread
 {
-    Q_OBJECT
 public:
-    PC(int _id, IP* _ip, Port* _port);
+    explicit PC(int _id, IP* _ip, Port* _port,  QThread *parent = nullptr);
     IP* ip;
     int id;
     Port* port;

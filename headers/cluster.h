@@ -22,12 +22,12 @@ private:
 
     QCoreApplication* dummy;
     int x, y;
-    QVector<QThread*> threads;
     void connectRouters(int i, int j);
     
     void getStaticRoutingTables();
 
 public:
+    QVector<QThread*> threads;
     Mesh(int _x, int _y, IPv4 netAddIP);
     ~Mesh();
 };

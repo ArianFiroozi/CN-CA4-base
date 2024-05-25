@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     src/cluster.cpp \
+    src/eventHandler.cpp \
     src/ip.cpp \
     src/networksimulator.cpp \
     src/packet.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
     src/routingtable.cpp \
     test/allTests.cpp \
     test/clusterTest.cpp \
+    test/eventhandlertest.cpp \
     test/ipTest.cpp \
     test/packetTest.cpp \
     test/portTest.cpp \
@@ -28,6 +30,7 @@ SOURCES += \
 
 HEADERS += \
     headers/cluster.h \
+    headers/eventHandler.h \
     headers/ip.h \
     headers/networksimulator.h \
     headers/packet.h \

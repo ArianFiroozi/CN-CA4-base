@@ -16,6 +16,7 @@ QVector<QString> run_all_tests()
     errors += run_routing_table_tests();
     errors += run_router_tests();
     errors += run_cluster_tests();
+    errors += run_event_handler_tests();
 
     QMutableVectorIterator<QString> i(errors);
     while (i.hasNext())
