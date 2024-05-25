@@ -30,13 +30,6 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version
     x = _x;
     y = _y;
 
-    //this is a test. later this should be done with PC entity
-    QVector<QString> upPcIPs;
-    upPcIPs.append("192.168.20.1");
-    upPcIPs.append("192.168.20.2");
-    upPcIPs.append("192.168.20.3");
-    upPcIPs.append("192.168.20.4");
-
     for(int i=0;i<y;i++)
     {
         for (int j=0;j<x;j++)
