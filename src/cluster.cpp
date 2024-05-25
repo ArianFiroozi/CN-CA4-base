@@ -129,13 +129,6 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP)
     ringLen = _ringLen;
     starConnections = _starConnections;
 
-    //this is a test. later this should be done with PC entity
-    QVector<QString> upPcIPs;
-    upPcIPs.append("192.168.20.1");
-    upPcIPs.append("192.168.20.2");
-    upPcIPs.append("192.168.20.3");
-    upPcIPs.append("192.168.20.4");
-
     for(int i=0;i<ringLen;i++)
     {
         routers.append(new Router(i+1));

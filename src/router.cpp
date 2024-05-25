@@ -17,6 +17,7 @@ void Router::forward()
 {
     if (buffer.size()==0) return;
 
+    buffer[0].addToPath(QString::number(this->id));
     sendPacket(buffer[0]);
     buffer.removeFirst();
 }
