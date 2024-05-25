@@ -15,7 +15,6 @@ QString event_handler_with_mesh_cluster_static_init_correct()
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"));
     Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                   IPv4("255.255.255.255", "192.168.20.4"));
-
     EventHandler* eventHandler = new EventHandler(100);
     QThread* eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
@@ -32,19 +31,13 @@ QString event_handler_with_mesh_cluster_static_init_correct()
     QObject::connect(cluster.routers.last()->getPortWithID(3), &Port::getPacket,
                      &receiver, &PC::recievePacket);
 
-    for (Router* router : cluster.routers)
-    {
-        QObject::connect(eventHandler, &EventHandler::forwardSig,
-                         router, &Router::forward);
-    }
+    cluster.connectForward(eventHandler);
 
-    // receiver.moveToThread(cluster.threads.last());
+    receiver.moveToThread(cluster.threads.last());
     eventThread->start();
 
     sender.sendPacket(myPack);
-
     emit eventHandler->startSig();
-
     usleep(100000);
 
     if (receiver.buffer[0].getString() != "hello world")
