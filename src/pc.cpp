@@ -2,8 +2,8 @@
 
 using namespace std;
 
-PC::PC(int _id, IP* _ip, Port* _port, QThread *parent)
-    : QThread{parent}
+PC::PC(int _id, IP* _ip, Port* _port, QObject *parent)
+    : QObject{parent}
 {
     id = _id;
     ip = _ip;
@@ -23,6 +23,7 @@ void PC::recievePacket(Packet packet)
 
     cout<<"pc "<<id<<" recieved msg: "<<packet.getString().toStdString()
          <<" through path: "<< path.toStdString() <<endl;
+    emit packetReceived();
 }
 
 void PC::sendPacket(Packet packet)

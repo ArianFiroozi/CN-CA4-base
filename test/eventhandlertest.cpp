@@ -12,6 +12,11 @@ using namespace std;
 
 QString event_handler_with_mesh_cluster_static_init_correct()
 {
+    int dummy_argc = 0;
+    char x = 'b';
+    char *dummy_argv[1] = {&x};
+    QCoreApplication dummy(dummy_argc, dummy_argv);
+
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"));
     Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                   IPv4("255.255.255.255", "192.168.20.4"));
@@ -32,13 +37,15 @@ QString event_handler_with_mesh_cluster_static_init_correct()
                      &receiver, &PC::recievePacket);
 
     cluster.connectForward(eventHandler);
-
-    receiver.moveToThread(cluster.threads.last());
     eventThread->start();
 
     sender.sendPacket(myPack);
     emit eventHandler->startSig();
-    usleep(100000);
+
+    QObject::connect(&receiver, &PC::packetReceived,
+                     &dummy, &QCoreApplication::quit);
+
+    dummy.exec();
 
     if (receiver.buffer[0].getString() != "hello world")
         return "message did not reach other pc in mesh!";
