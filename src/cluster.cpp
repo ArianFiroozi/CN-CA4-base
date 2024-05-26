@@ -181,8 +181,8 @@ void RingStar::connectStarRouter()
         routers.last()->addPort(new Port(starConnections[i]));
 
         QObject::connect(routers.last()->getPortWithID(starConnections[i]),
-                         &Port::getPacket, routers[starConnections[i]], &Router::recievePacket);
-        QObject::connect(routers[starConnections[i]]->getPortWithID(3),
+                         &Port::getPacket, routers[starConnections[i]-1], &Router::recievePacket);
+        QObject::connect(routers[starConnections[i]-1]->getPortWithID(3),
                          &Port::getPacket, routers.last(), &Router::recievePacket);
     }
 }

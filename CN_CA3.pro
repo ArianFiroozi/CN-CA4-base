@@ -21,7 +21,7 @@ SOURCES += \
     src/routingtable.cpp \
     test/allTests.cpp \
     test/clusterTest.cpp \
-    test/eventhandlertest.cpp \
+    test/eventHandlerTest.cpp \
     test/ipTest.cpp \
     test/packetTest.cpp \
     test/portTest.cpp \
@@ -65,5 +65,13 @@ DISTFILES += \
         resources/routingTables/manualMesh4x4/routingTable7.csv \
         resources/routingTables/manualMesh4x4/routingTable8.csv \
         resources/routingTables/manualMesh4x4/routingTable9.csv \
+        resources/routingTables/manualRingStar/routingTable1.csv \
+        resources/routingTables/manualRingStar/routingTable2.csv \
+        resources/routingTables/manualRingStar/routingTable3.csv \
+        resources/routingTables/manualRingStar/routingTable4.csv \
+        resources/routingTables/manualRingStar/routingTable5.csv \
+        resources/routingTables/manualRingStar/routingTable6.csv \
+        resources/routingTables/manualRingStar/routingTable7.csv \
+        resources/routingTables/manualRingStar/routingTable8.csv \
         resources/routingTables/routingTable1.csv \
         routingTable1.csv
