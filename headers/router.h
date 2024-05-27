@@ -14,6 +14,7 @@
 
 enum RoutingProtocol
 {
+    RIP,
     BGP,
     OSPF,
     MANUAL
@@ -21,16 +22,18 @@ enum RoutingProtocol
 
 class Router : public QThread
 {
+private:
+    bool sendTable;
+    void forwardTable();
+
 public:
-    explicit Router(int _id, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
-    IP* ip;
+    explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
+    IPv4* ip;
     int id;
     QVector<Port*> ports;
     QVector<QSharedPointer<Packet>> buffer;
     RoutingTable routingTable;
     RoutingProtocol protocol;
-
-    QMutex* mutex;
 
     void recievePacket(QSharedPointer<Packet> packet);
     bool sendPacket(QSharedPointer<Packet> packet);

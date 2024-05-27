@@ -8,7 +8,7 @@
 
 enum IPVersion{IPV4, IPV6};
 
-enum PacketType{HELLO, ROUTING_TABLE, MSG};
+enum PacketType{HELLO, ROUTING_TABLE_RIP, MSG};
 
 class Packet
 {
@@ -19,6 +19,7 @@ private:
     QVector<QString> path;
     int queueWaitCycles;
     int waitCycles;
+    int portID;
 
 public:
     Packet(QString _string="", PacketType _type=MSG, IPVersion _ipVer=IPV4, IPv4 _source=IPv4(), IPv4 _dest=IPv4());
@@ -36,6 +37,9 @@ public:
     void incQueueWaitCycles();
     int getWaitCycles() const;
     void incWaitCycles();
+    PacketType getType() const;
+    int getPortID() const;
+    void setPortID(int newPortID);
 };
 
 #endif // PACKET_H

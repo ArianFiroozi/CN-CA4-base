@@ -2,12 +2,15 @@
 
 #include <QFile>
 
-RoutingTable::RoutingTable()
-{}
+RoutingTable::RoutingTable(IPv4 *_masterIP)
+{
+    masterIP = _masterIP;
+}
 
 void RoutingTable::addRoute(Route newRoute)
 {
-    routes.append(newRoute);
+    // if (newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
+        routes.append(newRoute);
 }
 
 QVector<Route> RoutingTable::findAllRoutes(IPv4 ip)
@@ -97,11 +100,69 @@ void RoutingTable::initFromFile(QString address, Port* port)
     }
 }
 
-Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port) :
+bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
+{
+    int updated = false;
+    QVector<QString> routesStr = msg.split("#");
+    QString gatewayStr = routesStr[routesStr.length() - 1];
+    for (QString routeStr : routesStr)
+    {
+        if (routeStr == gatewayStr)
+            break;
+
+        int metric;
+        IPAddr ipAddr;
+        Mask mask;
+
+        ipAddr.strToIP(routeStr.split(",")[0]);
+        mask.strToMask(routeStr.split(",")[1]);
+        metric = routeStr.split(",")[2].toInt() + 1;
+
+        bool betterRouteExists = false;
+        Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
+        for (int i=0; i<routes.length();i++)
+        {
+            if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
+                newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
+            {
+                if (routes[i].metric <= newRoute.metric)
+                    betterRouteExists = true;
+                else
+                    routes.remove(i);
+                break;
+            }
+        }
+        if (!betterRouteExists)
+        {
+            addRoute(newRoute);
+            updated = true;
+        }
+    }
+    return updated;
+}
+
+QString RoutingTable::toStringRIP(IPv4 gateway)
+{
+    QString ripStr;
+
+    for (Route route : routes)
+    {
+        ripStr.append(route.dest.ipAddr.toStr());
+        ripStr.append(",");
+        ripStr.append(route.dest.mask.toStr());
+        ripStr.append(",");
+        ripStr.append(QString::number(route.metric));
+        ripStr.append("#");
+    }
+    ripStr.append(gateway.ipAddr.toStr());
+    return ripStr;
+}
+
+Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric) :
     dest(dest),
     mask(mask),
     gateway(gateway),
     port(port)
 {
-    metric = -1;
+    metric = _metric;
 }

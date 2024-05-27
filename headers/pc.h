@@ -19,10 +19,13 @@ public:
 
     void recievePacket(QSharedPointer<Packet> packet);
     void sendPacket(QSharedPointer<Packet> packet);
+    void start();
 
 signals:
     void packetReceived();
     void packetSent(Port* newPort);
+private:
+    void sendHello();
 };
 
 #endif // PC_H
