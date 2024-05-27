@@ -36,6 +36,16 @@ PacketType Packet::getType() const
     return type;
 }
 
+int Packet::getPortID() const
+{
+    return portID;
+}
+
+void Packet::setPortID(int newPortID)
+{
+    portID = newPortID;
+}
+
 Packet::Packet(QString _string, PacketType _type, IPVersion _ipVer, IPv4 _source, IPv4 _dest)
 {
     type = _type;

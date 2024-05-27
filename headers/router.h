@@ -24,7 +24,7 @@ class Router : public QThread
 {
 public:
     explicit Router(int _id, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
-    IP* ip;
+    IPv4* ip;
     int id;
     QVector<Port*> ports;
     QVector<QSharedPointer<Packet>> buffer;

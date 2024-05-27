@@ -1,24 +1,5 @@
 #include "../headers/cluster.h"
 
-int portTranslation(int other)
-{
-    switch (other)
-    {
-    case 1:
-        return 3;
-    case 2:
-        return 4;
-    case 3: // handler to star seperatley
-        return 1;
-    case 4:
-        return 2;
-    case 5:
-        return 5;
-    default:
-        return -1;
-    }
-}
-
 Router* Cluster::getRouter(int id)
 {
     return id <= routers.size() ? routers[id-1] : NULL;
@@ -48,6 +29,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this
 
     x = _x;
     y = _y;
+    protocol = _protocol;
 
     for(int i=0;i<y;i++)
     {
@@ -101,11 +83,12 @@ void Mesh::connectRouters(int i, int j)
             routers.last()->addPort(new Port(1));
 
         if (i != 0)
+        {
             QObject::connect(routers[(i-1)*x+j]->getPortWithID(3), &Port::getPacket,
                              routers.last(), &Router::recievePacket);
-        if (i != y-1)
             QObject::connect(routers.last()->getPortWithID(1), &Port::getPacket,
                              routers[(i-1)*x+j], &Router::recievePacket);
+        }
     }
     else if (j==x-1) // last cloumn
     {
@@ -119,14 +102,15 @@ void Mesh::connectRouters(int i, int j)
         QObject::connect(routers[i*x+j-1]->getPortWithID(2), &Port::getPacket,
                          routers.last(), &Router::recievePacket);
         QObject::connect(routers.last()->getPortWithID(4), &Port::getPacket,
-                         routers[(i-1)*x+j], &Router::recievePacket);
+                         routers[i*x+j-1], &Router::recievePacket);
 
         if (i != 0)
+        {
             QObject::connect(routers[(i-1)*x+j]->getPortWithID(3), &Port::getPacket,
                              routers.last(), &Router::recievePacket);
-        if (i != y-1)
             QObject::connect(routers.last()->getPortWithID(1), &Port::getPacket,
                              routers[(i-1)*x+j], &Router::recievePacket);
+        }
     }
     else
     {
@@ -140,13 +124,14 @@ void Mesh::connectRouters(int i, int j)
         QObject::connect(routers[i*x+j-1]->getPortWithID(2),
                          &Port::getPacket, routers.last(), &Router::recievePacket);
         QObject::connect(routers.last()->getPortWithID(4), &Port::getPacket,
-                         routers[(i-1)*x+j], &Router::recievePacket);
+                         routers[i*x+j-1], &Router::recievePacket);
         if (i != 0)
+        {
             QObject::connect(routers[(i-1)*x+j]->getPortWithID(3),
                              &Port::getPacket, routers.last(), &Router::recievePacket);
-        if (i != y-1)
             QObject::connect(routers.last()->getPortWithID(1), &Port::getPacket,
                              routers[(i-1)*x+j], &Router::recievePacket);
+        }
     }
 }
 

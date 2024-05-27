@@ -1,5 +1,25 @@
 #include "./headers/router.h"
 
+int portTranslation(int other)
+{
+    switch (other)
+    {
+    case 1:
+        return 3;
+    case 2:
+        return 4;
+    case 3: // handler to star seperatley
+        return 1;
+    case 4:
+        return 2;
+    case 5:
+        return 5;
+    default:
+        return -1;
+    }
+}
+
+
 Router::Router(int _id, RoutingProtocol _protocol, QThread *parent)
     : QThread{parent}
 {
@@ -17,7 +37,8 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
             break;
         case HELLO:
             if (protocol == RIP)
-                routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, this->ip, port));
+                routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
+                                            this->getPortWithID(portTranslation(packet->getPortID()))) );
             break;
         default:
             cerr << "unknown message type!" << endl;

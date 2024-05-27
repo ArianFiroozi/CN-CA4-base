@@ -9,6 +9,7 @@ Port::Port(int _id)
 
 void Port::write(QSharedPointer<Packet> _packet)
 {
+    _packet->setPortID(id);
     emit getPacket(_packet);
 }
 
