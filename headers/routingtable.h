@@ -29,9 +29,11 @@ struct Route
 class RoutingTable
 {
 public:
-    RoutingTable();
+    RoutingTable(IPv4 *_masterIP);
 
     QVector<Route> routes;
+    IPv4 *masterIP;
+
     void addRoute(Route newRoute);
     QVector<Route> findAllRoutes(IPv4 ip);
     Route findBestRoute(IPv4 ip); //based on metric

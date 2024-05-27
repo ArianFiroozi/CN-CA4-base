@@ -2,12 +2,15 @@
 
 #include <QFile>
 
-RoutingTable::RoutingTable()
-{}
+RoutingTable::RoutingTable(IPv4 *_masterIP)
+{
+    masterIP = _masterIP;
+}
 
 void RoutingTable::addRoute(Route newRoute)
 {
-    routes.append(newRoute);
+    // if (newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
+        routes.append(newRoute);
 }
 
 QVector<Route> RoutingTable::findAllRoutes(IPv4 ip)
@@ -116,10 +119,11 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
         metric = routeStr.split(",")[2].toInt() + 1;
 
         bool betterRouteExists = false;
-        Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, gatewayStr, port, metric);
+        Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
         for (int i=0; i<routes.length();i++)
         {
-            if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum())
+            if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
+                newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
             {
                 if (routes[i].metric <= newRoute.metric)
                     betterRouteExists = true;

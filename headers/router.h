@@ -27,7 +27,7 @@ private:
     void forwardTable();
 
 public:
-    explicit Router(int _id, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
+    explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
     IPv4* ip;
     int id;
     QVector<Port*> ports;

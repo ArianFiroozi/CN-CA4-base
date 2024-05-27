@@ -35,11 +35,9 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this
     {
         for (int j=0;j<x;j++)
         {
-            routers.append(new Router(i*x+j+1, _protocol));
-
             IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
             newIP.ipAddr.hostID += i*x + j + 1;
-            routers.last()->ip = new IPv4(newIP.mask.toStr(), newIP.ipAddr.toStr());
+            routers.append(new Router(i*x+j+1, new IPv4(newIP.mask.toStr(), newIP.ipAddr.toStr()), _protocol));
             connectRouters(i, j);
         }
     }
@@ -157,15 +155,16 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP)
 
     for(int i=0;i<ringLen;i++)
     {
-        routers.append(new Router(i+1));
 
         IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
         newIP.ipAddr.hostID += i + 1;
-        routers.last()->ip = new IPv4(netAddrIP.mask, netAddrIP.ipAddr);
+        routers.append(new Router(i+1, new IPv4(netAddrIP.mask, netAddrIP.ipAddr)));
         connectRingRouters(i);
     }
 
-    routers.append(new Router(ringLen + 1)); //star
+    IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
+    newIP.ipAddr.hostID += ringLen + 1;
+    routers.append(new Router(ringLen + 1, new IPv4(netAddrIP.mask, netAddrIP.ipAddr))); //star
     connectStarRouter();
 
     //TODO: get tables according to static/dynamic type

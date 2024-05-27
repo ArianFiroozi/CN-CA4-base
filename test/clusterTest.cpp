@@ -25,7 +25,7 @@ QString mesh_cluster_static_init_correct()
     cluster.routers.last()->routingTable.initFromFile(path, cluster.routers.last()->getPortWithID(3));
 
     QObject::connect(sender.port, &Port::getPacket,
-                     cluster.routers[0], &Router::recievePacket);
+                     cluster.routers[3], &Router::recievePacket);
     QObject::connect(cluster.routers.last()->getPortWithID(3), &Port::getPacket,
                      &receiver, &PC::recievePacket);
 

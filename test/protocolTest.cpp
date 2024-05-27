@@ -24,8 +24,8 @@ QString simple_rip_on_mesh()
     QThread* eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
 
-    PC sender(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1));
-    PC receiver(2, new IPv4("255.255.255.255", "192.168.20.4"), new Port(2));
+    PC sender(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(3));
+    PC receiver(2, new IPv4("255.255.255.255", "192.168.20.4"), new Port(1));
 
     cluster.routers.last()->addPort(new Port(3));
     QString path("../resources/routingTables/manualMesh4x4/routingTable16.csv");
@@ -33,6 +33,10 @@ QString simple_rip_on_mesh()
 
     QObject::connect(sender.port, &Port::getPacket,
                      cluster.routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    QObject::connect(receiver.port, &Port::getPacket,
+                     cluster.routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
     QObject::connect(cluster.routers.last()->getPortWithID(3), &Port::getPacket,
                      &receiver, &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
 
@@ -46,11 +50,13 @@ QString simple_rip_on_mesh()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
+    dummy.exec();
+
+
     usleep(1000000);
 
     sender.sendPacket(myPack);
-
-    dummy.exec();
+    usleep(1000000);
 
     cluster.printRoutingTables();
 

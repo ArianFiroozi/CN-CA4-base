@@ -12,7 +12,7 @@ QString routing_table_finds_path_correctly()
     Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1"));
 
     Port a1(1);
-    RoutingTable routingTable;
+    RoutingTable routingTable(new IPv4());
     routingTable.addRoute(Route(myPack.getDest(), myPack.getSource().mask,
                                   myPack.getSource(), &a1));
     Route found = routingTable.findBestRoute(myPack.getDest());
@@ -25,7 +25,7 @@ QString routing_table_finds_path_correctly()
 
 QString routing_table_init_correct()
 {
-    RoutingTable rt;
+    RoutingTable rt(new IPv4());
     rt.initFromFile("../resources/routingTables/routingTable1.csv");
     if (rt.routes[0].gateway.getIPStr()!="192.168.20.1/30" ||
         rt.routes[0].port == NULL ||

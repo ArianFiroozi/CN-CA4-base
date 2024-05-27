@@ -28,8 +28,10 @@ void Router::forwardTable()
     }
 }
 
-Router::Router(int _id, RoutingProtocol _protocol, QThread *parent)
-    : QThread{parent}
+Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
+    : QThread{parent},
+    ip(_ip),
+    routingTable(RoutingTable(ip))
 {
     id = _id;
     protocol = _protocol;
@@ -57,7 +59,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         break;
     case ROUTING_TABLE_RIP:
         cout << "before:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
-        sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID())));
+        sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
         cout << "after:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
         cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
         break;
