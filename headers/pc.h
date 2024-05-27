@@ -15,10 +15,10 @@ public:
     IP* ip;
     int id;
     Port* port;
-    QVector<Packet> buffer;
+    QVector<QSharedPointer<Packet>> buffer;
 
-    void recievePacket(Packet packet);
-    void sendPacket(Packet packet);
+    void recievePacket(QSharedPointer<Packet> packet);
+    void sendPacket(QSharedPointer<Packet> packet);
 
 signals:
     void packetReceived();

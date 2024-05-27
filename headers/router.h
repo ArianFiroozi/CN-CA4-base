@@ -5,27 +5,37 @@
 #include <QThread>
 #include <QMutex>
 #include <QVector>
+#include <QSharedPointer>
 
 #include "packet.h"
 #include "port.h"
 #include "ip.h"
 #include "routingtable.h"
 
+enum RoutingProtocol
+{
+    BGP,
+    OSPF,
+    MANUAL
+};
+
 class Router : public QThread
 {
 public:
-    explicit Router(int _id, QThread *parent = nullptr);
+    explicit Router(int _id, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
     IP* ip;
     int id;
     QVector<Port*> ports;
-    QVector<Packet> buffer;
+    QVector<QSharedPointer<Packet>> buffer;
     RoutingTable routingTable;
+    RoutingProtocol protocol;
 
     QMutex* mutex;
 
-    void recievePacket(Packet packet);
-    bool sendPacket(Packet packet);
+    void recievePacket(QSharedPointer<Packet> packet);
+    bool sendPacket(QSharedPointer<Packet> packet);
     void forward();
+    void tick();
 
     void start();
     void stop();

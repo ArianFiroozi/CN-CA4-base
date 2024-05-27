@@ -9,23 +9,16 @@
 
 using namespace std;
 
-enum RoutingProtocol
-{
-    BGP,
-    OSPF,
-    MANUAL
-};
 
 struct Route
 {
-    RoutingProtocol protocol;
     IPv4 dest;
     Mask mask;
     IPv4 gateway;
     Port* port;
     int metric; //not implemented
 
-    Route(RoutingProtocol protocol, IPv4 dest, const Mask &mask, IPv4 gateway, Port *port);
+    Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port);
 
     void print()
     {

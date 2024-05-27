@@ -5,12 +5,12 @@ Router* Cluster::getRouter(int id)
     return id <= routers.size() ? routers[id-1] : NULL;
 }
 
-void Cluster::connectForward(EventHandler* eventHandler)
+void Cluster::connectTick(EventHandler* eventHandler)
 {
     for (Router* router : routers)
     {
-        QObject::connect(eventHandler, &EventHandler::forwardSig,
-                         router, &Router::forward);
+        QObject::connect(eventHandler, &EventHandler::tick,
+                         router, &Router::tick);
     }
 }
 
@@ -23,7 +23,7 @@ void Cluster::printRoutingTables()
     }
 }
 
-Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version each up router is connected to one pc
+Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this mesh, unlike final version each up router is connected to one pc
 {
     makeDummyApp();
 
@@ -34,7 +34,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP) // in this mesh, unlike final version
     {
         for (int j=0;j<x;j++)
         {
-            routers.append(new Router(i*x+j+1));
+            routers.append(new Router(i*x+j+1, _protocol));
 
             IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
             newIP.ipAddr.hostID += i*x + j + 1;

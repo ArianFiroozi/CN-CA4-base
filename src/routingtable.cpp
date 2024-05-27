@@ -22,7 +22,7 @@ QVector<Route> RoutingTable::findAllRoutes(IPv4 ip)
 Route RoutingTable::findBestRoute(IPv4 ip)
 {
     if (!routes.size())
-        return Route(MANUAL, IPv4("255.255.255.255", "255.255.255.255"),
+        return Route(IPv4("255.255.255.255", "255.255.255.255"),
                      Mask(), IPv4("255.255.255.255", "255.255.255.255"),
                      new Port(0));
 
@@ -59,14 +59,13 @@ void RoutingTable::initFromFile(QString address)
         if(line.startsWith("//")) continue;
 
         QVector<QString> lineVec = line.split(",");
-        RoutingProtocol protocol = (lineVec[0] == "OSPF") ? OSPF : BGP;
         IPv4 dest(lineVec[2], lineVec[1]);
         Mask mask;
         mask.strToMask(lineVec[2]);
         IPv4 gateway(lineVec[2], lineVec[3]);
         int portID(lineVec[4].toInt());
 
-        Route newRoute(protocol, dest, mask, gateway, new Port(portID));
+        Route newRoute(dest, mask, gateway, new Port(portID));
         this->routes.append(newRoute);
     }
 }
@@ -85,7 +84,6 @@ void RoutingTable::initFromFile(QString address, Port* port)
         if(line.startsWith("//")) continue;
 
         QVector<QString> lineVec = line.split(",");
-        RoutingProtocol protocol = (lineVec[0] == "OSPF") ? OSPF : ((lineVec[0] == "MANUAL") ? MANUAL : BGP);
         IPv4 dest(lineVec[2], lineVec[1]);
         Mask mask;
         mask.strToMask(lineVec[2]);
@@ -93,13 +91,13 @@ void RoutingTable::initFromFile(QString address, Port* port)
         int portID(lineVec[4].toInt());
         if (port->id == portID)
         {
-            Route newRoute(protocol, dest, mask, gateway, port);
+            Route newRoute(dest, mask, gateway, port);
             this->routes.append(newRoute);
         }
     }
 }
 
-Route::Route(RoutingProtocol protocol, IPv4 dest, const Mask &mask, IPv4 gateway, Port *port) : protocol(protocol),
+Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port) :
     dest(dest),
     mask(mask),
     gateway(gateway),

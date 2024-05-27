@@ -24,7 +24,7 @@ void EventHandler::start()
     while (!stopFlag)
     {
         usleep(period);
-        emit forwardSig();
+        emit tick();
     }
 }
 

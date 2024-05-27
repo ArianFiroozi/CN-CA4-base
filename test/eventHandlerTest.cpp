@@ -18,8 +18,8 @@ QString event_handler_with_mesh_cluster_static_init_correct()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"));
-    Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
-                  IPv4("255.255.255.255", "192.168.20.4"));
+    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+                                                                      IPv4("255.255.255.255", "192.168.20.4")));
     EventHandler* eventHandler = new EventHandler(100);
     QThread* eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
@@ -36,7 +36,7 @@ QString event_handler_with_mesh_cluster_static_init_correct()
     QObject::connect(cluster.routers.last()->getPortWithID(3), &Port::getPacket,
                      &receiver, &PC::recievePacket);
 
-    cluster.connectForward(eventHandler);
+    cluster.connectTick(eventHandler);
     eventThread->start();
 
     sender.sendPacket(myPack);
@@ -47,7 +47,7 @@ QString event_handler_with_mesh_cluster_static_init_correct()
 
     dummy.exec();
 
-    if (receiver.buffer[0].getString() != "hello world")
+    if (receiver.buffer[0]->getString() != "hello world")
         return "message did not reach other pc in mesh!";
     return "";
 }

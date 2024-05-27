@@ -7,12 +7,12 @@ Port::Port(int _id)
     id = _id;
 }
 
-void Port::write(Packet _packet)
+void Port::write(QSharedPointer<Packet> _packet)
 {
     emit getPacket(_packet);
 }
 
-void Port::read(Packet _packet)
+void Port::read(QSharedPointer<Packet> _packet)
 {
     packet = _packet;
 }

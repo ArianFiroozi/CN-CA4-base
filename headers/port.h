@@ -20,14 +20,14 @@ public:
     Port(int id);
     ~Port();
 
-    Packet packet;
+    QSharedPointer<Packet> packet;
     int id;
 
-    void write(Packet _packet);
-    void read(Packet _packet);
+    void write(QSharedPointer<Packet> _packet);
+    void read(QSharedPointer<Packet> _packet);
 
 signals:
-    void getPacket(Packet);
+    void getPacket(QSharedPointer<Packet>);
 };
 
 #endif // PORT_H

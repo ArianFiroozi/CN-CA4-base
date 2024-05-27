@@ -19,7 +19,7 @@ public:
     void start();
     void stop();
 signals:
-    void forwardSig();
+    void tick();
     void startSig();
     void stopSig();
 };

@@ -8,7 +8,7 @@
 
 enum IPVersion{IPV4, IPV6};
 
-enum PacketType{HELLO, MSG};
+enum PacketType{HELLO, ROUTING_TABLE, MSG};
 
 class Packet
 {

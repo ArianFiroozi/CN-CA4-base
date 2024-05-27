@@ -13,7 +13,7 @@ QString routing_table_finds_path_correctly()
 
     Port a1(1);
     RoutingTable routingTable;
-    routingTable.addRoute(Route(OSPF, myPack.getDest(), myPack.getSource().mask,
+    routingTable.addRoute(Route(myPack.getDest(), myPack.getSource().mask,
                                   myPack.getSource(), &a1));
     Route found = routingTable.findBestRoute(myPack.getDest());
 

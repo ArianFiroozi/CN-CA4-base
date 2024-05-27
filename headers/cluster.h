@@ -12,13 +12,14 @@ class Cluster
 protected:
     void makeDummyApp();
     QCoreApplication* dummy;
+    RoutingProtocol protocol;
 
 public:
     QVector<Router*> routers;
     Router* getRouter(int id);
     QVector<QThread*> threads;
 
-    void connectForward(EventHandler* eventHandler);
+    void connectTick(EventHandler* eventHandler);
     void printRoutingTables();
 };
 
@@ -31,7 +32,7 @@ private:
     void getStaticRoutingTables();
 
 public:
-    Mesh(int _x, int _y, IPv4 netAddIP);
+    Mesh(int _x, int _y, IPv4 netAddIP, RoutingProtocol _protocol = MANUAL);
     ~Mesh();
 };
 

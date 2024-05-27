@@ -14,7 +14,7 @@ QString string_transfer_between_ports_correct()
     char *dummy_argv[1] = {&x};
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
-    Packet myPack("hello world");
+    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world"));
 
     Port a(1), b(2);
     QThread bthread;
@@ -25,13 +25,13 @@ QString string_transfer_between_ports_correct()
     a.write(myPack);
     bthread.wait(10);
 
-    Packet bPack(b.packet.getString());
+    Packet bPack(b.packet->getString());
 
     bthread.exit();
     bthread.wait(10);
     bthread.deleteLater();
 
-    if (bPack.getString() != myPack.getString())
+    if (bPack.getString() != myPack->getString())
         return "string does not transfer between ports correctly";
     return "";
 }

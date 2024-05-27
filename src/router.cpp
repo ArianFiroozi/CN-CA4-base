@@ -1,12 +1,13 @@
 #include "./headers/router.h"
 
-Router::Router(int _id, QThread *parent)
+Router::Router(int _id, RoutingProtocol _protocol, QThread *parent)
     : QThread{parent}
 {
     id = _id;
+    protocol = _protocol;
 }
 
-void Router::recievePacket(Packet packet)
+void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     // infinite buffer
     buffer.append(packet);
@@ -17,17 +18,27 @@ void Router::forward()
 {
     if (buffer.size()==0) return;
 
-    buffer[0].addToPath(QString::number(this->id));
+    buffer[0]->addToPath(QString::number(this->id));
     sendPacket(buffer[0]);
     buffer.removeFirst();
+
+    for (QSharedPointer<Packet> packet : buffer)
+        packet->incQueueWaitCycles();
 }
 
-bool Router::sendPacket(Packet packet)
+void Router::tick()
 {
-    IPv4 dest = packet.getDest();
+    for (int i=0; i<buffer.size(); i++)
+        buffer[i]->incWaitCycles();
+    forward();
+}
+
+bool Router::sendPacket(QSharedPointer<Packet> packet)
+{
+    IPv4 dest = packet->getDest();
     Route sendRoute = routingTable.findBestRoute(dest);
 
-    if (!packet.getDest().includes(sendRoute.dest))
+    if (!packet->getDest().includes(sendRoute.dest))
     {
         cout<<"router "<<id<<" dropped message!"<<endl;
         return false;

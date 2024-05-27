@@ -15,7 +15,8 @@ QString router_sends_packet_to_another()
     char *dummy_argv[1] = {&x};
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
-    Packet myPack("hello world", MSG, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1"));
+    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(
+        new Packet("hello world", MSG, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1")));
 
     Router a(1), b(2);
     a.routingTable.initFromFile("../resources/routingTables/routingTable1.csv");
@@ -30,13 +31,13 @@ QString router_sends_packet_to_another()
     a.sendPacket(myPack);
     bthread.wait(10);
 
-    Packet bPack = b.buffer[0];
+    QSharedPointer<Packet> bPack = b.buffer[0];
 
     bthread.exit();
     bthread.wait(10);
     bthread.deleteLater();
 
-    if (bPack.getString() != myPack.getString())
+    if (bPack->getString() != myPack->getString())
         return "string does not transfer between routers correctly";
     return "";
 }
