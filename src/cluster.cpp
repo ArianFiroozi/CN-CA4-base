@@ -43,7 +43,8 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this
         }
     }
     //TODO: get tables according to static/dynamic type
-    getStaticRoutingTables();
+    if (protocol == MANUAL)
+        getStaticRoutingTables();
 
     for (Router* router:routers)
     {
