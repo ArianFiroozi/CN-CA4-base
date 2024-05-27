@@ -38,6 +38,6 @@ void PC::sendPacket(QSharedPointer<Packet> packet)
 
 void PC::sendHello()
 {
-    QSharedPointer<Packet> packet(new Packet("", HELLO, IPV4, IPv4(ip->mask, ip->ipAddr), IPv4(ip->mask, ip->ipAddr)));
+    QSharedPointer<Packet> packet(new Packet("0", HELLO, IPV4, IPv4(ip->mask, ip->ipAddr), IPv4(ip->mask, ip->ipAddr)));
     port->write(packet);
 }

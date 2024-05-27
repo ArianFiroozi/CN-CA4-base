@@ -97,8 +97,9 @@ void RoutingTable::initFromFile(QString address, Port* port)
     }
 }
 
-void RoutingTable::updateFromPacketRIP(QString msg, Port* port)
+bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
 {
+    int updated = false;
     QVector<QString> routesStr = msg.split("#");
     QString gatewayStr = routesStr[routesStr.length() - 1];
     for (QString routeStr : routesStr)
@@ -128,8 +129,12 @@ void RoutingTable::updateFromPacketRIP(QString msg, Port* port)
             }
         }
         if (!betterRouteExists)
+        {
             routes.append(newRoute);
+            updated = true;
+        }
     }
+    return updated;
 }
 
 QString RoutingTable::toStringRIP(IPv4 gateway)

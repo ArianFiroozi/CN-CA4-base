@@ -25,6 +25,7 @@ SOURCES += \
     test/ipTest.cpp \
     test/packetTest.cpp \
     test/portTest.cpp \
+    test/protocolTest.cpp \
     test/routerTest.cpp \
     test/routingTableTest.cpp
 

@@ -39,7 +39,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this
 
             IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
             newIP.ipAddr.hostID += i*x + j + 1;
-            routers.last()->ip = new IPv4(netAddrIP.mask, netAddrIP.ipAddr);
+            routers.last()->ip = new IPv4(newIP.mask.toStr(), newIP.ipAddr.toStr());
             connectRouters(i, j);
         }
     }
@@ -85,9 +85,9 @@ void Mesh::connectRouters(int i, int j)
         if (i != 0)
         {
             QObject::connect(routers[(i-1)*x+j]->getPortWithID(3), &Port::getPacket,
-                             routers.last(), &Router::recievePacket);
+                             routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
             QObject::connect(routers.last()->getPortWithID(1), &Port::getPacket,
-                             routers[(i-1)*x+j], &Router::recievePacket);
+                             routers[(i-1)*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         }
     }
     else if (j==x-1) // last cloumn
@@ -100,16 +100,16 @@ void Mesh::connectRouters(int i, int j)
             routers.last()->addPort(new Port(1));
 
         QObject::connect(routers[i*x+j-1]->getPortWithID(2), &Port::getPacket,
-                         routers.last(), &Router::recievePacket);
+                         routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         QObject::connect(routers.last()->getPortWithID(4), &Port::getPacket,
-                         routers[i*x+j-1], &Router::recievePacket);
+                         routers[i*x+j-1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
 
         if (i != 0)
         {
             QObject::connect(routers[(i-1)*x+j]->getPortWithID(3), &Port::getPacket,
-                             routers.last(), &Router::recievePacket);
+                             routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
             QObject::connect(routers.last()->getPortWithID(1), &Port::getPacket,
-                             routers[(i-1)*x+j], &Router::recievePacket);
+                             routers[(i-1)*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         }
     }
     else
@@ -122,15 +122,15 @@ void Mesh::connectRouters(int i, int j)
             routers.last()->addPort(new Port(1));
 
         QObject::connect(routers[i*x+j-1]->getPortWithID(2),
-                         &Port::getPacket, routers.last(), &Router::recievePacket);
+                         &Port::getPacket, routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         QObject::connect(routers.last()->getPortWithID(4), &Port::getPacket,
-                         routers[i*x+j-1], &Router::recievePacket);
+                         routers[i*x+j-1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         if (i != 0)
         {
             QObject::connect(routers[(i-1)*x+j]->getPortWithID(3),
-                             &Port::getPacket, routers.last(), &Router::recievePacket);
+                             &Port::getPacket, routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
             QObject::connect(routers.last()->getPortWithID(1), &Port::getPacket,
-                             routers[(i-1)*x+j], &Router::recievePacket);
+                             routers[(i-1)*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         }
     }
 }
@@ -188,15 +188,15 @@ void RingStar::connectRingRouters(int i)
     if (i!=0)
     {
         QObject::connect(routers[i-1]->getPortWithID(2),
-                         &Port::getPacket, routers.last(), &Router::recievePacket);
+                         &Port::getPacket, routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         QObject::connect(routers.last()->getPortWithID(4),
-                         &Port::getPacket, routers[i-1], &Router::recievePacket);
+                         &Port::getPacket, routers[i-1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     }
     if (i==ringLen-1){
         QObject::connect(routers.last()->getPortWithID(2),
-                         &Port::getPacket, routers.first(), &Router::recievePacket);
+                         &Port::getPacket, routers.first(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         QObject::connect(routers.first()->getPortWithID(4),
-                         &Port::getPacket, routers.last(), &Router::recievePacket);
+                         &Port::getPacket, routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     }
 }
 
@@ -207,9 +207,9 @@ void RingStar::connectStarRouter()
         routers.last()->addPort(new Port(starConnections[i]));
 
         QObject::connect(routers.last()->getPortWithID(starConnections[i]),
-                         &Port::getPacket, routers[starConnections[i]-1], &Router::recievePacket);
+                         &Port::getPacket, routers[starConnections[i]-1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
         QObject::connect(routers[starConnections[i]-1]->getPortWithID(3),
-                         &Port::getPacket, routers.last(), &Router::recievePacket);
+                         &Port::getPacket, routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     }
 }
 

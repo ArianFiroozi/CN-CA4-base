@@ -39,7 +39,7 @@ public:
     void print();
     void initFromFile(QString address);
     void initFromFile(QString address, Port* port);
-    void updateFromPacketRIP(QString msg, Port* port);
+    bool updateFromPacketRIP(QString msg, Port* port);
     QString toStringRIP(IPv4 gateway);
 };
 

@@ -39,26 +39,31 @@ Router::Router(int _id, RoutingProtocol _protocol, QThread *parent)
 void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     // infinite buffer
+    cout<<"router "<<id<<" recieved smt!"<<endl;
 
     switch(packet->getType()){
-        case MSG:
-            buffer.append(packet);
-            break;
-        case HELLO:
-            if (protocol == RIP)
-            {
-                routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
-                                            this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
-                sendTable = true;
-            }
-            break;
-        case ROUTING_TABLE_RIP:
-            routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID())));
-            break;
-        default:
-            cerr << "unknown message type!" << endl;
+    case MSG:
+        buffer.append(packet);
+        break;
+    case HELLO:
+        if (protocol == RIP)
+        {
+            routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
+                                        this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
+            sendTable = true;
+
+            cout<< "hello message:" <<packet->getString().toStdString()<<endl<<endl;
         }
-    cout<<"router "<<id<<" recieved smt!"<<endl;
+        break;
+    case ROUTING_TABLE_RIP:
+        cout << "before:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
+        sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID())));
+        cout << "after:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
+        cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
+        break;
+    default:
+        cerr << "unknown message type!" << endl;
+    }
 }
 
 void Router::forward()

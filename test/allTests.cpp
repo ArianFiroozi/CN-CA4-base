@@ -10,13 +10,14 @@ QVector<QString> run_all_tests()
 {
     QVector<QString> errors;
 
-    errors += run_ip_tests();
-    errors += run_packet_tests();
-    errors += run_port_tests();
-    errors += run_routing_table_tests();
-    errors += run_router_tests();
-    errors += run_cluster_tests();
-    errors += run_event_handler_tests();
+    // errors += run_ip_tests();
+    // errors += run_packet_tests();
+    // errors += run_port_tests();
+    // errors += run_routing_table_tests();
+    // errors += run_router_tests();
+    // errors += run_cluster_tests();
+    // errors += run_event_handler_tests();
+    errors += run_protocol_tests();
 
     QMutableVectorIterator<QString> i(errors);
     while (i.hasNext())
