@@ -10,7 +10,18 @@ Router::Router(int _id, RoutingProtocol _protocol, QThread *parent)
 void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     // infinite buffer
-    buffer.append(packet);
+
+    switch(packet->getType()){
+        case MSG:
+            buffer.append(packet);
+            break;
+        case HELLO:
+            if (protocol == RIP)
+                routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, this->ip, port));
+            break;
+        default:
+            cerr << "unknown message type!" << endl;
+        }
     cout<<"router "<<id<<" recieved smt!"<<endl;
 }
 

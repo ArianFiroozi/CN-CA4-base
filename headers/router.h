@@ -14,6 +14,7 @@
 
 enum RoutingProtocol
 {
+    RIP,
     BGP,
     OSPF,
     MANUAL

@@ -36,6 +36,7 @@ public:
     void incQueueWaitCycles();
     int getWaitCycles() const;
     void incWaitCycles();
+    PacketType getType() const;
 };
 
 #endif // PACKET_H

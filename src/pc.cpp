@@ -10,6 +10,11 @@ PC::PC(int _id, IP* _ip, Port* _port, QObject *parent)
     port = _port;
 }
 
+void PC::start()
+{
+    sendHello();
+}
+
 void PC::recievePacket(QSharedPointer<Packet> packet)
 {
     buffer.append(packet);
@@ -28,5 +33,11 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
 
 void PC::sendPacket(QSharedPointer<Packet> packet)
 {
+    port->write(packet);
+}
+
+void PC::sendHello()
+{
+    static QSharedPointer<Packet> packet(new Packet("", HELLO, IPV4, IPv4(ip->mask, ip->ipAddr), IPv4(ip->mask, ip->ipAddr)));
     port->write(packet);
 }
