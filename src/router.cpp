@@ -20,11 +20,20 @@ int portTranslation(int other)
 }
 
 
+void Router::forwardTable()
+{
+    for (Port* port:ports)
+    {
+        port->write(QSharedPointer<Packet>(new Packet(routingTable.toStringRIP(*ip), ROUTING_TABLE_RIP, IPV4, *ip, *ip)));
+    }
+}
+
 Router::Router(int _id, RoutingProtocol _protocol, QThread *parent)
     : QThread{parent}
 {
     id = _id;
     protocol = _protocol;
+    sendTable = false;
 }
 
 void Router::recievePacket(QSharedPointer<Packet> packet)
@@ -37,8 +46,14 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
             break;
         case HELLO:
             if (protocol == RIP)
+            {
                 routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
-                                            this->getPortWithID(portTranslation(packet->getPortID()))) );
+                                            this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
+                sendTable = true;
+            }
+            break;
+        case ROUTING_TABLE_RIP:
+            routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID())));
             break;
         default:
             cerr << "unknown message type!" << endl;
@@ -62,7 +77,14 @@ void Router::tick()
 {
     for (int i=0; i<buffer.size(); i++)
         buffer[i]->incWaitCycles();
-    forward();
+
+    if (sendTable)
+    {
+        forwardTable();
+        sendTable = false;
+    }
+    else
+        forward();
 }
 
 bool Router::sendPacket(QSharedPointer<Packet> packet)
