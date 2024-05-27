@@ -41,29 +41,32 @@ Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
 void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     // infinite buffer
-    cout<<"router "<<id<<" recieved smt!"<<endl;
 
     switch(packet->getType()){
     case MSG:
+        cout<<"router "<<id<<" recieved msg!"<<endl;
         buffer.append(packet);
         break;
     case HELLO:
+        cout<<"router "<<id<<" recieved hello!"<<endl;
         if (protocol == RIP)
         {
             routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
                                         this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
             sendTable = true;
 
-            cout<< "hello message:" <<packet->getString().toStdString()<<endl<<endl;
+            // cout<< "hello message:" <<packet->getString().toStdString()<<endl<<endl;
         }
         break;
     case ROUTING_TABLE_RIP:
-        cout << "before:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
+        cout<<"router "<<id<<" recieved routing table!"<<endl;
+        // cout << "before:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
         sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
-        cout << "after:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
-        cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
+        // cout << "after:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
+        // cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
         break;
     default:
+        cout<<"router "<<id<<" recieved something!"<<endl;
         cerr << "unknown message type!" << endl;
     }
 }
@@ -107,6 +110,8 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
 
     cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
          << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
+    // cout << "message content was:" << packet->getString().toStdString() <<endl;
+
     sendRoute.port->write(packet);
     return true;
 }

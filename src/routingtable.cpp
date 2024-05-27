@@ -134,7 +134,7 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
         }
         if (!betterRouteExists)
         {
-            routes.append(newRoute);
+            addRoute(newRoute);
             updated = true;
         }
     }

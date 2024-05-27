@@ -20,7 +20,7 @@ QString simple_rip_on_mesh()
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), RIP);
     QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                                                       IPv4("255.255.255.255", "192.168.20.4")));
-    EventHandler* eventHandler = new EventHandler(100);
+    EventHandler* eventHandler = new EventHandler(10);
     QThread* eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
 
@@ -28,15 +28,11 @@ QString simple_rip_on_mesh()
     PC receiver(2, new IPv4("255.255.255.255", "192.168.20.4"), new Port(1));
 
     cluster.routers.last()->addPort(new Port(3));
-    QString path("../resources/routingTables/manualMesh4x4/routingTable16.csv");
-    cluster.routers.last()->routingTable.initFromFile(path, cluster.routers.last()->getPortWithID(3));
 
     QObject::connect(sender.port, &Port::getPacket,
                      cluster.routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
-
     QObject::connect(receiver.port, &Port::getPacket,
                      cluster.routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
-
     QObject::connect(cluster.routers.last()->getPortWithID(3), &Port::getPacket,
                      &receiver, &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
 
@@ -50,18 +46,16 @@ QString simple_rip_on_mesh()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    dummy.exec();
-
-
-    usleep(1000000);
+    usleep(1000);
 
     sender.sendPacket(myPack);
-    usleep(1000000);
 
-    cluster.printRoutingTables();
+    dummy.exec();
+
+    // cluster.printRoutingTables();
 
     if (receiver.buffer[0]->getString() != "hello world")
-        return "message did not reach other pc in mesh!";
+        return "RIP simple connection wrong!";
     return "";
 }
 

@@ -17,6 +17,9 @@ void PC::start()
 
 void PC::recievePacket(QSharedPointer<Packet> packet)
 {
+    if (packet->getType() != MSG)
+        return;
+
     buffer.append(packet);
 
     QString path;
