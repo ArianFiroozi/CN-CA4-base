@@ -47,7 +47,7 @@ private:
     void getStaticRoutingTables();
 
 public:
-    RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP);
+    RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol = MANUAL);
 };
 
 #endif // CLUSTER_H

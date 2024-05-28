@@ -12,10 +12,8 @@ int portTranslation(int other)
         return 1;
     case 4:
         return 2;
-    case 5:
-        return 5;
     default:
-        return -1;
+        return other; //star
     }
 }
 
@@ -44,7 +42,8 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 
     switch(packet->getType()){
     case MSG:
-        cout<<"router "<<id<<" recieved msg!"<<endl;
+        routingTable.print();
+        cout<<"router "<<id<<" recieved msg!" << packet->getDest().getIPStr().toStdString()<<endl;
         buffer.append(packet);
         break;
     case HELLO:

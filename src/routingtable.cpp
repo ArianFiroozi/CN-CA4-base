@@ -118,6 +118,9 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
         mask.strToMask(routeStr.split(",")[1]);
         metric = routeStr.split(",")[2].toInt() + 1;
 
+        if (metric > 15) // replace with const
+            return false;
+
         bool betterRouteExists = false;
         Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
         for (int i=0; i<routes.length();i++)
