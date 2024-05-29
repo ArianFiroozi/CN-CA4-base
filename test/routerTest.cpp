@@ -29,12 +29,13 @@ QString router_sends_packet_to_another()
     QObject::connect(a.routingTable.routes[0].port, &Port::getPacket, &b, &Router::recievePacket);
 
     a.sendPacket(myPack);
-    bthread.wait(10);
+    a.sendWaiting();
+    bthread.wait(100);
 
     QSharedPointer<Packet> bPack = b.buffer[0];
 
     bthread.exit();
-    bthread.wait(10);
+    bthread.wait(100);
     bthread.deleteLater();
 
     if (bPack->getString() != myPack->getString())

@@ -19,7 +19,7 @@ public:
     void start();
     void stop();
 signals:
-    void tick();
+    void tick(double time);
     void startSig();
     void stopSig();
 };

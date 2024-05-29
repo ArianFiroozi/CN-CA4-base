@@ -23,7 +23,7 @@ public:
 
 signals:
     void packetReceived();
-    void packetSent(Port* newPort);
+    // void packetSent(Port* newPort);
 private:
     void sendHello();
 };

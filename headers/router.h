@@ -20,11 +20,21 @@ enum RoutingProtocol
     MANUAL
 };
 
+struct WaitingQueueLine
+{
+    Port* port;
+    QSharedPointer<Packet> packet;
+    int delay, queueTime;
+    WaitingQueueLine(Port *port, QSharedPointer<Packet> packet, int delay, int queueTime);
+};
+
 class Router : public QThread
 {
 private:
     bool sendTable;
     void forwardTable();
+    int clk;
+    QVector<WaitingQueueLine> waitingQueue;
 
 public:
     explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
@@ -38,7 +48,8 @@ public:
     void recievePacket(QSharedPointer<Packet> packet);
     bool sendPacket(QSharedPointer<Packet> packet);
     void forward();
-    void tick();
+    void sendWaiting();
+    void tick(int _time);
 
     void start();
     void stop();

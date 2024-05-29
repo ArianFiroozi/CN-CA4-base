@@ -21,10 +21,11 @@ void EventHandler::changePeriod(int microSeconds)
 void EventHandler::start()
 {
     stopFlag = false;
+    double time = 0;
     while (!stopFlag)
     {
         usleep(period);
-        emit tick();
+        emit tick(++time);
     }
 }
 

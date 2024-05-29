@@ -26,6 +26,14 @@ void Router::forwardTable()
     }
 }
 
+void Router::sendWaiting()
+{
+    for (WaitingQueueLine line : waitingQueue)
+        if (clk >= line.delay + line.queueTime)
+            line.port->write(line.packet);
+
+}
+
 Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
     : QThread{parent},
     ip(_ip),
@@ -34,6 +42,7 @@ Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
     id = _id;
     protocol = _protocol;
     sendTable = false;
+    clk = -1;
 }
 
 void Router::recievePacket(QSharedPointer<Packet> packet)
@@ -82,8 +91,9 @@ void Router::forward()
         packet->incQueueWaitCycles();
 }
 
-void Router::tick()
+void Router::tick(int _time)
 {
+    clk = _time;
     for (int i=0; i<buffer.size(); i++)
         buffer[i]->incWaitCycles();
 
@@ -93,7 +103,10 @@ void Router::tick()
         sendTable = false;
     }
     else
+    {
         forward();
+        sendWaiting();
+    }
 }
 
 bool Router::sendPacket(QSharedPointer<Packet> packet)
@@ -111,7 +124,7 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
          << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
     // cout << "message content was:" << packet->getString().toStdString() <<endl;
 
-    sendRoute.port->write(packet);
+    waitingQueue.append(WaitingQueueLine(sendRoute.port, packet, sendRoute.port->delay, clk));
     return true;
 }
 
@@ -128,4 +141,9 @@ Port* Router::getPortWithID(int portID)
     return NULL;
 }
 
-
+WaitingQueueLine::WaitingQueueLine(Port *port, QSharedPointer<Packet> packet, int delay, int queueTime) :
+    port(port),
+    packet(std::move(packet)),
+    delay(delay),
+    queueTime(queueTime)
+{}

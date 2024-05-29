@@ -33,8 +33,9 @@ QString mesh_cluster_static_init_correct()
 
     for (auto router:cluster.routers)
     {
-        usleep(10);
+        usleep(100);
         router->forward();
+        router->sendWaiting();
     }
 
     if (receiver.buffer[0]->getString() != "hello world")
@@ -62,8 +63,9 @@ QString ring_cluster_static_init_correct()
 
     for (auto router:cluster.routers)
     {
-        usleep(10);
+        usleep(100);
         router->forward();
+        router->sendWaiting();
     }
 
     if (receiver.buffer[0]->getString() != "hello world")
@@ -91,14 +93,16 @@ QString star_cluster_static_init_correct()
 
     for (auto router:cluster.routers)
     {
-        usleep(10);
+        usleep(100);
         router->forward();
+        router->sendWaiting();
     }
 
     for (auto router:cluster.routers)
     {
-        usleep(10);
+        usleep(100);
         router->forward();
+        router->sendWaiting();
     }
 
     if (receiver.buffer[0]->getString() != "hello world")
