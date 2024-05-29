@@ -17,7 +17,7 @@ class Port : public QObject
 
 private:
 public:
-    Port(int id, int _delay=0);
+    Port(int id, int _delay=-1);
     ~Port();
 
     QSharedPointer<Packet> packet;

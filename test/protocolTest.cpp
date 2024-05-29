@@ -20,7 +20,7 @@ QString simple_rip_on_mesh()
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), RIP);
     QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                                                       IPv4("255.255.255.255", "192.168.20.4")));
-    EventHandler* eventHandler = new EventHandler(100);
+    EventHandler* eventHandler = new EventHandler(10);
     QThread* eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
 
@@ -46,7 +46,7 @@ QString simple_rip_on_mesh()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    usleep(10000);
+    usleep(1000);
 
     sender.sendPacket(myPack);
 
@@ -70,7 +70,7 @@ QString simple_rip_on_ring_star()
     QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.20.2")));
 
-    EventHandler* eventHandler = new EventHandler(100);
+    EventHandler* eventHandler = new EventHandler(10);
     QThread* eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
 
@@ -96,13 +96,13 @@ QString simple_rip_on_ring_star()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    usleep(10000);
+    usleep(1000);
 
     sender.sendPacket(myPack);
 
     dummy.exec();
 
-    cluster.printRoutingTables();
+    // cluster.printRoutingTables();
 
     if (receiver.buffer[0]->getString() != "hello world")
         return "RIP simple connection wrong!";

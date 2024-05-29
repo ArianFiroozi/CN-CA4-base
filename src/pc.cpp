@@ -29,8 +29,8 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
         path.append("  ");
     }
 
-    cout<<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
-         <<" with latency: " << packet->getWaitCycles() <<" through path: "<< path.toStdString() <<endl;
+    qDebug() <<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
+         <<" with latency: " << packet->getWaitCycles() <<" through path: "<< path.toStdString();
     emit packetReceived();
 }
 

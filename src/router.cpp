@@ -21,17 +21,22 @@ int portTranslation(int other)
 void Router::forwardTable()
 {
     for (Port* port:ports)
-    {
-        port->write(QSharedPointer<Packet>(new Packet(routingTable.toStringRIP(*ip), ROUTING_TABLE_RIP, IPV4, *ip, *ip)));
-    }
+        waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringRIP(*ip), ROUTING_TABLE_RIP, IPV4, *ip, *ip)),
+                                             port->delay, clk));
 }
 
 void Router::sendWaiting()
 {
-    for (WaitingQueueLine line : waitingQueue)
-        if (clk >= line.delay + line.queueTime)
-            line.port->write(line.packet);
+    QVector<int> sent;
+    for (int i = 0; i < waitingQueue.size();i++)
+        if (clk >= waitingQueue[i].delay + waitingQueue[i].queueTime)
+        {
+            waitingQueue[i].port->write(waitingQueue[i].packet);
+            sent.append(i);
+        }
 
+    for (int i = sent.size()-1; i>=0 ; i--)
+        waitingQueue.remove(i);
 }
 
 Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
@@ -51,31 +56,26 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 
     switch(packet->getType()){
     case MSG:
-        routingTable.print();
-        cout<<"router "<<id<<" recieved msg!" << packet->getDest().getIPStr().toStdString()<<endl;
+        // routingTable.print();
+        qDebug()<<"router "<<id<<" recieved msg!" ;
         buffer.append(packet);
         break;
     case HELLO:
-        cout<<"router "<<id<<" recieved hello!"<<endl;
+        qDebug()<<"router "<<id<<" recieved hello!";
         if (protocol == RIP)
         {
             routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
                                         this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
             sendTable = true;
-
-            // cout<< "hello message:" <<packet->getString().toStdString()<<endl<<endl;
         }
         break;
     case ROUTING_TABLE_RIP:
-        cout<<"router "<<id<<" recieved routing table!"<<endl;
-        // cout << "before:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
+        qDebug() <<"router "<<id<<" recieved routing table!";
         sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
-        // cout << "after:\t" << routingTable.toStringRIP(*ip).toStdString()<<endl;
         // cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
         break;
     default:
-        cout<<"router "<<id<<" recieved something!"<<endl;
-        cerr << "unknown message type!" << endl;
+        cerr << "unknown message type on router:" << id << endl;
     }
 }
 
@@ -103,10 +103,9 @@ void Router::tick(int _time)
         sendTable = false;
     }
     else
-    {
         forward();
-        sendWaiting();
-    }
+
+    sendWaiting();
 }
 
 bool Router::sendPacket(QSharedPointer<Packet> packet)
@@ -120,8 +119,8 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
         return false;
     }
 
-    cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
-         << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
+    // cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
+         // << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
     // cout << "message content was:" << packet->getString().toStdString() <<endl;
 
     waitingQueue.append(WaitingQueueLine(sendRoute.port, packet, sendRoute.port->delay, clk));
