@@ -46,7 +46,7 @@ QString simple_rip_on_mesh()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    usleep(1000);
+    usleep(10000);
 
     sender.sendPacket(myPack);
 
@@ -96,7 +96,7 @@ QString simple_rip_on_ring_star()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    usleep(1000);
+    usleep(10000);
 
     sender.sendPacket(myPack);
 

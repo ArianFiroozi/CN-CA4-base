@@ -97,6 +97,9 @@ void Router::tick(int _time)
     for (int i=0; i<buffer.size(); i++)
         buffer[i]->incWaitCycles();
 
+    for (int i=0; i<waitingQueue.size(); i++)
+        waitingQueue[i].packet->incWaitCycles();
+
     if (sendTable)
     {
         forwardTable();
