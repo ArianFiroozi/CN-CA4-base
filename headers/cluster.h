@@ -30,9 +30,10 @@ private:
 
     void connectRouters(int i, int j);
     void getStaticRoutingTables();
+    void addPortDelays();
 
 public:
-    Mesh(int _x, int _y, IPv4 netAddIP, RoutingProtocol _protocol = MANUAL);
+    Mesh(int _x, int _y, IPv4 netAddIP, RoutingProtocol _protocol=MANUAL, bool delayedPorts=false);
     ~Mesh();
 };
 
@@ -47,7 +48,7 @@ private:
     void getStaticRoutingTables();
 
 public:
-    RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol = MANUAL);
+    RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol=MANUAL, bool delayedPorts=false);
 };
 
 #endif // CLUSTER_H

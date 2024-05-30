@@ -1,5 +1,7 @@
 #include "../headers/cluster.h"
 
+#include <QFile>
+
 Router* Cluster::getRouter(int id)
 {
     return id <= routers.size() ? routers[id-1] : NULL;
@@ -23,7 +25,7 @@ void Cluster::printRoutingTables()
     }
 }
 
-Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this mesh, unlike final version each up router is connected to one pc
+Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol, bool delayedPorts)
 {
     makeDummyApp();
 
@@ -44,6 +46,9 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol) // in this
 
     if (protocol == MANUAL)
         getStaticRoutingTables();
+
+    if (delayedPorts)
+        addPortDelays();
 
     for (Router* router:routers)
     {
@@ -146,7 +151,33 @@ void Mesh::getStaticRoutingTables()
     }
 }
 
-RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol)
+void Mesh::addPortDelays()
+{
+    for (Router* router:routers)
+    {
+        QString address("../resources/delays/mesh4x4/portDelays.csv");
+        QFile file(address);
+
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+
+        QTextStream in(&file);
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+
+            if(line.startsWith("//")) continue;
+
+            QVector<QString> lineVec = line.split(",");
+            int routerID  = lineVec[0].toInt();
+            if (routerID != router->id) continue;
+
+            router->getPortWithID(lineVec[1].toInt())->delay = lineVec[2].toInt();
+        }
+    }
+}
+
+RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol, bool delayedPorts)
 {
     makeDummyApp();
 
