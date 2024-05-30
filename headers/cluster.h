@@ -13,6 +13,7 @@ protected:
     void makeDummyApp();
     QCoreApplication* dummy;
     RoutingProtocol protocol;
+    void addPortDelays(QString address);
 
 public:
     QVector<Router*> routers;
@@ -30,7 +31,6 @@ private:
 
     void connectRouters(int i, int j);
     void getStaticRoutingTables();
-    void addPortDelays();
 
 public:
     Mesh(int _x, int _y, IPv4 netAddIP, RoutingProtocol _protocol=MANUAL, bool delayedPorts=false);

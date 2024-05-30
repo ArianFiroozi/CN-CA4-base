@@ -51,6 +51,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
         resources/delays/mesh4x4/portDelays.csv \
+        resources/delays/ringStar/portDelays.csv \
         resources/routingTables/manualMesh4x4/routingTable1.csv \
         resources/routingTables/manualMesh4x4/routingTable10.csv \
         resources/routingTables/manualMesh4x4/routingTable11.csv \

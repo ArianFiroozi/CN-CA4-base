@@ -22,7 +22,7 @@ struct Route
 
     void print()
     {
-        cout << dest.getIPStr().toStdString() << " via " << gateway.getIPStr().toStdString() << endl;
+        qDebug() << "\t" << dest.getIPStr().toStdString() << " via " << gateway.getIPStr().toStdString();
     }
 };
 

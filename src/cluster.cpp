@@ -20,8 +20,33 @@ void Cluster::printRoutingTables()
 {
     for (Router* router:routers)
     {
-        cout << endl << "routing table " << router->id << ":" << endl;
+        qDebug() << "\nrouting table " << router->id << ":";
         router->routingTable.print();
+    }
+}
+
+void Cluster::addPortDelays(QString address)
+{
+    for (Router* router:routers)
+    {
+        QFile file(address);
+
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+
+        QTextStream in(&file);
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+
+            if(line.startsWith("//")) continue;
+
+            QVector<QString> lineVec = line.split(",");
+            int routerID  = lineVec[0].toInt();
+            if (routerID != router->id) continue;
+
+            router->getPortWithID(lineVec[1].toInt())->delay = lineVec[2].toInt();
+        }
     }
 }
 
@@ -48,7 +73,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol, bool delay
         getStaticRoutingTables();
 
     if (delayedPorts)
-        addPortDelays();
+        addPortDelays(QString("../resources/delays/mesh4x4/portDelays.csv"));
 
     for (Router* router:routers)
     {
@@ -151,32 +176,6 @@ void Mesh::getStaticRoutingTables()
     }
 }
 
-void Mesh::addPortDelays()
-{
-    for (Router* router:routers)
-    {
-        QString address("../resources/delays/mesh4x4/portDelays.csv");
-        QFile file(address);
-
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            return;
-
-        QTextStream in(&file);
-        while (!in.atEnd())
-        {
-            QString line = in.readLine();
-
-            if(line.startsWith("//")) continue;
-
-            QVector<QString> lineVec = line.split(",");
-            int routerID  = lineVec[0].toInt();
-            if (routerID != router->id) continue;
-
-            router->getPortWithID(lineVec[1].toInt())->delay = lineVec[2].toInt();
-        }
-    }
-}
-
 RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol, bool delayedPorts)
 {
     makeDummyApp();
@@ -202,6 +201,9 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, 
     if (protocol == MANUAL)
         getStaticRoutingTables();
 
+    if (delayedPorts)
+        addPortDelays(QString("../resources/delays/ringStar/portDelays.csv"));
+
     for (Router* router:routers)
     {
         threads.append(new QThread());
@@ -213,7 +215,8 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, 
 void RingStar::connectRingRouters(int i)
 {
     routers.last()->addPort(new Port(2));
-    routers.last()->addPort(new Port(3)); //for star
+    routers.last()->addPort(new Port(10 + i + 1)); //for star
+    routers.last()->addPort(new Port(3));
     routers.last()->addPort(new Port(4));
 
     if (i!=0)
@@ -235,11 +238,11 @@ void RingStar::connectStarRouter()
 {
     for (int i=0;i<starConnections.length();i++)
     {
-        routers.last()->addPort(new Port(starConnections[i]));
+        routers.last()->addPort(new Port(10 + starConnections[i]));
 
-        QObject::connect(routers.last()->getPortWithID(starConnections[i]),
+        QObject::connect(routers.last()->getPortWithID(10 + starConnections[i]),
                          &Port::getPacket, routers[starConnections[i]-1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
-        QObject::connect(routers[starConnections[i]-1]->getPortWithID(3),
+        QObject::connect(routers[starConnections[i]-1]->getPortWithID(10 + starConnections[i]),
                          &Port::getPacket, routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     }
 }

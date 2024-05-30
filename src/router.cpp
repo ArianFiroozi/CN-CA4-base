@@ -28,10 +28,12 @@ void Router::forwardTable()
                                                      port->delay, clk));
     }
     else if (protocol == OSPF)
+    {
         for (Port* port:ports)
             if (!doNotSend.contains(port->id))
                 waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringOSPF(*ip), LSA, IPV4, *ip, *ip)),
                                                      port->delay, clk));
+    }
 }
 
 void Router::sendWaiting()
