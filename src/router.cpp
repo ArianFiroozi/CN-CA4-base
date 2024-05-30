@@ -20,9 +20,18 @@ int portTranslation(int other)
 
 void Router::forwardTable()
 {
-    for (Port* port:ports)
-        waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringRIP(*ip), ROUTING_TABLE_RIP, IPV4, *ip, *ip)),
-                                             port->delay, clk));
+    if (protocol == RIP)
+    {
+        for (Port* port:ports)
+            if (!doNotSend.contains(port->id))
+                waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringRIP(*ip), ROUTING_TABLE_RIP, IPV4, *ip, *ip)),
+                                                     port->delay, clk));
+    }
+    else if (protocol == OSPF)
+        for (Port* port:ports)
+            if (!doNotSend.contains(port->id))
+                waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringOSPF(*ip), LSA, IPV4, *ip, *ip)),
+                                                     port->delay, clk));
 }
 
 void Router::sendWaiting()
@@ -62,17 +71,29 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         break;
     case HELLO:
         qDebug()<<"router "<<id<<" recieved hello!";
-        if (protocol == RIP)
+        if (protocol == RIP) // no need for protocol
         {
             routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
                                         this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
             sendTable = true;
+            doNotSend.append(portTranslation(packet->getPortID()));
+        }
+        else if (protocol == OSPF)
+        {
+            routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
+                                        this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
+            sendTable = true;
+            doNotSend.append(portTranslation(packet->getPortID()));
         }
         break;
     case ROUTING_TABLE_RIP:
         qDebug() <<"router "<<id<<" recieved routing table!";
         sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
         // cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
+        break;
+    case LSA:
+        qDebug() <<"router "<<id<<" recieved LSA!";
+        sendTable = routingTable.updateFromPacketOSPF(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
         break;
     default:
         cerr << "unknown message type on router:" << id << endl;
@@ -103,6 +124,7 @@ void Router::tick(int _time)
     if (sendTable)
     {
         forwardTable();
+        doNotSend = QVector<int> ();
         sendTable = false;
     }
     else
@@ -123,7 +145,7 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
     }
 
     // cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
-         // << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
+    // << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
     // cout << "message content was:" << packet->getString().toStdString() <<endl;
 
     waitingQueue.append(WaitingQueueLine(sendRoute.port, packet, sendRoute.port->delay, clk));

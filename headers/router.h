@@ -15,7 +15,6 @@
 enum RoutingProtocol
 {
     RIP,
-    BGP,
     OSPF,
     MANUAL
 };
@@ -34,6 +33,7 @@ private:
     bool sendTable;
     void forwardTable();
     int clk;
+    QVector<int> doNotSend;
     QVector<WaitingQueueLine> waitingQueue;
 
 public:

@@ -9,8 +9,7 @@ RoutingTable::RoutingTable(IPv4 *_masterIP)
 
 void RoutingTable::addRoute(Route newRoute)
 {
-    // if (newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
-        routes.append(newRoute);
+    routes.append(newRoute);
 }
 
 QVector<Route> RoutingTable::findAllRoutes(IPv4 ip)
@@ -30,13 +29,13 @@ Route RoutingTable::findBestRoute(IPv4 ip)
                      new Port(0));
 
     QVector<Route> maxRoutes = findAllRoutes(ip);
-    int maxMetric = -1;
+    int minMetric = 10000000000;
     for (Route route : maxRoutes)
-        if (route.metric > maxMetric)
-            maxMetric = route.metric;
+        if (route.metric < minMetric)
+            minMetric = route.metric;
 
     for (Route route : maxRoutes)
-        if (route.metric == maxMetric)
+        if (route.metric == minMetric)
             return route;
 
     return routes[0];
@@ -144,7 +143,71 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
     return updated;
 }
 
+bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
+{
+    int updated = false;
+    QVector<QString> routesStr = msg.split("#");
+    QString gatewayStr = routesStr[routesStr.length() - 1];
+    for (QString routeStr : routesStr)
+    {
+        if (routeStr == gatewayStr)
+            break;
+
+        int metric;
+        IPAddr ipAddr;
+        Mask mask;
+
+        ipAddr.strToIP(routeStr.split(",")[0]);
+        mask.strToMask(routeStr.split(",")[1]);
+        metric = routeStr.split(",")[2].toInt() + port->delay;
+
+        // if (metric > 15) // replace with const
+        //     return false;
+
+        bool betterRouteExists = false;
+        Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
+        for (int i=0; i<routes.length();i++)
+        {
+            if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
+                newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
+            {
+                if (routes[i].metric <= newRoute.metric)
+                {
+                    qDebug() << "better route metric:" << newRoute.metric;
+                    betterRouteExists = true;
+                }
+                else
+                    routes.remove(i);
+                break;
+            }
+        }
+        if (!betterRouteExists)
+        {
+            addRoute(newRoute);
+            updated = true;
+        }
+    }
+    return updated;
+}
+
 QString RoutingTable::toStringRIP(IPv4 gateway)
+{
+    QString ripStr;
+
+    for (Route route : routes)
+    {
+        ripStr.append(route.dest.ipAddr.toStr());
+        ripStr.append(",");
+        ripStr.append(route.dest.mask.toStr());
+        ripStr.append(",");
+        ripStr.append(QString::number(route.metric));
+        ripStr.append("#");
+    }
+    ripStr.append(gateway.ipAddr.toStr());
+    return ripStr;
+}
+
+QString RoutingTable::toStringOSPF(IPv4 gateway)
 {
     QString ripStr;
 

@@ -66,7 +66,7 @@ QString simple_rip_on_mesh_with_delay()
     char *dummy_argv[1] = {&x};
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
-    Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), RIP, true);
+    Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), OSPF, true);
     QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                                                       IPv4("255.255.255.255", "192.168.20.4")));
     EventHandler* eventHandler = new EventHandler(10);

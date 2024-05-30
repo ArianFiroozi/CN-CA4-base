@@ -16,7 +16,7 @@ struct Route
     Mask mask;
     IPv4 gateway;
     Port* port;
-    int metric; // RIP: hops
+    int metric; // min is best, RIP: hops, OSPF: delay
 
     Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric = -1);
 
@@ -43,6 +43,8 @@ public:
     void initFromFile(QString address, Port* port);
     bool updateFromPacketRIP(QString msg, Port* port);
     QString toStringRIP(IPv4 gateway);
+    bool updateFromPacketOSPF(QString msg, Port* port);
+    QString toStringOSPF(IPv4 gateway);
 };
 
 #endif // ROUTINGTABLE_H
