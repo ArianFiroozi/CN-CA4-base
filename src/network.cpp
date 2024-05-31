@@ -10,29 +10,114 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol)
     eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
 
-    senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(3, 10)));
+    createSenders();
+    createReceivers();
+    addMeshPorts();
+    connectRingStar();
+    connectMesh();
 
-    receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(1, 10)));
+    ringStar->connectTick(eventHandler);
+    mesh->connectTick(eventHandler);
+}
 
+void Network::createSenders()
+{
+    senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(21, 10)));
+    senders.append(new PC(2, new IPv4("255.255.255.255", "192.168.10.2"), new Port(22, 10)));
+    senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
+    senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
+    senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
+}
+
+void Network::createReceivers()
+{
+    receivers.append(new PC(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1, 10)));
+    receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(5, 10)));
+    receivers.append(new PC(3, new IPv4("255.255.255.255", "192.168.20.3"), new Port(1, 10)));
+    receivers.append(new PC(4, new IPv4("255.255.255.255", "192.168.20.4"), new Port(5, 10)));
+    receivers.append(new PC(5, new IPv4("255.255.255.255", "192.168.20.5"), new Port(1, 10)));
+    receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
+    receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
+    receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
+}
+
+void Network::addMeshPorts()
+{
+    mesh->routers[0]->addPort(new Port(1, 10));
     mesh->routers[1]->addPort(new Port(1, 10));
+    mesh->routers[2]->addPort(new Port(1, 10));
 
+    mesh->routers[12]->addPort(new Port(3, 15));
+    mesh->routers[12]->addPort(new Port(5, 15));
+    mesh->routers[13]->addPort(new Port(3, 15));
+    mesh->routers[13]->addPort(new Port(5, 15));
+    mesh->routers[14]->addPort(new Port(3, 15));
+    mesh->routers[14]->addPort(new Port(5, 15));
+    mesh->routers[15]->addPort(new Port(3, 15));
+    mesh->routers[15]->addPort(new Port(5, 15));
+}
+
+void Network::connectRingStar()
+{
     QObject::connect(senders[0]->port, &Port::getPacket,
                      ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[1]->port, &Port::getPacket,
+                     ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[2]->port, &Port::getPacket,
+                     ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[3]->port, &Port::getPacket,
+                     ringStar->routers[1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[4]->port, &Port::getPacket,
+                     ringStar->routers[1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
 
+    QObject::connect(ringStar->routers[3]->getPortWithID(3), &Port::getPacket,
+                     mesh->routers[2], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[2]->getPortWithID(1), &Port::getPacket,
+                     ringStar->routers[3], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(ringStar->routers[4]->getPortWithID(3), &Port::getPacket,
                      mesh->routers[1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(mesh->routers[1]->getPortWithID(1), &Port::getPacket,
                      ringStar->routers[4], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[5]->getPortWithID(3), &Port::getPacket,
+                     mesh->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[0]->getPortWithID(1), &Port::getPacket,
+                     ringStar->routers[5], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+}
 
-    mesh->routers.last()->addPort(new Port(3, 15));
-
+void Network::connectMesh()
+{
     QObject::connect(receivers[0]->port, &Port::getPacket,
-                     mesh->routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
-    QObject::connect(mesh->routers.last()->getPortWithID(3), &Port::getPacket,
+                     mesh->routers[12], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[12]->getPortWithID(3), &Port::getPacket,
                      receivers[0], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
-
-    ringStar->connectTick(eventHandler);
-    mesh->connectTick(eventHandler);
+    QObject::connect(receivers[1]->port, &Port::getPacket,
+                     mesh->routers[12], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[12]->getPortWithID(5), &Port::getPacket,
+                     receivers[1], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(receivers[2]->port, &Port::getPacket,
+                     mesh->routers[13], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[13]->getPortWithID(3), &Port::getPacket,
+                     receivers[2], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(receivers[3]->port, &Port::getPacket,
+                     mesh->routers[13], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[13]->getPortWithID(5), &Port::getPacket,
+                     receivers[3], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(receivers[4]->port, &Port::getPacket,
+                     mesh->routers[14], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[14]->getPortWithID(3), &Port::getPacket,
+                     receivers[4], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(receivers[5]->port, &Port::getPacket,
+                     mesh->routers[14], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[14]->getPortWithID(5), &Port::getPacket,
+                     receivers[5], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(receivers[6]->port, &Port::getPacket,
+                     mesh->routers[15], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[15]->getPortWithID(3), &Port::getPacket,
+                     receivers[6], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(receivers[7]->port, &Port::getPacket,
+                     mesh->routers[15], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh->routers[15]->getPortWithID(5), &Port::getPacket,
+                     receivers[7], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
 }
 
 void Network::start()

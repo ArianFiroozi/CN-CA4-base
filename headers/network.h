@@ -19,12 +19,22 @@ private:
     RingStar* ringStar;
     Mesh* mesh;
 
+    void createSenders();
+    void createReceivers();
+
+    void addMeshPorts();
+
+    void connectRingStar();
+
+    void connectMesh();
+
 public:
     QVector<PC*> senders, receivers;
 
     Network(EventHandler* _eventHandler, RoutingProtocol protocol);
 
     void start();
+
 signals:
     void done();
 };

@@ -19,7 +19,7 @@ QString network_connected()
     Network net(eventHandler, OSPF);
 
     QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
-                                             IPv4("255.255.255.255", "192.168.20.2")));
+                                             IPv4("255.255.255.255", "192.168.20.1")));
 
     net.start();
 
