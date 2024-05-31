@@ -104,7 +104,7 @@ QString simple_ospf_on_mesh_with_delay()
 
 
     if (receiver.buffer[0]->getString() != "hello world")
-        return "RIP simple connection wrong!";
+        return "OSPF simple connection on mesh wrong!";
     return "";
 }
 
@@ -154,7 +154,7 @@ QString simple_rip_on_ring_star()
     cluster.printRoutingTables();
 
     if (receiver.buffer[0]->getString() != "hello world")
-        return "RIP simple connection wrong!";
+        return "RIP simple connection on ring star wrong!";
     return "";
 }
 
@@ -205,10 +205,70 @@ QString simple_ospf_on_ring_star_with_delay()
     dummy.exec();
 
     if (receiver.buffer[0]->getString() != "hello world")
-        return "OSPF simple connection wrong!";
+        return "OSPF simple connection on ring star with delay wrong!";
     return "";
 }
 
+QString mesh_connected_to_ring_star()
+{
+    int dummy_argc = 0;
+    char x = 'b';
+    char *dummy_argv[1] = {&x};
+    QCoreApplication dummy(dummy_argc, dummy_argv);
+
+    RingStar ringStar(7, {2, 4, 6, 7}, IPv4("255.255.255.255", "10.0.0.0"), OSPF, true);
+    Mesh mesh(4, 4, IPv4("255.255.255.255", "20.0.0.0"), OSPF, true);
+
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
+                                             IPv4("255.255.255.255", "192.168.20.2")));
+
+    EventHandler* eventHandler = new EventHandler(10);
+    QThread* eventThread = new QThread();
+    eventHandler->moveToThread(eventThread);
+
+    PC sender(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(3, 10));
+    PC receiver(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(1, 10));
+
+    // ringStar.routers[4]->addPort(new Port(1, 10));
+    mesh.routers[1]->addPort(new Port(1, 10));
+
+    QObject::connect(sender.port, &Port::getPacket,
+                     ringStar.routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    QObject::connect(ringStar.routers[4]->getPortWithID(3), &Port::getPacket,
+                     mesh.routers[1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh.routers[1]->getPortWithID(1), &Port::getPacket,
+                     ringStar.routers[4], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    mesh.routers.last()->addPort(new Port(3, 15));
+
+    QObject::connect(receiver.port, &Port::getPacket,
+                     mesh.routers.last(), &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(mesh.routers.last()->getPortWithID(3), &Port::getPacket,
+                     &receiver, &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    ringStar.connectTick(eventHandler);
+    mesh.connectTick(eventHandler);
+    eventThread->start();
+    receiver.start();
+    sender.start();
+
+    emit eventHandler->startSig();
+
+    QObject::connect(&receiver, &PC::packetReceived,
+                     &dummy, &QCoreApplication::quit);
+
+    usleep(1000000);
+    sender.sendPacket(myPack);
+
+    mesh.printRoutingTables();
+    ringStar.printRoutingTables();
+    dummy.exec();
+
+    if (receiver.buffer[0]->getString() != "hello world")
+        return "ring star connected to mesh wrong!";
+    return "";
+}
 
 QVector<QString> run_protocol_tests()
 {
@@ -218,6 +278,7 @@ QVector<QString> run_protocol_tests()
     errors += simple_rip_on_ring_star();
     errors += simple_ospf_on_mesh_with_delay();
     errors += simple_ospf_on_ring_star_with_delay();
+    errors += mesh_connected_to_ring_star();
 
     return errors;
 }

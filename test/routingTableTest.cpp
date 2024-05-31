@@ -5,7 +5,7 @@
 
 #include "./headers/routingtable.h"
 
-    using namespace std;
+using namespace std;
 
 QString routing_table_finds_path_correctly()
 {
@@ -14,7 +14,7 @@ QString routing_table_finds_path_correctly()
     Port a1(1);
     RoutingTable routingTable(new IPv4());
     routingTable.addRoute(Route(myPack.getDest(), myPack.getSource().mask,
-                                  myPack.getSource(), &a1));
+                                myPack.getSource(), &a1));
     Route found = routingTable.findBestRoute(myPack.getDest());
 
     if (found.dest.getIPStr() != "20.0.0.1/30"
