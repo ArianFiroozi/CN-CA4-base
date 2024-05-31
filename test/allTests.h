@@ -12,5 +12,6 @@ QVector<QString> run_router_tests();
 QVector<QString> run_cluster_tests();
 QVector<QString> run_event_handler_tests();
 QVector<QString> run_protocol_tests();
+QVector<QString> run_network_tests();
 
 #endif // ALLTESTS_H

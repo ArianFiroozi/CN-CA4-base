@@ -216,8 +216,8 @@ QString mesh_connected_to_ring_star()
     char *dummy_argv[1] = {&x};
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
-    RingStar ringStar(7, {2, 4, 6, 7}, IPv4("255.255.255.255", "10.0.0.0"), OSPF, true);
-    Mesh mesh(4, 4, IPv4("255.255.255.255", "20.0.0.0"), OSPF, true);
+    RingStar ringStar(7, {2, 4, 6, 7}, IPv4("255.255.255.0", "10.0.0.0"), OSPF, true);
+    Mesh mesh(4, 4, IPv4("255.255.255.0", "20.0.0.0"), OSPF, true);
 
     QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.20.2")));
@@ -229,7 +229,6 @@ QString mesh_connected_to_ring_star()
     PC sender(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(3, 10));
     PC receiver(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(1, 10));
 
-    // ringStar.routers[4]->addPort(new Port(1, 10));
     mesh.routers[1]->addPort(new Port(1, 10));
 
     QObject::connect(sender.port, &Port::getPacket,
@@ -258,11 +257,11 @@ QString mesh_connected_to_ring_star()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    usleep(1000000);
+    usleep(100000);
     sender.sendPacket(myPack);
 
-    mesh.printRoutingTables();
-    ringStar.printRoutingTables();
+    // mesh.printRoutingTables();
+    // ringStar.printRoutingTables();
     dummy.exec();
 
     if (receiver.buffer[0]->getString() != "hello world")

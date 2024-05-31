@@ -18,6 +18,7 @@ QVector<QString> run_all_tests()
     errors += run_cluster_tests();
     errors += run_event_handler_tests();
     errors += run_protocol_tests();
+    errors += run_network_tests();
 
     QMutableVectorIterator<QString> i(errors);
     while (i.hasNext())

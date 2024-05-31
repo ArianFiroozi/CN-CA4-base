@@ -146,6 +146,9 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
         return false;
     }
 
+    if (!this->ip->includes(sendRoute.gateway))
+        qDebug() << "external send!"<<this->ip->getIPStr() << sendRoute.gateway.getIPStr();
+
     // cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
     // << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
     // cout << "message content was:" << packet->getString().toStdString() <<endl;
