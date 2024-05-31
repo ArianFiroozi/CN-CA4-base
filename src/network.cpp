@@ -1,8 +1,9 @@
 #include "../headers/network.h"
 
-Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol)
+Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lambda)
 {
     eventHandler = _eventHandler;
+    running = false;
 
     ringStar = new RingStar(7, {2, 4, 6, 7}, IPv4("255.255.255.0", "10.0.0.0"), protocol, true);
     mesh = new Mesh(4, 4, IPv4("255.255.255.0", "20.0.0.0"), protocol, true);
@@ -18,6 +19,8 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol)
 
     ringStar->connectTick(eventHandler);
     mesh->connectTick(eventHandler);
+
+    messagingSystem = new MessagingSystem(lambda, receivers, senders);
 }
 
 void Network::createSenders()
@@ -130,4 +133,24 @@ void Network::start()
         sender->start();
 
     emit eventHandler->startSig();
+    running = true;
+}
+
+void Network::tick(double time)
+{
+    if (!running) return;
+
+    QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
+    for (QSharedPointer<Packet> packet:packets)
+        for (PC* sender:senders)
+            if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
+            {
+                sender->sendPacket(packet);
+                break;
+            }
+}
+
+void Network::stop()
+{
+    running = false;
 }

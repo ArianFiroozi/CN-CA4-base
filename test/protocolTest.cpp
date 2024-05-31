@@ -257,7 +257,7 @@ QString mesh_connected_to_ring_star()
     QObject::connect(&receiver, &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
-    usleep(100000);
+    usleep(1000000);
     sender.sendPacket(myPack);
 
     // mesh.printRoutingTables();

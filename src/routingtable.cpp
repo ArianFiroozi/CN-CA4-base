@@ -173,7 +173,7 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
             {
                 if (routes[i].metric <= newRoute.metric)
                 {
-                    qDebug() << "better route metric:" << newRoute.metric;
+                    // qDebug() << "better route metric:" << newRoute.metric;
                     betterRouteExists = true;
                 }
                 else

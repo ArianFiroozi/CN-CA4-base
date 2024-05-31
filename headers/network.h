@@ -10,7 +10,10 @@
 #include <QVector>
 #include <QThread>
 
-class Network
+#include <../headers/eventHandler.h>
+#include <../headers/messagingSystem.h>
+
+class Network : public QObject
 {
 private:
     QThread* eventThread;
@@ -18,23 +21,24 @@ private:
     EventHandler* eventHandler;
     RingStar* ringStar;
     Mesh* mesh;
+    MessagingSystem* messagingSystem;
+    bool running;
 
     void createSenders();
     void createReceivers();
-
     void addMeshPorts();
-
     void connectRingStar();
-
     void connectMesh();
 
 public:
     QVector<PC*> senders, receivers;
 
-    Network(EventHandler* _eventHandler, RoutingProtocol protocol);
+    Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lambda=0);
 
     void start();
+    void tick(double time);
 
+    void stop();
 signals:
     void done();
 };

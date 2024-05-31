@@ -1,4 +1,3 @@
-#include "./headers/networksimulator.h"
 #include "./test/allTests.h"
 
 #include <iostream>

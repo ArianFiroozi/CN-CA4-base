@@ -16,22 +16,25 @@ QString network_connected()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     EventHandler* eventHandler = new EventHandler(10);
-    Network net(eventHandler, OSPF);
+    Network net(eventHandler, OSPF, 5);
 
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
-                                             IPv4("255.255.255.255", "192.168.20.1")));
+    // QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
+    //                                          IPv4("255.255.255.255", "192.168.20.1")));
 
+    QObject::connect(eventHandler, &EventHandler::tick,
+                     &net, &Network::tick);
     net.start();
 
     usleep(100000);
-    net.senders[0]->sendPacket(myPack);
+    // net.senders[0]->sendPacket(myPack);
 
     QObject::connect(net.receivers[0], &PC::packetReceived,
                      &dummy, &QCoreApplication::quit);
 
     dummy.exec();
+    net.stop();
 
-    if (net.receivers[0]->buffer[0]->getString() != "hello world")
+    if (net.receivers[0]->buffer[0]->getString() != "test")
         return "network is not connected correct!";
     return "";
 }

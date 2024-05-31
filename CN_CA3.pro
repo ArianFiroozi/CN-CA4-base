@@ -13,8 +13,8 @@ SOURCES += \
     src/cluster.cpp \
     src/eventHandler.cpp \
     src/ip.cpp \
+    src/messagingSystem.cpp \
     src/network.cpp \
-    src/networksimulator.cpp \
     src/packet.cpp \
     src/pc.cpp \
     src/port.cpp \
@@ -24,6 +24,7 @@ SOURCES += \
     test/clusterTest.cpp \
     test/eventHandlerTest.cpp \
     test/ipTest.cpp \
+    test/messagingSystemTest.cpp \
     test/networkTest.cpp \
     test/packetTest.cpp \
     test/portTest.cpp \
@@ -35,8 +36,8 @@ HEADERS += \
     headers/cluster.h \
     headers/eventHandler.h \
     headers/ip.h \
+    headers/messagingSystem.h \
     headers/network.h \
-    headers/networksimulator.h \
     headers/packet.h \
     headers/pc.h \
     headers/port.h \

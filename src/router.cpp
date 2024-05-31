@@ -17,7 +17,6 @@ int portTranslation(int other)
     }
 }
 
-
 void Router::forwardTable()
 {
     if (protocol == RIP)
@@ -68,11 +67,11 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
     switch(packet->getType()){
     case MSG:
         // routingTable.print();
-        qDebug()<<"router "<<id<<" recieved msg!" ;
+        // qDebug()<<"router "<<id<<" recieved msg!" ;
         buffer.append(packet);
         break;
     case HELLO:
-        qDebug()<<"router "<<id<<" recieved hello!";
+        // qDebug()<<"router "<<id<<" recieved hello!";
         if (protocol == RIP) // no need for protocol
         {
             routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
@@ -89,12 +88,12 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         }
         break;
     case ROUTING_TABLE_RIP:
-        qDebug() <<"router "<<id<<" recieved routing table!";
+        // qDebug() <<"router "<<id<<" recieved routing table!";
         sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
         // cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
         break;
     case LSA:
-        qDebug() <<"router "<<id<<" recieved LSA!";
+        // qDebug() <<"router "<<id<<" recieved LSA!";
         sendTable = routingTable.updateFromPacketOSPF(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
         break;
     default:
@@ -146,8 +145,8 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
         return false;
     }
 
-    if (!this->ip->includes(sendRoute.gateway))
-        qDebug() << "external send!"<<this->ip->getIPStr() << sendRoute.gateway.getIPStr();
+    // if (!this->ip->includes(sendRoute.gateway))
+    //     qDebug() << "external send!"<<this->ip->getIPStr() << sendRoute.gateway.getIPStr();
 
     // cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
     // << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
