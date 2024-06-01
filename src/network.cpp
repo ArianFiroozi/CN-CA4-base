@@ -21,6 +21,10 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
     mesh->connectTick(eventHandler);
 
     messagingSystem = new MessagingSystem(lambda, receivers, senders);
+    packetsSent = 0;
+    packetsReceived = 0;
+    totalWaitCycles = 0;
+    totalQueueWaitCycles = 0;
 }
 
 Network::~Network()
@@ -35,6 +39,38 @@ Network::~Network()
     delete eventThread;
 }
 
+int Network::getPacketsSent() const
+{
+    return packetsSent;
+}
+
+int Network::getPacketsReceived() const
+{
+    return packetsReceived;
+}
+
+int Network::getTotalWaitCycles() const
+{
+    return totalWaitCycles;
+}
+
+int Network::getTotalQueueWaitCycles() const
+{
+    return totalQueueWaitCycles;
+}
+
+void Network::packetReceived(QSharedPointer<Packet> packet)
+{
+    packetsReceived++;
+    totalQueueWaitCycles += packet->getQueueWaitCycles();
+    totalWaitCycles += packet->getWaitCycles();
+}
+
+void Network::packetSent()
+{
+    // packetsSent++;
+}
+
 void Network::createSenders()
 {
     senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(21, 10)));
@@ -42,6 +78,11 @@ void Network::createSenders()
     senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
     senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
     senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
+
+
+    for (auto sender: senders)
+        QObject::connect(sender, &PC::packetSent,
+                         this, &Network::packetSent);
 }
 
 void Network::createReceivers()
@@ -54,6 +95,10 @@ void Network::createReceivers()
     receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
     receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
     receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
+
+    for (auto receiver: receivers)
+        QObject::connect(receiver, &PC::packetReceived,
+                         this, &Network::packetReceived);
 }
 
 void Network::addMeshPorts()
@@ -153,6 +198,7 @@ void Network::tick(double time)
     if (!running) return;
 
     QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
+    packetsSent += packets.size();
     for (QSharedPointer<Packet> packet:packets)
         for (PC* sender:senders)
             if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())

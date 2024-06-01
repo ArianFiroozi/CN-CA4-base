@@ -24,12 +24,17 @@ private:
     Mesh* mesh;
     MessagingSystem* messagingSystem;
     bool running;
+    int packetsSent;
+    int packetsReceived;
+    int totalWaitCycles, totalQueueWaitCycles;
 
+    void packetReceived(QSharedPointer<Packet> packet);
     void createSenders();
     void createReceivers();
     void addMeshPorts();
     void connectRingStar();
     void connectMesh();
+    void packetSent();
 
 public:
     QVector<PC*> senders, receivers;
@@ -41,6 +46,12 @@ public:
     void tick(double time);
 
     void stop();
+    int getPacketsSent() const;
+    int getPacketsReceived() const;
+
+    int getTotalWaitCycles() const;
+    int getTotalQueueWaitCycles() const;
+
 signals:
     void done();
     void oneCycleFinished(double time);

@@ -31,12 +31,13 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
 
     qDebug() <<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
              <<" with queue waiting: " << packet->getQueueWaitCycles() << " ,latency: " << packet->getWaitCycles() <<" through path: "<< path.toStdString();
-    emit packetReceived();
+    emit packetReceived(packet);
 }
 
 void PC::sendPacket(QSharedPointer<Packet> packet)
 {
     port->write(packet);
+    emit packetSent();
 }
 
 void PC::sendHello()

@@ -22,8 +22,8 @@ public:
     void start();
 
 signals:
-    void packetReceived();
-    // void packetSent(Port* newPort);
+    void packetReceived(QSharedPointer<Packet> packet);
+    void packetSent();
 private:
     void sendHello();
 };

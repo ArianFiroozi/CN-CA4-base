@@ -65,6 +65,12 @@ void NetworkSimulator::on_tickCount_sliderMoved(int position)
 void NetworkSimulator::tick(int tickNum)
 {
     if (tickNum >= tickCount)
+    {
         network->stop();
+        qDebug() << network->getPacketsReceived();
+        qDebug() << network->getPacketsSent();
+        qDebug() << network->getTotalQueueWaitCycles() / network->getPacketsReceived();
+        qDebug() << network->getTotalWaitCycles() / network->getPacketsReceived();
+    }
 }
 
