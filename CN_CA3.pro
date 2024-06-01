@@ -15,7 +15,7 @@ SOURCES += \
     src/ip.cpp \
     src/messagingSystem.cpp \
     src/network.cpp \
-    src/netwrokSimulator.cpp \
+    src/networkSimulator.cpp \
     src/packet.cpp \
     src/pc.cpp \
     src/port.cpp \
