@@ -33,6 +33,7 @@ QString network_connected()
 
     dummy.exec();
     net.stop();
+    delete eventHandler;
 
     if (net.receivers[0]->buffer[0]->getString() != "test")
         return "network is not connected correct!";

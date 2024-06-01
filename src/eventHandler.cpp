@@ -5,10 +5,10 @@
 
 using namespace std;
 
-EventHandler::EventHandler(int microSeconds)
+EventHandler::EventHandler(int microSeconds, double _stopTime)
 {
     period = microSeconds;
-
+    stopTime = _stopTime;
     QObject::connect(this, &EventHandler::stopSig, this, &EventHandler::stop);
     QObject::connect(this, &EventHandler::startSig, this, &EventHandler::start);
 }
@@ -22,7 +22,7 @@ void EventHandler::start()
 {
     stopFlag = false;
     double time = 0;
-    while (!stopFlag)
+    while (time < stopTime)
     {
         usleep(period);
         emit tick(++time);

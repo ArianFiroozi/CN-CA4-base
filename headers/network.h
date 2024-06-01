@@ -15,6 +15,7 @@
 
 class Network : public QObject
 {
+    Q_OBJECT
 private:
     QThread* eventThread;
 
@@ -34,6 +35,7 @@ public:
     QVector<PC*> senders, receivers;
 
     Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lambda=0);
+    ~Network();
 
     void start();
     void tick(double time);
@@ -41,6 +43,7 @@ public:
     void stop();
 signals:
     void done();
+    void oneCycleFinished(double time);
 };
 
 #endif // NETWORK_H

@@ -15,6 +15,7 @@ SOURCES += \
     src/ip.cpp \
     src/messagingSystem.cpp \
     src/network.cpp \
+    src/netwrokSimulator.cpp \
     src/packet.cpp \
     src/pc.cpp \
     src/port.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     headers/ip.h \
     headers/messagingSystem.h \
     headers/network.h \
+    headers/networkSimulator.h \
     headers/packet.h \
     headers/pc.h \
     headers/port.h \

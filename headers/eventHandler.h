@@ -11,9 +11,10 @@ class EventHandler : public QThread
 private:
     int period;
     bool stopFlag;
+    double stopTime;
 
 public:
-    EventHandler(int microSeconds);
+    EventHandler(int microSeconds, double _stopTime=1000000);
 
     void changePeriod(int microSeconds);
     void start();

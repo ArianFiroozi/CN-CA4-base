@@ -23,6 +23,18 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
     messagingSystem = new MessagingSystem(lambda, receivers, senders);
 }
 
+Network::~Network()
+{
+    delete mesh;
+    delete ringStar;
+    for (auto receiver:receivers)
+        delete receiver;
+    for (auto sender:senders)
+        delete sender;
+    delete eventHandler;
+    delete eventThread;
+}
+
 void Network::createSenders()
 {
     senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(21, 10)));
@@ -148,6 +160,8 @@ void Network::tick(double time)
                 sender->sendPacket(packet);
                 break;
             }
+
+    emit oneCycleFinished(time);
 }
 
 void Network::stop()

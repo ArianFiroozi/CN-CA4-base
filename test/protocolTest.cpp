@@ -263,7 +263,6 @@ QString mesh_connected_to_ring_star()
     // mesh.printRoutingTables();
     // ringStar.printRoutingTables();
     dummy.exec();
-
     if (receiver.buffer[0]->getString() != "hello world")
         return "ring star connected to mesh wrong!";
     return "";
