@@ -1,4 +1,5 @@
 #include "./headers/routingtable.h"
+#include "../headers/common.h"
 
 #include <QFile>
 
@@ -9,6 +10,21 @@ RoutingTable::RoutingTable(IPv4 *_masterIP)
 
 void RoutingTable::addRoute(Route newRoute)
 {
+    if (newRoute.asIDs.size() == 0)
+        newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
+
+    if (masterIP->ipAddr.netID1 != newRoute.asIDs.last()){
+        if (newRoute.asIDs.contains(this->masterIP->ipAddr.netID1))
+            return;
+
+        newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
+        newRoute.metric = newRoute.asIDs.size();
+        newRoute.protocol = EBGP;
+    }
+
+    if (masterIP->includes(newRoute.gateway))
+        if (newRoute.protocol == EBGP) return;
+
     routes.append(newRoute);
 }
 
@@ -28,13 +44,13 @@ Route RoutingTable::findBestRoute(IPv4 ip)
                      Mask(), IPv4("255.255.255.255", "255.255.255.255"),
                      new Port(0));
 
-    QVector<Route> maxRoutes = findAllRoutes(ip);
+    QVector<Route> minRoutes = findAllRoutes(ip);
     int minMetric = 10000000000;
-    for (Route route : maxRoutes)
+    for (Route route : minRoutes)
         if (route.metric < minMetric)
             minMetric = route.metric;
 
-    for (Route route : maxRoutes)
+    for (Route route : minRoutes)
         if (route.metric == minMetric)
             return route;
 
@@ -117,12 +133,15 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
         mask.strToMask(routeStr.split(",")[1]);
         metric = routeStr.split(",")[2].toInt() + 1;
 
-        if (metric > 15) // replace with const
+        if (metric > RIP_MAX_HOP)
             return false;
 
         bool betterRouteExists = false;
         Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
-        newRoute.timeOut = time + 1200;
+        for (QString as: routeStr.split(",")[3].split("-"))
+            if (as != "")
+                newRoute.asIDs.append(as.toInt());
+        newRoute.timeOut = time + RIP_TIMEOUT;
         for (int i=0; i<routes.length();i++)
         {
             if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
@@ -175,21 +194,19 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
         mask.strToMask(routeStr.split(",")[1]);
         metric = routeStr.split(",")[2].toInt() + port->delay;
 
-        // if (metric > 15) // replace with const
-        //     return false;
-
         bool betterRouteExists = false;
         Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
+        for (QString as: routeStr.split(",")[3].split("-"))
+            if (as != "")
+                newRoute.asIDs.append(as.toInt());
+
         for (int i=0; i<routes.length();i++)
         {
             if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
                 newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
             {
                 if (routes[i].metric <= newRoute.metric)
-                {
-                    // qDebug() << "better route metric:" << newRoute.metric;
                     betterRouteExists = true;
-                }
                 else
                     routes.remove(i);
                 break;
@@ -215,6 +232,12 @@ QString RoutingTable::toStringRIP(IPv4 gateway)
         ripStr.append(route.dest.mask.toStr());
         ripStr.append(",");
         ripStr.append(QString::number(route.metric));
+        ripStr.append(",");
+        for(int as:route.asIDs)
+        {
+            ripStr.append(QString::number(as));
+            ripStr.append("-");
+        }
         ripStr.append("#");
     }
     ripStr.append(gateway.ipAddr.toStr());
@@ -232,17 +255,24 @@ QString RoutingTable::toStringOSPF(IPv4 gateway)
         ripStr.append(route.dest.mask.toStr());
         ripStr.append(",");
         ripStr.append(QString::number(route.metric));
+        ripStr.append(",");
+        for(int as:route.asIDs)
+        {
+            ripStr.append(QString::number(as));
+            ripStr.append("-");
+        }
         ripStr.append("#");
     }
     ripStr.append(gateway.ipAddr.toStr());
     return ripStr;
 }
 
-Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric) :
+Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric, RouteGate _protocol) :
     dest(dest),
     mask(mask),
     gateway(gateway),
     port(port)
 {
     metric = _metric;
+    protocol = _protocol;
 }

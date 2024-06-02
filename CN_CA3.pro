@@ -35,6 +35,7 @@ SOURCES += \
 
 HEADERS += \
     headers/cluster.h \
+    headers/common.h \
     headers/eventHandler.h \
     headers/ip.h \
     headers/messagingSystem.h \

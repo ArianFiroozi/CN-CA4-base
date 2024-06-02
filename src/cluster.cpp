@@ -1,4 +1,5 @@
 #include "../headers/cluster.h"
+#include "../headers/common.h"
 
 #include <QFile>
 
@@ -73,7 +74,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol, bool delay
         getStaticRoutingTables();
 
     if (delayedPorts)
-        addPortDelays(QString("../resources/delays/mesh4x4/portDelays.csv"));
+        addPortDelays(MESH_DELAY_PATH);
 
     for (Router* router:routers)
     {
@@ -167,7 +168,7 @@ void Mesh::getStaticRoutingTables()
 {
     for (Router* router:routers) //static
     {
-        QString path("../resources/routingTables/manualMesh4x4/routingTable");
+        QString path(MESH_ROUTING_TABLE_PATH);
         path.append(QString::number(router->id));
         path.append(".csv");
 
@@ -202,7 +203,7 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, 
         getStaticRoutingTables();
 
     if (delayedPorts)
-        addPortDelays(QString("../resources/delays/ringStar/portDelays.csv"));
+        addPortDelays(RING_STAR_DELAY_PATH);
 
     for (Router* router:routers)
     {
@@ -251,7 +252,7 @@ void RingStar::getStaticRoutingTables()
 {
     for (Router* router:routers) //static
     {
-        QString path("../resources/routingTables/manualRingStar/routingTable");
+        QString path(RING_STAR_ROUTING_TABLE_PATH);
         path.append(QString::number(router->id));
         path.append(".csv");
 

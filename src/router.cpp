@@ -1,5 +1,7 @@
 #include "./headers/router.h"
 
+#include "../headers/common.h"
+
 int portTranslation(int other)
 {
     switch (other)
@@ -125,7 +127,7 @@ void Router::tick(int _time)
     if (protocol==RIP)
     {
         routingTable.removeTimeOutRoutes(clk);
-        sendTable = sendTable || !(clk%300);
+        sendTable = sendTable || !(clk%RIP_SEND_ROUTING_TABLE);
     }
 
     if (sendTable)

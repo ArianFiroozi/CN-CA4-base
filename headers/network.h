@@ -51,8 +51,8 @@ public:
 
     int getTotalWaitCycles() const;
     int getTotalQueueWaitCycles() const;
-
     int getPacketsDropped() const;
+    void printRoutingTables();
 
 signals:
     void done();

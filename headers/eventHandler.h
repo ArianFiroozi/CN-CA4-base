@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QThread>
 
+#include "common.h"
+
 class EventHandler : public QThread
 {
     Q_OBJECT
@@ -14,7 +16,7 @@ private:
     double stopTime;
 
 public:
-    EventHandler(int microSeconds, double _stopTime=1000000);
+    EventHandler(int microSeconds, double _stopTime=DEFAULT_EVENT_HANDLER_STOP);
 
     void changePeriod(int microSeconds);
     void start();

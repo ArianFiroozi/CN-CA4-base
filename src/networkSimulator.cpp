@@ -6,10 +6,10 @@ NetworkSimulator::NetworkSimulator(QWidget *parent)
     , ui(new Ui::NetworkSimulator)
 {
     ui->setupUi(this);
-    tickDuration = 10;
+    tickDuration = DEFAULT_CYCLE_DURATION;
     protocol = OSPF;
-    lambda = 5;
-    tickCount = 100;
+    lambda = DEFAULT_LAMBDA;
+    tickCount = DEFAULT_CYCLE_COUNT;
 }
 
 void NetworkSimulator::start()
@@ -47,13 +47,13 @@ void NetworkSimulator::on_protocol_activated(int index)
         protocol = OSPF;
     else if (index == 1)
         protocol = RIP;
-    qDebug() << index;
+    else if (index == 2)
+        protocol = MANUAL;
 }
 
 void NetworkSimulator::on_lambda_valueChanged(int arg1)
 {
     lambda = arg1;
-    qDebug() << arg1;
 }
 
 void NetworkSimulator::on_tickCount_sliderMoved(int position)
@@ -67,11 +67,13 @@ void NetworkSimulator::tick(int tickNum)
     if (tickNum >= tickCount)
     {
         network->stop();
+        network->printRoutingTables();
         qDebug() << network->getPacketsReceived();
         qDebug() << network->getPacketsSent();
         qDebug() << network->getPacketsDropped();
-        qDebug() << network->getTotalQueueWaitCycles() / network->getPacketsReceived();
-        qDebug() << network->getTotalWaitCycles() / network->getPacketsReceived();
+        // qDebug() << network->getTotalQueueWaitCycles() / network->getPacketsReceived();
+        // qDebug() << network->getTotalWaitCycles() / network->getPacketsReceived();
+
 
         exit(0);
     }

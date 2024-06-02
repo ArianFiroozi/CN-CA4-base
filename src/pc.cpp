@@ -30,7 +30,9 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
     }
 
     qDebug() <<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
-             <<" with queue waiting: " << packet->getQueueWaitCycles() << " ,latency: " << packet->getWaitCycles() <<" through path: "<< path.toStdString();
+             <<" with queue waiting: " << packet->getQueueWaitCycles() << " ,latency: "
+             << packet->getWaitCycles() <<" through path: "<< path.toStdString();
+
     emit packetReceived(packet);
 }
 

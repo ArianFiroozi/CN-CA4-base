@@ -53,7 +53,6 @@ Packet::Packet(QString _string, PacketType _type, IPVersion _ipVer, IPv4 _source
     ipVer = _ipVer;
     source = _source;
     dest = _dest;
-    // path.append(_source.getIPStr());
     waitCycles = 0;
     queueWaitCycles = 0;
 }

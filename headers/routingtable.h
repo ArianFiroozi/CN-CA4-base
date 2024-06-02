@@ -9,6 +9,11 @@
 
 using namespace std;
 
+enum RouteGate
+{
+    IBGP,
+    EBGP
+};
 
 struct Route
 {
@@ -18,12 +23,21 @@ struct Route
     Port* port;
     int metric; // min is best, RIP: hops, OSPF: delay
     int timeOut;
+    QVector<int> asIDs;
+    RouteGate protocol;
 
-    Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric = -1);
+    Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric = -1, RouteGate _protocol = IBGP);
 
     void print()
     {
-        qDebug() << "\t" << dest.getIPStr().toStdString() << " via " << gateway.getIPStr().toStdString();
+        QDebug deb = qDebug();
+        deb << "\t" << dest.getIPStr().toStdString() << "via" << gateway.getIPStr().toStdString();
+        deb << "metric =" << metric;
+        deb << ((protocol == IBGP)? "iBGP" : "eBGP");
+        deb << "AS:";
+        for (auto i:asIDs)
+            deb << i;
+
     }
 };
 

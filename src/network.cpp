@@ -65,6 +65,12 @@ int Network::getPacketsDropped() const
     return packetsDropped;
 }
 
+void Network::printRoutingTables()
+{
+    mesh->printRoutingTables();
+    ringStar->printRoutingTables();
+}
+
 void Network::packetReceived(QSharedPointer<Packet> packet)
 {
     packetsReceived++;
@@ -216,7 +222,7 @@ void Network::tick(double time)
 {
     if (!running) return;
 
-    if ((int)time%10 == 0)
+    if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
     {
         QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
         for (const QSharedPointer<Packet> &packet:packets)
