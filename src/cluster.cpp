@@ -33,7 +33,11 @@ void Cluster::addPortDelays(QString address)
         QFile file(address);
 
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            cout << address.toStdString()<<" no such file!"<<endl;
+            exit(0);
             return;
+        }
 
         QTextStream in(&file);
         while (!in.atEnd())

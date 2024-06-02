@@ -47,8 +47,6 @@ void NetworkSimulator::on_protocol_activated(int index)
         protocol = OSPF;
     else if (index == 1)
         protocol = RIP;
-    else if (index == 2)
-        protocol = MANUAL;
 }
 
 void NetworkSimulator::on_lambda_valueChanged(int arg1)
@@ -71,8 +69,8 @@ void NetworkSimulator::tick(int tickNum)
         qDebug() << network->getPacketsReceived();
         qDebug() << network->getPacketsSent();
         qDebug() << network->getPacketsDropped();
-        // qDebug() << network->getTotalQueueWaitCycles() / network->getPacketsReceived();
-        // qDebug() << network->getTotalWaitCycles() / network->getPacketsReceived();
+        qDebug() << network->getTotalQueueWaitCycles() / network->getPacketsReceived();
+        qDebug() << network->getTotalWaitCycles() / network->getPacketsReceived();
 
 
         exit(0);
