@@ -25,6 +25,7 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
     packetsReceived = 0;
     totalWaitCycles = 0;
     totalQueueWaitCycles = 0;
+    packetsDropped = 0;
 }
 
 Network::~Network()
@@ -59,6 +60,11 @@ int Network::getTotalQueueWaitCycles() const
     return totalQueueWaitCycles;
 }
 
+int Network::getPacketsDropped() const
+{
+    return packetsDropped;
+}
+
 void Network::packetReceived(QSharedPointer<Packet> packet)
 {
     packetsReceived++;
@@ -68,7 +74,12 @@ void Network::packetReceived(QSharedPointer<Packet> packet)
 
 void Network::packetSent()
 {
-    // packetsSent++;
+    packetsSent++;
+}
+
+void Network::packetDropped()
+{
+    packetsDropped++;
 }
 
 void Network::createSenders()
@@ -142,6 +153,10 @@ void Network::connectRingStar()
                      mesh->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(mesh->routers[0]->getPortWithID(1), &Port::getPacket,
                      ringStar->routers[5], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    for (auto router:ringStar->routers)
+        QObject::connect(router, &Router::packetDropped,
+                         this, &Network::packetDropped);
 }
 
 void Network::connectMesh()
@@ -178,6 +193,10 @@ void Network::connectMesh()
                      mesh->routers[15], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(mesh->routers[15]->getPortWithID(5), &Port::getPacket,
                      receivers[7], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    for (auto router:mesh->routers)
+        QObject::connect(router, &Router::packetDropped,
+                         this, &Network::packetDropped);
 }
 
 void Network::start()
@@ -197,15 +216,17 @@ void Network::tick(double time)
 {
     if (!running) return;
 
-    QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
-    packetsSent += packets.size();
-    for (QSharedPointer<Packet> packet:packets)
-        for (PC* sender:senders)
-            if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
-            {
-                sender->sendPacket(packet);
-                break;
-            }
+    if ((int)time%10 == 0)
+    {
+        QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
+        for (const QSharedPointer<Packet> &packet:packets)
+            for (PC* sender:senders)
+                if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
+                {
+                    sender->sendPacket(packet);
+                    break;
+                }
+    }
 
     emit oneCycleFinished(time);
 }

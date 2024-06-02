@@ -10,8 +10,8 @@
 #include <QVector>
 #include <QThread>
 
-#include <../headers/eventHandler.h>
-#include <../headers/messagingSystem.h>
+#include "../headers/eventHandler.h"
+#include "../headers/messagingSystem.h"
 
 class Network : public QObject
 {
@@ -24,8 +24,7 @@ private:
     Mesh* mesh;
     MessagingSystem* messagingSystem;
     bool running;
-    int packetsSent;
-    int packetsReceived;
+    int packetsSent, packetsReceived, packetsDropped;
     int totalWaitCycles, totalQueueWaitCycles;
 
     void packetReceived(QSharedPointer<Packet> packet);
@@ -35,6 +34,7 @@ private:
     void connectRingStar();
     void connectMesh();
     void packetSent();
+    void packetDropped();
 
 public:
     QVector<PC*> senders, receivers;
@@ -51,6 +51,8 @@ public:
 
     int getTotalWaitCycles() const;
     int getTotalQueueWaitCycles() const;
+
+    int getPacketsDropped() const;
 
 signals:
     void done();

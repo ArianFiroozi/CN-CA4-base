@@ -29,6 +29,7 @@ struct WaitingQueueLine
 
 class Router : public QThread
 {
+    Q_OBJECT
 private:
     bool sendTable;
     void forwardTable();
@@ -59,6 +60,7 @@ public:
     Port* getPortWithID(int portID);
 signals:
     void packetSent(Port* newPort);
+    void packetDropped();
 };
 
 #endif // ROUTER_H

@@ -142,6 +142,7 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
     if (!packet->getDest().includes(sendRoute.dest))
     {
         cout<<"router "<<id<<" dropped message!"<<endl;
+        emit packetDropped();
         return false;
     }
 
