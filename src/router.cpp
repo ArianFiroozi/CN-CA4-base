@@ -51,7 +51,7 @@ void Router::sendWaiting()
         waitingQueue.remove(i);
 }
 
-Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
+Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, int _bufferSize, QThread *parent)
     : QThread{parent},
     ip(_ip),
     routingTable(RoutingTable(ip))
@@ -60,11 +60,17 @@ Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, QThread *parent)
     protocol = _protocol;
     sendTable = false;
     clk = -1;
+    bufferSize = _bufferSize;
 }
 
 void Router::recievePacket(QSharedPointer<Packet> packet)
 {
-    // infinite buffer
+    if (buffer.size() >= bufferSize && bufferSize != -1)
+    {
+        cout<<"router "<<id<<" dropped message!"<<endl;
+        emit packetDropped();
+        return;
+    }
 
     switch(packet->getType()){
     case MSG:

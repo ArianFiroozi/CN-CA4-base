@@ -11,6 +11,7 @@ const int DEFAULT_CYCLE_DURATION = 10;
 const int DEFAULT_EVENT_HANDLER_STOP = 1000000;
 const int MESSAGING_SYSTEM_SEND_PERIOD = 10;
 const int RIP_MAX_HOP = 15;
+const int DEFAULT_BUFFER_SIZE = 10;
 
 const QString MESH_DELAY_PATH ("../resources/delays/mesh4x4/portDelays.csv");
 const QString MESH_ROUTING_TABLE_PATH ("../resources/routingTables/manualMesh4x4/routingTable");

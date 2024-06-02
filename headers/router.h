@@ -11,6 +11,7 @@
 #include "port.h"
 #include "ip.h"
 #include "routingtable.h"
+#include "common.h"
 
 enum RoutingProtocol
 {
@@ -36,9 +37,10 @@ private:
     int clk;
     QVector<int> doNotSend;
     QVector<WaitingQueueLine> waitingQueue;
+    int bufferSize;
 
 public:
-    explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, QThread *parent = nullptr);
+    explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, int _bufferSize=DEFAULT_BUFFER_SIZE, QThread *parent = nullptr);
     IPv4* ip;
     int id;
     QVector<Port*> ports;
