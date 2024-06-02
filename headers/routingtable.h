@@ -17,6 +17,7 @@ struct Route
     IPv4 gateway;
     Port* port;
     int metric; // min is best, RIP: hops, OSPF: delay
+    int timeOut;
 
     Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric = -1);
 
@@ -41,10 +42,11 @@ public:
     void print();
     void initFromFile(QString address);
     void initFromFile(QString address, Port* port);
-    bool updateFromPacketRIP(QString msg, Port* port);
+    bool updateFromPacketRIP(QString msg, Port* port, int time);
     QString toStringRIP(IPv4 gateway);
     bool updateFromPacketOSPF(QString msg, Port* port);
     QString toStringOSPF(IPv4 gateway);
+    void removeTimeOutRoutes(int time);
 };
 
 #endif // ROUTINGTABLE_H

@@ -99,7 +99,7 @@ void RoutingTable::initFromFile(QString address, Port* port)
     }
 }
 
-bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
+bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
 {
     int updated = false;
     QVector<QString> routesStr = msg.split("#");
@@ -122,13 +122,20 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
 
         bool betterRouteExists = false;
         Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
+        newRoute.timeOut = time + 1200;
         for (int i=0; i<routes.length();i++)
         {
             if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
                 newRoute.gateway.ipAddr.addrToNum() != masterIP->ipAddr.addrToNum())
             {
-                if (routes[i].metric <= newRoute.metric)
+                if (routes[i].metric < newRoute.metric)
                     betterRouteExists = true;
+                else if (routes[i].metric == newRoute.metric)
+                {
+                    betterRouteExists = true;
+                    routes.remove(i);
+                    addRoute(newRoute); // keep alive
+                }
                 else
                     routes.remove(i);
                 break;
@@ -141,6 +148,13 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port)
         }
     }
     return updated;
+}
+
+void RoutingTable::removeTimeOutRoutes(int time)
+{
+    for (int i=routes.length() - 1; i >= 0;i--)
+        if (routes[i].timeOut < time)
+                routes.remove(i);
 }
 
 bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)

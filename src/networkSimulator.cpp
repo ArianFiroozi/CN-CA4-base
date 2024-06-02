@@ -69,9 +69,10 @@ void NetworkSimulator::tick(int tickNum)
         network->stop();
         qDebug() << network->getPacketsReceived();
         qDebug() << network->getPacketsSent();
+        qDebug() << network->getPacketsDropped();
         qDebug() << network->getTotalQueueWaitCycles() / network->getPacketsReceived();
         qDebug() << network->getTotalWaitCycles() / network->getPacketsReceived();
-        qDebug() << network->getPacketsDropped();
+
         exit(0);
     }
 }

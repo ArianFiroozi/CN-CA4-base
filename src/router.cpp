@@ -89,7 +89,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         break;
     case ROUTING_TABLE_RIP:
         // qDebug() <<"router "<<id<<" recieved routing table!";
-        sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
+        sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID())), clk) || sendTable;
         // cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
         break;
     case LSA:
@@ -121,6 +121,12 @@ void Router::tick(int _time)
 
     for (int i=0; i<waitingQueue.size(); i++)
         waitingQueue[i].packet->incWaitCycles();
+
+    if (protocol==RIP)
+    {
+        routingTable.removeTimeOutRoutes(clk);
+        sendTable = sendTable || !(clk%300);
+    }
 
     if (sendTable)
     {
