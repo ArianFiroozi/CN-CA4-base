@@ -25,6 +25,7 @@ private:
     MessagingSystem* messagingSystem;
     bool running;
     int packetsSent, packetsReceived, packetsDropped;
+    int highestQueueWait, highestWait, leastWait, leastQueueWait;
     int totalWaitCycles, totalQueueWaitCycles;
 
     void packetReceived(QSharedPointer<Packet> packet);
@@ -53,6 +54,12 @@ public:
     int getTotalQueueWaitCycles() const;
     int getPacketsDropped() const;
     void printRoutingTables();
+
+    int getHighestQueueWait() const;
+    int getHighestWait() const;
+    int getLeastWait() const;
+
+    int getLeastQueueWait() const;
 
 signals:
     void done();

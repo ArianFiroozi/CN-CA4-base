@@ -21,11 +21,9 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
     mesh->connectTick(eventHandler);
 
     messagingSystem = new MessagingSystem(lambda, receivers, senders);
-    packetsSent = 0;
-    packetsReceived = 0;
-    totalWaitCycles = 0;
-    totalQueueWaitCycles = 0;
-    packetsDropped = 0;
+    packetsSent = packetsReceived = totalWaitCycles = totalQueueWaitCycles = packetsDropped = 0;
+    highestQueueWait = highestWait = -1;
+    leastWait = leastQueueWait = 100000;
 }
 
 Network::~Network()
@@ -71,11 +69,41 @@ void Network::printRoutingTables()
     ringStar->printRoutingTables();
 }
 
+int Network::getHighestQueueWait() const
+{
+    return highestQueueWait;
+}
+
+int Network::getHighestWait() const
+{
+    return highestWait;
+}
+
+int Network::getLeastWait() const
+{
+    return leastWait;
+}
+
+int Network::getLeastQueueWait() const
+{
+    return leastQueueWait;
+}
+
 void Network::packetReceived(QSharedPointer<Packet> packet)
 {
     packetsReceived++;
     totalQueueWaitCycles += packet->getQueueWaitCycles();
     totalWaitCycles += packet->getWaitCycles();
+
+    if (packet->getQueueWaitCycles()>highestQueueWait)
+        highestQueueWait = packet->getQueueWaitCycles();
+    if (packet->getWaitCycles()>highestWait)
+        highestWait = packet->getWaitCycles();
+    if (packet->getWaitCycles()<leastWait)
+        leastWait = packet->getWaitCycles();
+    if (packet->getQueueWaitCycles()<leastQueueWait)
+        leastQueueWait = packet->getQueueWaitCycles();
+
 }
 
 void Network::packetSent()
