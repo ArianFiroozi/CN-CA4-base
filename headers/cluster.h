@@ -26,7 +26,7 @@ public:
 
 class Mesh : public Cluster
 {
-private:
+protected:
     int x, y;
 
     void connectRouters(int i, int j);
@@ -49,6 +49,15 @@ private:
 
 public:
     RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol=MANUAL, bool delayedPorts=false);
+    ~RingStar();
+};
+
+class Torus : public Mesh
+{
+    void connectRouters(int i, int j);
+public:
+    Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol = RIP);
+
 };
 
 #endif // CLUSTER_H

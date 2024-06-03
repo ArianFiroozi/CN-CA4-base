@@ -90,6 +90,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol, bool delay
 
 Mesh::~Mesh()
 {
+    dummy->exit();
     for (auto thread : threads)
     {
         thread->exit();
@@ -217,6 +218,16 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, 
     }
 }
 
+RingStar::~RingStar()
+{
+    dummy->exit();
+    for (auto thread : threads)
+    {
+        thread->exit();
+        thread->deleteLater();
+    }
+}
+
 void RingStar::connectRingRouters(int i)
 {
     routers.last()->addPort(new Port(2));
@@ -263,4 +274,70 @@ void RingStar::getStaticRoutingTables()
         for (Port* port : router->ports)
             router->routingTable.initFromFile(path, port);
     }
+}
+
+void Torus::connectRouters(int i, int j)
+{
+    if (j==0) //first column
+    {
+        routers[i*x+j]->addPort(new Port(4));
+        if (i == y-1)
+            routers[i*x+j]->addPort(new Port(3));
+        if (i == 0)
+            routers[i*x+j]->addPort(new Port(1));
+
+        if (i == y-1)
+        {
+            QObject::connect(routers[0]->getPortWithID(1), &Port::getPacket,
+                             routers[i*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+            QObject::connect(routers[i*x+j]->getPortWithID(3), &Port::getPacket,
+                             routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+        }
+    }
+    else if (j==x-1) //last cloumn
+    {
+        routers[i*x+j]->addPort(new Port(2));
+
+        if (i == y-1)
+            routers[i*x+j]->addPort(new Port(3));
+        if (i == 0)
+            routers[i*x+j]->addPort(new Port(1));
+
+        QObject::connect(routers[i*x]->getPortWithID(4), &Port::getPacket,
+                         routers[i*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+        QObject::connect(routers[i*x+j]->getPortWithID(2), &Port::getPacket,
+                         routers[i*x], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+        if (i == y-1)
+        {
+            QObject::connect(routers[x-1]->getPortWithID(1), &Port::getPacket,
+                             routers[i*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+            QObject::connect(routers[i*x+j]->getPortWithID(3), &Port::getPacket,
+                             routers[x-1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+        }
+    }
+    else
+    {
+        if (i == y-1)
+            routers[i*x+j]->addPort(new Port(3));
+        if (i == 0)
+            routers[i*x+j]->addPort(new Port(1));
+
+        if (i == y-1)
+        {
+            QObject::connect(routers[j]->getPortWithID(1), &Port::getPacket,
+                             routers[i*x+j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+            QObject::connect(routers[i*x+j]->getPortWithID(3), &Port::getPacket,
+                             routers[j], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+        }
+    }
+}
+
+Torus::Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol)
+    : Mesh(_x, _y, netAddIP, _protocol, false)
+{
+    for(int i=0;i<y;i++)
+        for (int j=0;j<x;j++)
+            connectRouters(i, j);
+    addPortDelays(TORUS_DELAY_PATH);
 }

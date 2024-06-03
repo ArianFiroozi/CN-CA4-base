@@ -77,7 +77,7 @@ void NetworkSimulator::tick(int tickNum)
         qDebug() <<"highest queue waiting time:"<< network->getHighestQueueWait();
         qDebug() <<"least queue waiting time:"<< network->getLeastQueueWait();
 
-
+        // delete network;
         exit(0);
     }
 }
