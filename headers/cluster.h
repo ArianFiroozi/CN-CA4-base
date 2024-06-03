@@ -56,7 +56,7 @@ class Torus : public Mesh
 {
     void connectRouters(int i, int j);
 public:
-    Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol = RIP);
+    Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol = RIP, bool delayedPorts=false);
 
 };
 

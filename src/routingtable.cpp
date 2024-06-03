@@ -10,20 +10,7 @@ RoutingTable::RoutingTable(IPv4 *_masterIP)
 
 void RoutingTable::addRoute(Route newRoute)
 {
-    if (newRoute.asIDs.size() == 0)
-        newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
 
-    if (masterIP->ipAddr.netID1 != newRoute.asIDs.last()){
-        if (newRoute.asIDs.contains(this->masterIP->ipAddr.netID1))
-            return;
-
-        newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
-        newRoute.metric = newRoute.asIDs.size();
-        newRoute.protocol = EBGP;
-    }
-
-    if (masterIP->includes(newRoute.gateway))
-        if (newRoute.protocol == EBGP) return;
 
     routes.append(newRoute);
 }
@@ -142,6 +129,21 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
             if (as != "")
                 newRoute.asIDs.append(as.toInt());
         newRoute.timeOut = time + RIP_TIMEOUT;
+        if (newRoute.asIDs.size() == 0)
+            newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
+
+        if (masterIP->ipAddr.netID1 != newRoute.asIDs.last()){
+            if (newRoute.asIDs.contains(this->masterIP->ipAddr.netID1))
+                return updated;
+
+            newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
+            newRoute.metric = newRoute.asIDs.size();
+            newRoute.protocol = EBGP;
+        }
+
+        if (masterIP->includes(newRoute.gateway))
+            if (newRoute.protocol == EBGP) return updated;
+
         for (int i=0; i<routes.length();i++)
         {
             if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
@@ -173,7 +175,7 @@ void RoutingTable::removeTimeOutRoutes(int time)
 {
     for (int i=routes.length() - 1; i >= 0;i--)
         if (routes[i].timeOut < time)
-                routes.remove(i);
+            routes.remove(i);
 }
 
 bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
@@ -196,9 +198,20 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
 
         bool betterRouteExists = false;
         Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
-        for (QString as: routeStr.split(",")[3].split("-"))
-            if (as != "")
-                newRoute.asIDs.append(as.toInt());
+        if (newRoute.asIDs.size() == 0)
+            newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
+
+        if (masterIP->ipAddr.netID1 != newRoute.asIDs.last()){
+            if (newRoute.asIDs.contains(this->masterIP->ipAddr.netID1))
+                return updated;
+
+            newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
+            newRoute.metric = newRoute.asIDs.size();
+            newRoute.protocol = EBGP;
+        }
+
+        if (masterIP->includes(newRoute.gateway))
+            if (newRoute.protocol == EBGP) return updated;
 
         for (int i=0; i<routes.length();i++)
         {

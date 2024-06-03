@@ -7,18 +7,23 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
 
     ringStar = new RingStar(7, {2, 4, 6, 7}, IPv4("255.255.255.0", "10.0.0.0"), protocol, true);
     mesh = new Mesh(4, 4, IPv4("255.255.255.0", "20.0.0.0"), protocol, true);
+    torus = new Torus(3,3,IPv4("255.255.255.0", "30.0.0.0"), protocol, true);
 
     eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
 
     createSenders();
     createReceivers();
+    addRingStarPorts();
     addMeshPorts();
+    addTorusPorts();
     connectRingStar();
     connectMesh();
+    connectTorus();
 
     ringStar->connectTick(eventHandler);
     mesh->connectTick(eventHandler);
+    torus->connectTick(eventHandler);
 
     messagingSystem = new MessagingSystem(lambda, receivers, senders);
     packetsSent = packetsReceived = totalWaitCycles = totalQueueWaitCycles = packetsDropped = 0;
@@ -65,8 +70,15 @@ int Network::getPacketsDropped() const
 
 void Network::printRoutingTables()
 {
+    qDebug() << "";
+    qDebug() << "----------------------MESH------------------------";
     mesh->printRoutingTables();
+    qDebug() << "";
+    qDebug() << "--------------------RINGSTAR----------------------";
     ringStar->printRoutingTables();
+    qDebug() << "";
+    qDebug() << "----------------------TORUS-----------------------";
+    torus->printRoutingTables();
 }
 
 int Network::getHighestQueueWait() const
@@ -123,6 +135,9 @@ void Network::createSenders()
     senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
     senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
     senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
+    senders.append(new PC(6, new IPv4("255.255.255.255", "192.168.30.3"), new Port(31, 10)));
+    senders.append(new PC(7, new IPv4("255.255.255.255", "192.168.30.4"), new Port(32, 10)));
+    senders.append(new PC(8, new IPv4("255.255.255.255", "192.168.30.5"), new Port(33, 10)));
 
 
     for (auto sender: senders)
@@ -146,12 +161,21 @@ void Network::createReceivers()
                          this, &Network::packetReceived);
 }
 
+void Network::addRingStarPorts()
+{
+    // torus
+    ringStar->routers[0]->addPort(new Port(42, 10));
+    ringStar->routers[6]->addPort(new Port(42, 10));
+}
+
 void Network::addMeshPorts()
 {
+    // ringstar
     mesh->routers[0]->addPort(new Port(1, 10));
     mesh->routers[1]->addPort(new Port(1, 10));
     mesh->routers[2]->addPort(new Port(1, 10));
 
+    // receivers
     mesh->routers[12]->addPort(new Port(3, 15));
     mesh->routers[12]->addPort(new Port(5, 15));
     mesh->routers[13]->addPort(new Port(3, 15));
@@ -160,6 +184,18 @@ void Network::addMeshPorts()
     mesh->routers[14]->addPort(new Port(5, 15));
     mesh->routers[15]->addPort(new Port(3, 15));
     mesh->routers[15]->addPort(new Port(5, 15));
+}
+
+void Network::addTorusPorts()
+{
+    // senders
+    torus->routers[6]->addPort(new Port(5, 10));
+    torus->routers[7]->addPort(new Port(5, 10));
+    torus->routers[8]->addPort(new Port(5, 10));
+
+    // ring star
+    torus->routers[2]->addPort(new Port(42, 10));
+    torus->routers[5]->addPort(new Port(42, 10));
 }
 
 void Network::connectRingStar()
@@ -189,6 +225,35 @@ void Network::connectRingStar()
                      ringStar->routers[5], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
 
     for (auto router:ringStar->routers)
+        QObject::connect(router, &Router::packetDropped,
+                         this, &Network::packetDropped);
+}
+
+void Network::connectTorus()
+{
+    QObject::connect(torus->routers[6]->getPortWithID(5), &Port::getPacket,
+                     senders[5], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[5]->port, &Port::getPacket,
+                     torus->routers[6], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(torus->routers[7]->getPortWithID(5), &Port::getPacket,
+                     senders[6], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[6]->port, &Port::getPacket,
+                     torus->routers[7], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(torus->routers[8]->getPortWithID(5), &Port::getPacket,
+                     senders[7], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(senders[7]->port, &Port::getPacket,
+                     torus->routers[8], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    QObject::connect(torus->routers[2]->getPortWithID(42), &Port::getPacket,
+                     ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[0]->getPortWithID(42), &Port::getPacket,
+                     torus->routers[2], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(torus->routers[5]->getPortWithID(42), &Port::getPacket,
+                     ringStar->routers[6], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[6]->getPortWithID(42), &Port::getPacket,
+                     torus->routers[5], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+
+    for (auto router:torus->routers)
         QObject::connect(router, &Router::packetDropped,
                          this, &Network::packetDropped);
 }

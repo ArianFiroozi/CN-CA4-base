@@ -22,7 +22,9 @@ private:
     EventHandler* eventHandler;
     RingStar* ringStar;
     Mesh* mesh;
+    Torus* torus;
     MessagingSystem* messagingSystem;
+
     bool running;
     int packetsSent, packetsReceived, packetsDropped;
     int highestQueueWait, highestWait, leastWait, leastQueueWait;
@@ -32,33 +34,34 @@ private:
     void createSenders();
     void createReceivers();
     void addMeshPorts();
+    void addRingStarPorts();
+    void addTorusPorts();
     void connectRingStar();
     void connectMesh();
+    void connectTorus();
     void packetSent();
     void packetDropped();
 
 public:
     QVector<PC*> senders, receivers;
 
-    Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lambda=0);
+    Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lambda=DEFAULT_LAMBDA);
     ~Network();
 
     void start();
     void tick(double time);
-
     void stop();
+    void printRoutingTables();
+
+    // getters
     int getPacketsSent() const;
     int getPacketsReceived() const;
-
     int getTotalWaitCycles() const;
     int getTotalQueueWaitCycles() const;
     int getPacketsDropped() const;
-    void printRoutingTables();
-
     int getHighestQueueWait() const;
     int getHighestWait() const;
     int getLeastWait() const;
-
     int getLeastQueueWait() const;
 
 signals:

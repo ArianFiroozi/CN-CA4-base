@@ -333,11 +333,13 @@ void Torus::connectRouters(int i, int j)
     }
 }
 
-Torus::Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol)
+Torus::Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol, bool delayedPorts)
     : Mesh(_x, _y, netAddIP, _protocol, false)
 {
     for(int i=0;i<y;i++)
         for (int j=0;j<x;j++)
             connectRouters(i, j);
-    addPortDelays(TORUS_DELAY_PATH);
+
+    if (delayedPorts)
+        addPortDelays(TORUS_DELAY_PATH);
 }
