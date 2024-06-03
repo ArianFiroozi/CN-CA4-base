@@ -129,6 +129,7 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
             if (as != "")
                 newRoute.asIDs.append(as.toInt());
         newRoute.timeOut = time + RIP_TIMEOUT;
+
         if (newRoute.asIDs.size() == 0)
             newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
 
@@ -142,7 +143,8 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
         }
 
         if (masterIP->includes(newRoute.gateway))
-            if (newRoute.protocol == EBGP) return updated;
+            if (newRoute.protocol == EBGP)
+                return updated;
 
         for (int i=0; i<routes.length();i++)
         {

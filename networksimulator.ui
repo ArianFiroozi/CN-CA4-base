@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>727</width>
-    <height>474</height>
+    <width>628</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="start">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>185</y>
+      <x>190</x>
+      <y>195</y>
       <width>221</width>
       <height>41</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QComboBox" name="protocol">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>90</y>
+      <x>30</x>
+      <y>100</y>
       <width>79</width>
       <height>36</height>
      </rect>
@@ -46,17 +46,12 @@
       <string>RIP</string>
      </property>
     </item>
-    <item>
-     <property name="text">
-      <string>MANUAL</string>
-     </property>
-    </item>
    </widget>
    <widget class="QSlider" name="cycleDuration">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>50</y>
+      <x>210</x>
+      <y>60</y>
       <width>221</width>
       <height>31</height>
      </rect>
@@ -74,8 +69,8 @@
    <widget class="QSpinBox" name="lambda">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>90</y>
+      <x>520</x>
+      <y>100</y>
       <width>42</width>
       <height>37</height>
      </rect>
@@ -87,8 +82,8 @@
    <widget class="QTextBrowser" name="tickDurationShow">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>10</y>
+      <x>340</x>
+      <y>20</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -100,8 +95,8 @@
    <widget class="QTextBrowser" name="tickCountShow">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>90</y>
+      <x>340</x>
+      <y>100</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -113,8 +108,8 @@
    <widget class="QSlider" name="tickCount">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>130</y>
+      <x>210</x>
+      <y>140</y>
       <width>221</width>
       <height>31</height>
      </rect>
@@ -132,8 +127,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>20</y>
+      <x>210</x>
+      <y>30</y>
       <width>81</width>
       <height>28</height>
      </rect>
@@ -145,8 +140,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>90</y>
+      <x>210</x>
+      <y>100</y>
       <width>91</width>
       <height>28</height>
      </rect>
@@ -155,13 +150,26 @@
      <string>tick count</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>70</y>
+      <width>58</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>lamdbda</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>727</width>
+     <width>628</width>
      <height>33</height>
     </rect>
    </property>
