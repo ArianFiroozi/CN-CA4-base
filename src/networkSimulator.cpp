@@ -65,7 +65,7 @@ void NetworkSimulator::tick(int tickNum)
     if (tickNum >= tickCount)
     {
         network->stop();
-        // network->printRoutingTables();
+        network->printRoutingTables();
         qDebug() << "analysis:";
         qDebug() <<"total received packets:"<< network->getPacketsReceived();
         qDebug() <<"total sent packets:"<< network->getPacketsSent();

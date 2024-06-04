@@ -44,7 +44,7 @@ struct Route
 class RoutingTable
 {
 public:
-    RoutingTable(IPv4 *_masterIP);
+    RoutingTable(IPv4 *_masterIP = new IPv4());
 
     QVector<Route> routes;
     IPv4 *masterIP;

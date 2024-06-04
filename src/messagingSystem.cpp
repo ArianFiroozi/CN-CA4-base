@@ -16,10 +16,8 @@ MessagingSystem::MessagingSystem(int lambda, const QVector<PC *> &receivers, con
 QVector<QSharedPointer<Packet>> MessagingSystem::generatePackets() {
     packets = QVector<QSharedPointer<Packet>> ();
     int messageNum = numOfPackets();
-    int src = rand() % senders.size();
+    int src = 1; //rand() % senders.size();
     int dest = rand() % receivers.size();
-    // qDebug() << "send " << messageNum << " packets from " << senders[src]->ip->getIPStr().toStdString() << " to "
-    //           << receivers[dest]->ip->getIPStr().toStdString();
 
     for (int i=0;i<messageNum;i++)
         packets.append(QSharedPointer<Packet> (new Packet("test", MSG, IPV4, *(IPv4*)(senders[src]->ip), *(IPv4*)(receivers[dest]->ip))));

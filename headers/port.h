@@ -16,6 +16,7 @@ class Port : public QObject
     Q_OBJECT
 
 private:
+    QMutex mutex;
 public:
     Port(int id, int _delay=0);
     ~Port();

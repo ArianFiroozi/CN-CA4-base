@@ -74,44 +74,29 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 
     // loop detection for broadcast
     if (packet->getDest().getIPStr() == BROADCAST_ADDRESS && packet->getPath().contains(QString::number(id)))
-    {
-        // qDebug() << "router" << id << "detected loop!";
         return;
-    }
 
     switch(packet->getType()){
     case MSG:
-        // routingTable.print();
-        // qDebug()<<"router "<<id<<" recieved msg!" ;
         buffer.append(packet);
         break;
     case HELLO:
-        // qDebug()<<"router "<<id<<" recieved hello!";
-        if (protocol == RIP) // no need for protocol
-        {
-            routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
-                                        this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
-            sendTable = true;
-            doNotSend.append(portTranslation(packet->getPortID()));
-        }
-        else if (protocol == OSPF)
-        {
-            routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, *ip,
-                                        this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
-            sendTable = true;
-            doNotSend.append(portTranslation(packet->getPortID()));
-        }
+        routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, IPv4("255.255.255.255", ip->ipAddr.toStr()),
+                                    this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
+        sendTable = true;
+        doNotSend.append(portTranslation(packet->getPortID()));
         break;
     case ROUTING_TABLE_RIP:
-        // qDebug() <<"router "<<id<<" recieved routing table!";
-        sendTable = routingTable.updateFromPacketRIP(packet->getString(), getPortWithID(portTranslation(packet->getPortID())), clk) || sendTable;
-        // cout<< "routing table msg:" <<packet->getString().toStdString()<<endl <<endl;
+        sendTable = routingTable.updateFromPacketRIP(
+                        packet->getString(), getPortWithID(portTranslation(packet->getPortID())), clk)
+                    || sendTable;
         break;
     case LSA:
-        // qDebug() <<"router "<<id<<" recieved LSA!";
-        sendTable = routingTable.updateFromPacketOSPF(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
+        sendTable = routingTable.updateFromPacketOSPF(
+                        packet->getString(), getPortWithID(portTranslation(packet->getPortID())))
+                    || sendTable;
         break;
-    // case DHCP_LEASE:
+    case DHCP_LEASE:
     case DHCP_REQUEST:
     case DHCP_OFFER:
         // qDebug() << "router" << id << "got dhcp";
@@ -125,13 +110,15 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 
 void Router::forward()
 {
-    if (buffer.size()==0) return;
+    if (buffer.size()==0)
+        return;
 
     while (buffer[0]->getDest().getIPStr() == BROADCAST_ADDRESS &&
            buffer[0]->getPath().contains(QString::number(this->id))) // broadcast loop
     {
         buffer.removeFirst();
-        if (buffer.size()==0) return;
+        if (buffer.size()==0)
+            return;
     }
 
     buffer[0]->addToPath(QString::number(this->id));
@@ -179,7 +166,7 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
 
         for (auto port:ports)
             port->write(packet);
-            // waitingQueue.append(WaitingQueueLine(port, packet, port->delay, clk));
+        // waitingQueue.append(WaitingQueueLine(port, packet, port->delay, clk));
 
         return true;
     }
@@ -188,17 +175,10 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
 
     if (!packet->getDest().includes(sendRoute.dest))
     {
-        cout<<"router "<<id<<" dropped message!"<<endl;
+        cout<<"router "<<id<<" dropped message!" << packet->getDest().getIPStr().toStdString()<<endl;
         emit packetDropped();
         return false;
     }
-
-    // if (!this->ip->includes(sendRoute.gateway))
-    //     qDebug() << "external send!"<<this->ip->getIPStr() << sendRoute.gateway.getIPStr();
-
-    // cout<<"router "<<id<<" sended message through: "<<sendRoute.port->id
-    // << " to->" << sendRoute.gateway.getIPStr().toStdString()<<endl;
-    // cout << "message content was:" << packet->getString().toStdString() <<endl;
 
     waitingQueue.append(WaitingQueueLine(sendRoute.port, packet, sendRoute.port->delay, clk));
     return true;
@@ -206,6 +186,9 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
 
 void Router::addPort(Port* newPort)
 {
+    for (auto port:ports)
+        if (port->id == newPort->id)
+            exit(0);
     ports.append(newPort);
 }
 

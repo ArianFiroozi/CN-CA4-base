@@ -135,9 +135,9 @@ void Network::createSenders()
     senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
     senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
     senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
-    senders.append(new PC(6, new IPv4("255.255.255.255", "192.168.30.3"), new Port(31, 10)));
-    senders.append(new PC(7, new IPv4("255.255.255.255", "192.168.30.4"), new Port(32, 10)));
-    senders.append(new PC(8, new IPv4("255.255.255.255", "192.168.30.5"), new Port(33, 10)));
+    senders.append(new PC(6, new IPv4("255.255.255.255", "192.168.30.1"), new Port(31, 10)));
+    senders.append(new PC(7, new IPv4("255.255.255.255", "192.168.30.2"), new Port(32, 10)));
+    senders.append(new PC(8, new IPv4("255.255.255.255", "192.168.30.3"), new Port(33, 10)));
 
 
     for (auto sender: senders)
@@ -147,14 +147,22 @@ void Network::createSenders()
 
 void Network::createReceivers()
 {
-    receivers.append(new PC(1, new Port(1, 10)));
-    receivers.append(new PC(2, new Port(5, 10)));
-    receivers.append(new PC(3, new Port(1, 10)));
-    receivers.append(new PC(4, new Port(5, 10)));
-    receivers.append(new PC(5, new Port(1, 10)));
-    receivers.append(new PC(6, new Port(5, 10)));
-    receivers.append(new PC(7, new Port(1, 10)));
-    receivers.append(new PC(8, new Port(5, 10)));
+    receivers.append(new PC(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1, 10)));
+    receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(5, 10)));
+    receivers.append(new PC(3, new IPv4("255.255.255.255", "192.168.20.3"), new Port(1, 10)));
+    receivers.append(new PC(4, new IPv4("255.255.255.255", "192.168.20.4"), new Port(5, 10)));
+    receivers.append(new PC(5, new IPv4("255.255.255.255", "192.168.20.5"), new Port(1, 10)));
+    receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
+    receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
+    receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
+    // receivers.append(new PC(1, new Port(1, 10)));
+    // receivers.append(new PC(2, new Port(5, 10)));
+    // receivers.append(new PC(3, new Port(1, 10)));
+    // receivers.append(new PC(4, new Port(5, 10)));
+    // receivers.append(new PC(5, new Port(1, 10)));
+    // receivers.append(new PC(6, new Port(5, 10)));
+    // receivers.append(new PC(7, new Port(1, 10)));
+    // receivers.append(new PC(8, new Port(5, 10)));
 
     for (auto receiver: receivers)
         QObject::connect(receiver, &PC::packetReceived,
@@ -163,6 +171,14 @@ void Network::createReceivers()
 
 void Network::addRingStarPorts()
 {
+    //senders
+    ringStar->routers[0]->addPort(new Port(21, 10));
+    ringStar->routers[0]->addPort(new Port(22, 10));
+    ringStar->routers[0]->addPort(new Port(23, 10));
+    ringStar->routers[1]->addPort(new Port(21, 10));
+    ringStar->routers[1]->addPort(new Port(22, 10));
+
+    // mesh
     ringStar->routers[3]->addPort(new Port(3, 10));
     ringStar->routers[4]->addPort(new Port(3, 10));
     ringStar->routers[5]->addPort(new Port(3, 10));
@@ -206,14 +222,25 @@ void Network::connectRingStar()
 {
     QObject::connect(senders[0]->port, &Port::getPacket,
                      ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[0]->getPortWithID(21), &Port::getPacket,
+                     senders[0], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(senders[1]->port, &Port::getPacket,
                      ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[0]->getPortWithID(22), &Port::getPacket,
+                     senders[1], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(senders[2]->port, &Port::getPacket,
                      ringStar->routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[0]->getPortWithID(23), &Port::getPacket,
+                     senders[2], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
+
     QObject::connect(senders[3]->port, &Port::getPacket,
                      ringStar->routers[1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[1]->getPortWithID(21), &Port::getPacket,
+                     senders[3], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(senders[4]->port, &Port::getPacket,
                      ringStar->routers[1], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
+    QObject::connect(ringStar->routers[1]->getPortWithID(22), &Port::getPacket,
+                     senders[4], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
 
     QObject::connect(ringStar->routers[3]->getPortWithID(3), &Port::getPacket,
                      mesh->routers[2], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
@@ -308,8 +335,8 @@ void Network::start()
 
     for (auto receiver:receivers)
         receiver->start();
-    for (auto sender:senders)
-        sender->start();
+    // for (auto sender:senders)
+    //     sender->start();
 
     emit eventHandler->startSig();
     running = true;
@@ -319,18 +346,19 @@ void Network::tick(double time)
 {
     if (!running) return;
 
+    // if (time < 500) return;
     // temporary no message
-    // if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
-    // {
-    //     QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
-    //     for (const QSharedPointer<Packet> &packet:packets)
-    //         for (PC* sender:senders)
-    //             if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
-    //             {
-    //                 sender->sendPacket(packet);
-    //                 break;
-    //             }
-    // }
+    if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
+    {
+        QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
+        for (const QSharedPointer<Packet> &packet:packets)
+            for (PC* sender:senders)
+                if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
+                {
+                    sender->sendPacket(packet);
+                    break;
+                }
+    }
 
     emit oneCycleFinished(time);
 }
