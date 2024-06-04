@@ -65,13 +65,13 @@ void NetworkSimulator::tick(int tickNum)
     if (tickNum >= tickCount)
     {
         network->stop();
-        network->printRoutingTables();
+        // network->printRoutingTables();
         qDebug() << "analysis:";
         qDebug() <<"total received packets:"<< network->getPacketsReceived();
         qDebug() <<"total sent packets:"<< network->getPacketsSent();
         qDebug() <<"total dropped packets:"<< network->getPacketsDropped();
-        qDebug() <<"average queue waiting time:"<< network->getTotalQueueWaitCycles() / network->getPacketsReceived();
-        qDebug() <<"average total waiting time:"<< network->getTotalWaitCycles() / network->getPacketsReceived();
+        // qDebug() <<"average queue waiting time:"<< network->getTotalQueueWaitCycles() / network->getPacketsReceived();
+        // qDebug() <<"average total waiting time:"<< network->getTotalWaitCycles() / network->getPacketsReceived();
         qDebug() <<"least waiting time:"<< network->getLeastWait();
         qDebug() <<"highest waiting time:"<< network->getHighestWait();
         qDebug() <<"highest queue waiting time:"<< network->getHighestQueueWait();

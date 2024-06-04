@@ -147,14 +147,14 @@ void Network::createSenders()
 
 void Network::createReceivers()
 {
-    receivers.append(new PC(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1, 10)));
-    receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(5, 10)));
-    receivers.append(new PC(3, new IPv4("255.255.255.255", "192.168.20.3"), new Port(1, 10)));
-    receivers.append(new PC(4, new IPv4("255.255.255.255", "192.168.20.4"), new Port(5, 10)));
-    receivers.append(new PC(5, new IPv4("255.255.255.255", "192.168.20.5"), new Port(1, 10)));
-    receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
-    receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
-    receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
+    receivers.append(new PC(1, new Port(1, 10)));
+    receivers.append(new PC(2, new Port(5, 10)));
+    receivers.append(new PC(3, new Port(1, 10)));
+    receivers.append(new PC(4, new Port(5, 10)));
+    receivers.append(new PC(5, new Port(1, 10)));
+    receivers.append(new PC(6, new Port(5, 10)));
+    receivers.append(new PC(7, new Port(1, 10)));
+    receivers.append(new PC(8, new Port(5, 10)));
 
     for (auto receiver: receivers)
         QObject::connect(receiver, &PC::packetReceived,
@@ -319,17 +319,18 @@ void Network::tick(double time)
 {
     if (!running) return;
 
-    if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
-    {
-        QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
-        for (const QSharedPointer<Packet> &packet:packets)
-            for (PC* sender:senders)
-                if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
-                {
-                    sender->sendPacket(packet);
-                    break;
-                }
-    }
+    // temporary no message
+    // if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
+    // {
+    //     QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
+    //     for (const QSharedPointer<Packet> &packet:packets)
+    //         for (PC* sender:senders)
+    //             if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
+    //             {
+    //                 sender->sendPacket(packet);
+    //                 break;
+    //             }
+    // }
 
     emit oneCycleFinished(time);
 }

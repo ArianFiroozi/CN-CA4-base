@@ -6,13 +6,16 @@
 #include <QVector>
 #include <QCoreApplication>
 #include "eventHandler.h"
+#include "dhcp.h"
 
 class Cluster
 {
 protected:
+
     void makeDummyApp();
     QCoreApplication* dummy;
     RoutingProtocol protocol;
+    DhcpServer* dhcpServer;
     void addPortDelays(QString address);
 
 public:

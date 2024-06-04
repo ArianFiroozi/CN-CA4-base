@@ -12,6 +12,7 @@
 
 #include "../headers/eventHandler.h"
 #include "../headers/messagingSystem.h"
+#include "dhcp.h"
 
 class Network : public QObject
 {

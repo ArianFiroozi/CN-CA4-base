@@ -10,8 +10,6 @@ RoutingTable::RoutingTable(IPv4 *_masterIP)
 
 void RoutingTable::addRoute(Route newRoute)
 {
-
-
     routes.append(newRoute);
 }
 

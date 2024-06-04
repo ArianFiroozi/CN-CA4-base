@@ -67,7 +67,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     if (buffer.size() >= bufferSize && bufferSize != -1)
     {
-        cout<<"router "<<id<<" dropped message!"<<endl;
+        cout<<"router "<<id<<" dropped message, congested!"<<endl;
         emit packetDropped();
         return;
     }
@@ -111,6 +111,13 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         // qDebug() <<"router "<<id<<" recieved LSA!";
         sendTable = routingTable.updateFromPacketOSPF(packet->getString(), getPortWithID(portTranslation(packet->getPortID()))) || sendTable;
         break;
+    // case DHCP_LEASE:
+    case DHCP_REQUEST:
+    case DHCP_OFFER:
+        // qDebug() << "router" << id << "got dhcp";
+        buffer.append(packet);
+        break;
+
     default:
         cerr << "unknown message type on router:" << id << endl;
     }
@@ -119,6 +126,13 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 void Router::forward()
 {
     if (buffer.size()==0) return;
+
+    while (buffer[0]->getDest().getIPStr() == BROADCAST_ADDRESS &&
+           buffer[0]->getPath().contains(QString::number(this->id))) // broadcast loop
+    {
+        buffer.removeFirst();
+        if (buffer.size()==0) return;
+    }
 
     buffer[0]->addToPath(QString::number(this->id));
     sendPacket(buffer[0]);
@@ -161,8 +175,12 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
 
     if (dest.getIPStr() == BROADCAST_ADDRESS)
     {
+        // qDebug() << "broadcasting from" << id;
+
         for (auto port:ports)
-            waitingQueue.append(WaitingQueueLine(port, packet, port->delay, clk));
+            port->write(packet);
+            // waitingQueue.append(WaitingQueueLine(port, packet, port->delay, clk));
+
         return true;
     }
 

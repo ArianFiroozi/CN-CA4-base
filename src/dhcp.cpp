@@ -29,8 +29,8 @@ bool DhcpServer::alreadyAssigned(QSharedPointer<Packet> packet)
 {
     for (const DhcpTableRow &row:dhcpTable)
         if (row.id == packet->getString().toInt())
-            return false;
-    return true;
+            return true;
+    return false;
 }
 
 void DhcpServer::assignIP(QSharedPointer<Packet> packet)
@@ -56,8 +56,12 @@ void DhcpServer::assignIP(QSharedPointer<Packet> packet)
 
 void DhcpServer::sendOffer(DhcpTableRow row)
 {
+    QString offerStr(row.ip.ipAddr.toStr());
+    offerStr.append(",");
+    offerStr.append(QString::number(row.id));
+
     sendPacket(QSharedPointer<Packet> (
-        new Packet(row.ip.ipAddr.toStr(), DHCP_OFFER, IPV4, *(IPv4*)ip,
+        new Packet(offerStr, DHCP_OFFER, IPV4, *(IPv4*)ip,
                    IPv4("255.255.255.255", "255.255.255.255"))));
 }
 
@@ -74,6 +78,7 @@ void DhcpServer::recievePacket(QSharedPointer<Packet> packet)
     }
     else if (packet->getType() == DHCP_REQUEST)
     {
+        // cout << "received dhcp!" <<endl;
         qDebug() <<"DhcpServer recieved request from: "<<packet->getString();
         assignIP(packet);
         for(auto row:dhcpTable)
@@ -86,6 +91,7 @@ void DhcpServer::recievePacket(QSharedPointer<Packet> packet)
 void DhcpServer::sendPacket(QSharedPointer<Packet> packet)
 {
     port->write(packet);
+    qDebug() << "sent dhcp Packet" << packet->getString();
 }
 
 DhcpServer::DhcpTableRow::DhcpTableRow(const IPv4 &ip, int id, int lastLeaseTime) : ip(ip),
@@ -95,7 +101,7 @@ DhcpServer::DhcpTableRow::DhcpTableRow(const IPv4 &ip, int id, int lastLeaseTime
 
 void DhcpServer::removeIPs()
 {
-    for (int i = dhcpTable.size() - 1; i >=0 ;i++)
-        if (dhcpTable[i].lastLeaseTime + LEASE_TIMEOUT)
+    for (int i = dhcpTable.size() - 1; i >=0 ;i--)
+        if (dhcpTable[i].lastLeaseTime + LEASE_TIMEOUT < clk)
             dhcpTable.remove(i);
 }

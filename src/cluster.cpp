@@ -15,6 +15,18 @@ void Cluster::connectTick(EventHandler* eventHandler)
         QObject::connect(eventHandler, &EventHandler::tick,
                          router, &Router::tick);
     }
+
+    dhcpServer = new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.20.0"),
+                                new IPv4("255.255.255.255", "192.168.20.250"), new Port(555, 1));
+
+    routers[0]->addPort(new Port(555, 1));
+    QObject::connect(dhcpServer->port, &Port::getPacket,
+                     routers[0], &Router::recievePacket);
+    QObject::connect(routers[0]->getPortWithID(555), &Port::getPacket,
+                     dhcpServer, &DhcpServer::recievePacket);
+
+    QObject::connect(eventHandler, &EventHandler::tick,
+                     dhcpServer, &DhcpServer::tick);
 }
 
 void Cluster::printRoutingTables()

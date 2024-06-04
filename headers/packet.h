@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QMutex>
 
 #include "ip.h"
 
@@ -13,6 +14,7 @@ enum PacketType{HELLO, LSA, ROUTING_TABLE_RIP, DHCP_OFFER, DHCP_REQUEST, DHCP_LE
 class Packet
 {
 private:
+    QMutex mutex;
     PacketType type;
     QString string;
     IPv4 source, dest;
