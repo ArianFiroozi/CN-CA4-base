@@ -232,7 +232,7 @@ void RingStar::connectRingRouters(int i)
 {
     routers.last()->addPort(new Port(2));
     routers.last()->addPort(new Port(10 + i + 1)); //for star
-    routers.last()->addPort(new Port(3));
+    // routers.last()->addPort(new Port(3));
     routers.last()->addPort(new Port(4));
 
     if (i!=0)

@@ -163,6 +163,10 @@ void Network::createReceivers()
 
 void Network::addRingStarPorts()
 {
+    ringStar->routers[3]->addPort(new Port(3, 10));
+    ringStar->routers[4]->addPort(new Port(3, 10));
+    ringStar->routers[5]->addPort(new Port(3, 10));
+
     // torus
     ringStar->routers[0]->addPort(new Port(42, 10));
     ringStar->routers[6]->addPort(new Port(42, 10));

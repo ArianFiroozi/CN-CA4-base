@@ -120,10 +120,6 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
         mask.strToMask(routeStr.split(",")[1]);
         metric = routeStr.split(",")[2].toInt() + 1;
 
-        if (metric > RIP_MAX_HOP)
-            return false;
-
-        bool betterRouteExists = false;
         Route newRoute = Route(IPv4(mask.toStr(), ipAddr.toStr()), mask, IPv4(mask.toStr(), gatewayStr), port, metric);
         for (QString as: routeStr.split(",")[3].split("-"))
             if (as != "")
@@ -146,6 +142,10 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
             if (newRoute.protocol == EBGP)
                 return updated;
 
+        if (metric > RIP_MAX_HOP)
+            return false;
+
+        bool betterRouteExists = false;
         for (int i=0; i<routes.length();i++)
         {
             if (routes[i].dest.ipAddr.addrToNum() == newRoute.dest.ipAddr.addrToNum() &&
