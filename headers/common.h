@@ -12,6 +12,8 @@ const int DEFAULT_EVENT_HANDLER_STOP = 1000000;
 const int MESSAGING_SYSTEM_SEND_PERIOD = 10;
 const int RIP_MAX_HOP = 15;
 const int DEFAULT_BUFFER_SIZE = 10;
+const int SEND_LEASE = 10000;
+const int LEASE_TIMEOUT = 50000;
 
 const QString BROADCAST_ADDRESS ("255.255.255.255/32");
 const QString MESH_DELAY_PATH ("../resources/delays/mesh4x4/portDelays.csv");
