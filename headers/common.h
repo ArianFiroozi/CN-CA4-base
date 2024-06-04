@@ -13,6 +13,7 @@ const int MESSAGING_SYSTEM_SEND_PERIOD = 10;
 const int RIP_MAX_HOP = 15;
 const int DEFAULT_BUFFER_SIZE = 10;
 
+const QString BROADCAST_ADDRESS ("255.255.255.255/32");
 const QString MESH_DELAY_PATH ("../resources/delays/mesh4x4/portDelays.csv");
 const QString MESH_ROUTING_TABLE_PATH ("../resources/routingTables/manualMesh4x4/routingTable");
 const QString RING_STAR_DELAY_PATH("../resources/delays/ringStar/portDelays.csv");

@@ -72,6 +72,13 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         return;
     }
 
+    // loop detection for broadcast
+    if (packet->getDest().getIPStr() == BROADCAST_ADDRESS && packet->getPath().contains(QString::number(id)))
+    {
+        // qDebug() << "router" << id << "detected loop!";
+        return;
+    }
+
     switch(packet->getType()){
     case MSG:
         // routingTable.print();
@@ -151,6 +158,14 @@ void Router::tick(int _time)
 bool Router::sendPacket(QSharedPointer<Packet> packet)
 {
     IPv4 dest = packet->getDest();
+
+    if (dest.getIPStr() == BROADCAST_ADDRESS)
+    {
+        for (auto port:ports)
+            waitingQueue.append(WaitingQueueLine(port, packet, port->delay, clk));
+        return true;
+    }
+
     Route sendRoute = routingTable.findBestRoute(dest);
 
     if (!packet->getDest().includes(sendRoute.dest))
