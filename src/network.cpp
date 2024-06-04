@@ -5,9 +5,15 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
     eventHandler = _eventHandler;
     running = false;
 
-    ringStar = new RingStar(7, {2, 4, 6, 7}, IPv4("255.255.255.0", "10.0.0.0"), protocol, true);
-    mesh = new Mesh(4, 4, IPv4("255.255.255.0", "20.0.0.0"), protocol, true);
-    torus = new Torus(3,3,IPv4("255.255.255.0", "30.0.0.0"), protocol, true);
+    ringStar = new RingStar(7, {2, 4, 6, 7}, IPv4("255.255.255.0", "10.0.0.0"), protocol, true,
+                            new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.10.0"),
+                                           new IPv4("255.255.255.255", "192.168.10.250"), new Port(555, 10)));
+    mesh = new Mesh(4, 4, IPv4("255.255.255.0", "20.0.0.0"), protocol, true,
+                    new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.20.0"),
+                                   new IPv4("255.255.255.255", "192.168.20.250"), new Port(555, 10)));
+    torus = new Torus(3,3,IPv4("255.255.255.0", "30.0.0.0"), protocol, true,
+                      new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.30.0"),
+                                     new IPv4("255.255.255.255", "192.168.30.250"), new Port(555, 10)));
 
     eventThread = new QThread();
     eventHandler->moveToThread(eventThread);
@@ -147,22 +153,22 @@ void Network::createSenders()
 
 void Network::createReceivers()
 {
-    receivers.append(new PC(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1, 10)));
-    receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(5, 10)));
-    receivers.append(new PC(3, new IPv4("255.255.255.255", "192.168.20.3"), new Port(1, 10)));
-    receivers.append(new PC(4, new IPv4("255.255.255.255", "192.168.20.4"), new Port(5, 10)));
-    receivers.append(new PC(5, new IPv4("255.255.255.255", "192.168.20.5"), new Port(1, 10)));
-    receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
-    receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
-    receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
-    // receivers.append(new PC(1, new Port(1, 10)));
-    // receivers.append(new PC(2, new Port(5, 10)));
-    // receivers.append(new PC(3, new Port(1, 10)));
-    // receivers.append(new PC(4, new Port(5, 10)));
-    // receivers.append(new PC(5, new Port(1, 10)));
-    // receivers.append(new PC(6, new Port(5, 10)));
-    // receivers.append(new PC(7, new Port(1, 10)));
-    // receivers.append(new PC(8, new Port(5, 10)));
+    // receivers.append(new PC(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1, 10)));
+    // receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(5, 10)));
+    // receivers.append(new PC(3, new IPv4("255.255.255.255", "192.168.20.3"), new Port(1, 10)));
+    // receivers.append(new PC(4, new IPv4("255.255.255.255", "192.168.20.4"), new Port(5, 10)));
+    // receivers.append(new PC(5, new IPv4("255.255.255.255", "192.168.20.5"), new Port(1, 10)));
+    // receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
+    // receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
+    // receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
+    receivers.append(new PC(1, new Port(1, 10)));
+    receivers.append(new PC(2, new Port(5, 10)));
+    receivers.append(new PC(3, new Port(1, 10)));
+    receivers.append(new PC(4, new Port(5, 10)));
+    receivers.append(new PC(5, new Port(1, 10)));
+    receivers.append(new PC(6, new Port(5, 10)));
+    receivers.append(new PC(7, new Port(1, 10)));
+    receivers.append(new PC(8, new Port(5, 10)));
 
     for (auto receiver: receivers)
         QObject::connect(receiver, &PC::packetReceived,
@@ -346,7 +352,7 @@ void Network::tick(double time)
 {
     if (!running) return;
 
-    // if (time < 500) return;
+    // if (time < 50) return;
     // temporary no message
     if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
     {

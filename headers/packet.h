@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVector>
 #include <QMutex>
+#include <QMutexLocker>
 
 #include "ip.h"
 

@@ -78,3 +78,8 @@ void PC::sendDhcpRequest()
                                              IPv4("255.255.255.255", "255.255.255.255")));
     port->write(packet);
 }
+
+bool PC::hasIP()
+{
+    return ipSet;
+}

@@ -8,9 +8,8 @@ QVector<QString> Packet::getPath() const
 
 void Packet::addToPath(QString newRouterAdd)
 {
-    mutex.lock();
+    QMutexLocker lock(&mutex);
     path.append(newRouterAdd);
-    mutex.unlock();
 }
 
 int Packet::getQueueWaitCycles() const

@@ -21,6 +21,7 @@ public:
     void recievePacket(QSharedPointer<Packet> packet);
     void sendPacket(QSharedPointer<Packet> packet);
     void start();
+    bool hasIP();
 
 signals:
     void packetReceived(QSharedPointer<Packet> packet);

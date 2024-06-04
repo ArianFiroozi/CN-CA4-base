@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <QString>
+#include <QMutex>
 
 const int RIP_TIMEOUT = 1800;
 const int RIP_SEND_ROUTING_TABLE = 300;

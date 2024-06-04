@@ -16,17 +16,14 @@ void Cluster::connectTick(EventHandler* eventHandler)
                          router, &Router::tick);
     }
 
-    // dhcpServer = new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.20.0"),
-    //                             new IPv4("255.255.255.255", "192.168.20.250"), new Port(555, 1));
+    routers[0]->addPort(new Port(555, 10));
+    QObject::connect(dhcpServer->port, &Port::getPacket,
+                     routers[0], &Router::recievePacket);
+    QObject::connect(routers[0]->getPortWithID(555), &Port::getPacket,
+                     dhcpServer, &DhcpServer::recievePacket);
 
-    // routers[0]->addPort(new Port(555, 1));
-    // QObject::connect(dhcpServer->port, &Port::getPacket,
-    //                  routers[0], &Router::recievePacket);
-    // QObject::connect(routers[0]->getPortWithID(555), &Port::getPacket,
-    //                  dhcpServer, &DhcpServer::recievePacket);
-
-    // QObject::connect(eventHandler, &EventHandler::tick,
-    //                  dhcpServer, &DhcpServer::tick);
+    QObject::connect(eventHandler, &EventHandler::tick,
+                     dhcpServer, &DhcpServer::tick);
 }
 
 void Cluster::printRoutingTables()
@@ -66,7 +63,18 @@ void Cluster::addPortDelays(QString address)
     }
 }
 
-Mesh::Mesh(int _x, int _y, IPv4 netAddrIP, RoutingProtocol _protocol, bool delayedPorts)
+Cluster::Cluster(IPv4 *dhcpIP, IPv4 *dhcpStart, IPv4 *dhcpEnd)
+{
+    dhcpServer = new DhcpServer(dhcpIP, dhcpStart, dhcpEnd, new Port(555, 10));
+}
+
+Cluster::Cluster(DhcpServer* _dhcpServer)
+{
+    dhcpServer = _dhcpServer;
+}
+
+Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
+    : Cluster(_dhcpServer)
 {
     makeDummyApp();
 
@@ -193,7 +201,7 @@ void Mesh::getStaticRoutingTables()
     }
 }
 
-RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, RoutingProtocol _protocol, bool delayedPorts)
+RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
 {
     makeDummyApp();
 
@@ -343,8 +351,8 @@ void Torus::connectRouters(int i, int j)
     }
 }
 
-Torus::Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol, bool delayedPorts)
-    : Mesh(_x, _y, netAddIP, _protocol, false)
+Torus::Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
+    : Mesh(_x, _y, netAddIP, _protocol, false, _dhcpServer)
 {
     for(int i=0;i<y;i++)
         for (int j=0;j<x;j++)
