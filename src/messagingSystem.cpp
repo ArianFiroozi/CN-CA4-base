@@ -16,7 +16,7 @@ MessagingSystem::MessagingSystem(int lambda, const QVector<PC *> &receivers, con
 QVector<QSharedPointer<Packet>> MessagingSystem::generatePackets() {
     packets = QVector<QSharedPointer<Packet>> ();
     int messageNum = numOfPackets();
-    int src = 1; //rand() % senders.size();
+    int src = rand() % senders.size();
     int dest = rand() % receivers.size();
 
     for (int i=0;i<messageNum;i++)

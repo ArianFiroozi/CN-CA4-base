@@ -16,17 +16,17 @@ void Cluster::connectTick(EventHandler* eventHandler)
                          router, &Router::tick);
     }
 
-    dhcpServer = new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.20.0"),
-                                new IPv4("255.255.255.255", "192.168.20.250"), new Port(555, 1));
+    // dhcpServer = new DhcpServer(new IPv4("255.255.255.255", "0.0.0.0"), new IPv4("255.255.255.255", "192.168.20.0"),
+    //                             new IPv4("255.255.255.255", "192.168.20.250"), new Port(555, 1));
 
-    routers[0]->addPort(new Port(555, 1));
-    QObject::connect(dhcpServer->port, &Port::getPacket,
-                     routers[0], &Router::recievePacket);
-    QObject::connect(routers[0]->getPortWithID(555), &Port::getPacket,
-                     dhcpServer, &DhcpServer::recievePacket);
+    // routers[0]->addPort(new Port(555, 1));
+    // QObject::connect(dhcpServer->port, &Port::getPacket,
+    //                  routers[0], &Router::recievePacket);
+    // QObject::connect(routers[0]->getPortWithID(555), &Port::getPacket,
+    //                  dhcpServer, &DhcpServer::recievePacket);
 
-    QObject::connect(eventHandler, &EventHandler::tick,
-                     dhcpServer, &DhcpServer::tick);
+    // QObject::connect(eventHandler, &EventHandler::tick,
+    //                  dhcpServer, &DhcpServer::tick);
 }
 
 void Cluster::printRoutingTables()
@@ -48,7 +48,6 @@ void Cluster::addPortDelays(QString address)
         {
             cout << address.toStdString()<<" no such file!"<<endl;
             exit(0);
-            return;
         }
 
         QTextStream in(&file);
@@ -244,7 +243,6 @@ void RingStar::connectRingRouters(int i)
 {
     routers.last()->addPort(new Port(2));
     routers.last()->addPort(new Port(10 + i + 1)); //for star
-    // routers.last()->addPort(new Port(3));
     routers.last()->addPort(new Port(4));
 
     if (i!=0)
