@@ -42,7 +42,8 @@ private:
     void connectTorus();
     void packetSent();
     void packetDropped();
-
+    
+    void connectPcTick();
 public:
     QVector<PC*> senders, receivers;
 

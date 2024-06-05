@@ -30,6 +30,7 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
     ringStar->connectTick(eventHandler);
     mesh->connectTick(eventHandler);
     torus->connectTick(eventHandler);
+    connectPcTick();
 
     messagingSystem = new MessagingSystem(lambda, receivers, senders);
     packetsSent = packetsReceived = totalWaitCycles = totalQueueWaitCycles = packetsDropped = 0;
@@ -132,6 +133,14 @@ void Network::packetSent()
 void Network::packetDropped()
 {
     packetsDropped++;
+}
+
+void Network::connectPcTick()
+{
+    for (auto receiver:receivers)
+        receiver->connectTick(eventHandler);
+    for (auto sender:senders)
+        sender->connectTick(eventHandler);
 }
 
 void Network::createSenders()
@@ -351,7 +360,7 @@ void Network::start()
     for (auto receiver:receivers)
         receiver->start();
     for (auto sender:senders)
-       sender->start();
+        sender->start();
 
     emit eventHandler->startSig();
     running = true;

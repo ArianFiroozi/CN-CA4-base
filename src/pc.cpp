@@ -73,13 +73,37 @@ void PC::sendHello()
 
 void PC::sendDhcpRequest()
 {
-    qDebug() << "sending req";
+    qDebug() << "sending DHCP req";
     QSharedPointer<Packet> packet(new Packet(QString::number(id), DHCP_REQUEST, IPV4, IPv4("255.255.255.255", "255.255.255.255"),
                                              IPv4("255.255.255.255", "255.255.255.255")));
     port->write(packet);
+    lastDhcpRq = clk;
 }
 
 bool PC::hasIP()
 {
     return ipSet;
+}
+
+void PC::connectTick(EventHandler *eventHandler)
+{
+    QObject::connect(eventHandler, &EventHandler::tick,
+                     this, &PC::tick, Qt::ConnectionType::QueuedConnection);
+}
+
+void PC::tick(int time)
+{
+    clk = time;
+    if (!hasIP()&&time > lastDhcpRq + 100)
+        sendDhcpRequest();
+    if (hasIP() && time % SEND_LEASE == 0)
+        sendLease();
+    //TODO: forward packets
+}
+
+void PC::sendLease()
+{
+    QSharedPointer<Packet> packet(new Packet(QString::number(id), DHCP_LEASE, IPV4, IPv4("255.255.255.255", "255.255.255.255"),
+                                             IPv4("255.255.255.255", "255.255.255.255")));
+    port->write(packet);
 }

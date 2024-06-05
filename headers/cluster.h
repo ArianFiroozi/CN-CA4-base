@@ -10,11 +10,13 @@
 
 class Cluster
 {
+private:
+    QThread *dhcpThread;
+    DhcpServer* dhcpServer;
 protected:
     void makeDummyApp();
     QCoreApplication* dummy;
     RoutingProtocol protocol;
-    DhcpServer* dhcpServer;
     void addPortDelays(QString address);
 
 public:

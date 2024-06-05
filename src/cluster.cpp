@@ -71,6 +71,9 @@ Cluster::Cluster(IPv4 *dhcpIP, IPv4 *dhcpStart, IPv4 *dhcpEnd)
 Cluster::Cluster(DhcpServer* _dhcpServer)
 {
     dhcpServer = _dhcpServer;
+    dhcpThread=new QThread();
+    dhcpServer->moveToThread(dhcpThread);
+    dhcpThread->start();
 }
 
 Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
