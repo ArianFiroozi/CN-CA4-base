@@ -2,38 +2,17 @@
 
 #include "../headers/common.h"
 
-int portTranslation(int other)
-{
-    switch (other)
-    {
-    case 1:
-        return 3;
-    case 2:
-        return 4;
-    case 3: // handler to star seperatley
-        return 1;
-    case 4:
-        return 2;
-    default:
-        return other; //star
-    }
-}
-
 void Router::forwardTable()
 {
-    if (protocol == RIP)
+    for (Port* port:ports)
     {
-        for (Port* port:ports)
-            if (!doNotSend.contains(port->id))
-                waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringRIP(*ip), ROUTING_TABLE_RIP, IPV4, *ip, *ip)),
-                                                     port->delay, clk));
-    }
-    else if (protocol == OSPF)
-    {
-        for (Port* port:ports)
-            if (!doNotSend.contains(port->id))
-                waitingQueue.append(WaitingQueueLine(port,QSharedPointer<Packet>(new Packet(routingTable.toStringOSPF(*ip), LSA, IPV4, *ip, *ip)),
-                                                     port->delay, clk));
+        QString routingTableStr = routingTable.toString(*ip, port->id);
+        if (routingTableStr=="")
+            continue;
+        waitingQueue.append(WaitingQueueLine(port, QSharedPointer<Packet>(
+                                                       new Packet(routingTableStr,
+                                                                  protocol == RIP?ROUTING_TABLE_RIP:LSA, IPV4, *ip, *ip)),
+                                             1, clk));
     }
 }
 
@@ -84,7 +63,6 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, IPv4("255.255.255.255", ip->ipAddr.toStr()),
                                     this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
         sendTable = true;
-        doNotSend.append(portTranslation(packet->getPortID()));
         break;
     case ROUTING_TABLE_RIP:
         sendTable = routingTable.updateFromPacketRIP(
@@ -95,6 +73,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         sendTable = routingTable.updateFromPacketOSPF(
                         packet->getString(), getPortWithID(portTranslation(packet->getPortID())))
                     || sendTable;
+        // qDebug() << ip->getIPStr() << sendTable << "not to" ;
         break;
     case DHCP_LEASE:
     case DHCP_REQUEST:
@@ -147,7 +126,6 @@ void Router::tick(int _time)
     if (sendTable)
     {
         forwardTable();
-        doNotSend = QVector<int> ();
         sendTable = false;
     }
     else

@@ -9,6 +9,8 @@
 
 using namespace std;
 
+int portTranslation(int other);
+
 enum RouteGate
 {
     IBGP,
@@ -57,9 +59,8 @@ public:
     void initFromFile(QString address);
     void initFromFile(QString address, Port* port);
     bool updateFromPacketRIP(QString msg, Port* port, int time);
-    QString toStringRIP(IPv4 gateway);
+    QString toString(IPv4 gateway, int portID);
     bool updateFromPacketOSPF(QString msg, Port* port);
-    QString toStringOSPF(IPv4 gateway);
     void removeTimeOutRoutes(int time);
 };
 

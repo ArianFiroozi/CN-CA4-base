@@ -35,7 +35,6 @@ private:
     bool sendTable;
     void forwardTable();
     int clk;
-    QVector<int> doNotSend;
     QVector<WaitingQueueLine> waitingQueue;
     int bufferSize;
 

@@ -136,19 +136,28 @@ void Network::packetDropped()
 
 void Network::createSenders()
 {
-    senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(21, 10)));
-    senders.append(new PC(2, new IPv4("255.255.255.255", "192.168.10.2"), new Port(22, 10)));
-    senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
-    senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
-    senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
-    senders.append(new PC(6, new IPv4("255.255.255.255", "192.168.30.1"), new Port(31, 10)));
-    senders.append(new PC(7, new IPv4("255.255.255.255", "192.168.30.2"), new Port(32, 10)));
-    senders.append(new PC(8, new IPv4("255.255.255.255", "192.168.30.3"), new Port(33, 10)));
+    // senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(21, 10)));
+    // senders.append(new PC(2, new IPv4("255.255.255.255", "192.168.10.2"), new Port(22, 10)));
+    // senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
+    // senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
+    // senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
+    // senders.append(new PC(6, new IPv4("255.255.255.255", "192.168.30.1"), new Port(31, 10)));
+    // senders.append(new PC(7, new IPv4("255.255.255.255", "192.168.30.2"), new Port(32, 10)));
+    // senders.append(new PC(8, new IPv4("255.255.255.255", "192.168.30.3"), new Port(33, 10)));
+
+    senders.append(new PC(1, new Port(21, 10)));
+    senders.append(new PC(2, new Port(22, 10)));
+    senders.append(new PC(3, new Port(23, 10)));
+    senders.append(new PC(4, new Port(21, 10)));
+    senders.append(new PC(5, new Port(22, 10)));
+    senders.append(new PC(6, new Port(31, 10)));
+    senders.append(new PC(7, new Port(32, 10)));
+    senders.append(new PC(8, new Port(33, 10)));
 
 
     for (auto sender: senders)
         QObject::connect(sender, &PC::packetSent,
-                         this, &Network::packetSent);
+                         this, &Network::packetSent, Qt::ConnectionType::QueuedConnection);
 }
 
 void Network::createReceivers()
@@ -172,7 +181,7 @@ void Network::createReceivers()
 
     for (auto receiver: receivers)
         QObject::connect(receiver, &PC::packetReceived,
-                         this, &Network::packetReceived);
+                         this, &Network::packetReceived, Qt::ConnectionType::QueuedConnection);
 }
 
 void Network::addRingStarPorts()
@@ -215,9 +224,9 @@ void Network::addMeshPorts()
 void Network::addTorusPorts()
 {
     // senders
-    torus->routers[6]->addPort(new Port(5, 10));
-    torus->routers[7]->addPort(new Port(5, 10));
-    torus->routers[8]->addPort(new Port(5, 10));
+    torus->routers[6]->addPort(new Port(31, 10));
+    torus->routers[7]->addPort(new Port(32, 10));
+    torus->routers[8]->addPort(new Port(33, 10));
 
     // ring star
     torus->routers[2]->addPort(new Port(42, 10));
@@ -268,15 +277,15 @@ void Network::connectRingStar()
 
 void Network::connectTorus()
 {
-    QObject::connect(torus->routers[6]->getPortWithID(5), &Port::getPacket,
+    QObject::connect(torus->routers[6]->getPortWithID(31), &Port::getPacket,
                      senders[5], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(senders[5]->port, &Port::getPacket,
                      torus->routers[6], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
-    QObject::connect(torus->routers[7]->getPortWithID(5), &Port::getPacket,
+    QObject::connect(torus->routers[7]->getPortWithID(32), &Port::getPacket,
                      senders[6], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(senders[6]->port, &Port::getPacket,
                      torus->routers[7], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
-    QObject::connect(torus->routers[8]->getPortWithID(5), &Port::getPacket,
+    QObject::connect(torus->routers[8]->getPortWithID(33), &Port::getPacket,
                      senders[7], &PC::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(senders[7]->port, &Port::getPacket,
                      torus->routers[8], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
@@ -341,8 +350,8 @@ void Network::start()
 
     for (auto receiver:receivers)
         receiver->start();
-    // for (auto sender:senders)
-    //     sender->start();
+    for (auto sender:senders)
+       sender->start();
 
     emit eventHandler->startSig();
     running = true;

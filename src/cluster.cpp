@@ -13,17 +13,17 @@ void Cluster::connectTick(EventHandler* eventHandler)
     for (Router* router : routers)
     {
         QObject::connect(eventHandler, &EventHandler::tick,
-                         router, &Router::tick);
+                         router, &Router::tick, Qt::ConnectionType::QueuedConnection);
     }
 
     routers[0]->addPort(new Port(555, 10));
     QObject::connect(dhcpServer->port, &Port::getPacket,
-                     routers[0], &Router::recievePacket);
+                     routers[0], &Router::recievePacket, Qt::ConnectionType::QueuedConnection);
     QObject::connect(routers[0]->getPortWithID(555), &Port::getPacket,
-                     dhcpServer, &DhcpServer::recievePacket);
+                     dhcpServer, &DhcpServer::recievePacket, Qt::ConnectionType::QueuedConnection);
 
     QObject::connect(eventHandler, &EventHandler::tick,
-                     dhcpServer, &DhcpServer::tick);
+                     dhcpServer, &DhcpServer::tick, Qt::ConnectionType::QueuedConnection);
 }
 
 void Cluster::printRoutingTables()
@@ -202,6 +202,7 @@ void Mesh::getStaticRoutingTables()
 }
 
 RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
+    :Cluster(_dhcpServer)
 {
     makeDummyApp();
 

@@ -3,6 +3,25 @@
 
 #include <QFile>
 
+int portTranslation(int other)
+{
+    {
+        switch (other)
+        {
+        case 1:
+            return 3;
+        case 2:
+            return 4;
+        case 3: // handler to star seperatley
+            return 1;
+        case 4:
+            return 2;
+        default:
+            return other; //star
+        }
+    }
+}
+
 RoutingTable::RoutingTable(IPv4 *_masterIP)
 {
     masterIP = _masterIP;
@@ -109,7 +128,7 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
     for (QString routeStr : routesStr)
     {
         if (routeStr == gatewayStr)
-            break;
+            continue;
 
         int metric;
         IPAddr ipAddr;
@@ -130,7 +149,7 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
 
         if (masterIP->ipAddr.netID1 != newRoute.asIDs.last()){
             if (newRoute.asIDs.contains(this->masterIP->ipAddr.netID1))
-                return updated;
+                continue;
 
             newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
             newRoute.metric = newRoute.asIDs.size();
@@ -139,10 +158,10 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
 
         if (masterIP->includes(newRoute.gateway))
             if (newRoute.protocol == EBGP)
-                return updated;
+                continue;
 
         if (metric > RIP_MAX_HOP)
-            return false;
+            continue;
 
         bool betterRouteExists = false;
         for (int i=0; i<routes.length();i++)
@@ -181,13 +200,14 @@ void RoutingTable::removeTimeOutRoutes(int time)
 
 bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
 {
+    // qDebug()  << "in"<< masterIP->ipAddr.toStr()<< msg;
     int updated = false;
     QVector<QString> routesStr = msg.split("#");
     QString gatewayStr = routesStr[routesStr.length() - 1];
     for (QString routeStr : routesStr)
     {
         if (routeStr == gatewayStr)
-            break;
+            continue;
 
         int metric;
         IPAddr ipAddr;
@@ -207,7 +227,7 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
 
         if (masterIP->ipAddr.netID1 != newRoute.asIDs.last()){
             if (newRoute.asIDs.contains(this->masterIP->ipAddr.netID1))
-                return updated;
+                continue;
 
             newRoute.asIDs.append(this->masterIP->ipAddr.netID1);
             newRoute.metric = newRoute.asIDs.size();
@@ -216,7 +236,7 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
 
         if (masterIP->includes(newRoute.gateway))
             if (newRoute.protocol == EBGP)
-                return updated;
+                continue;
 
         bool betterRouteExists = false;
         for (int i=0; i<routes.length();i++)
@@ -240,50 +260,31 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
     return updated;
 }
 
-QString RoutingTable::toStringRIP(IPv4 gateway)
+QString RoutingTable::toString(IPv4 gateway, int portID)
 {
-    QString ripStr;
-
+    QString rtStr;
+    int routeCount=0;
     for (Route route : routes)
     {
-        ripStr.append(route.dest.ipAddr.toStr());
-        ripStr.append(",");
-        ripStr.append(route.dest.mask.toStr());
-        ripStr.append(",");
-        ripStr.append(QString::number(route.metric));
-        ripStr.append(",");
+        if (!route.port || route.port->id == portID)
+            continue;
+
+        routeCount++;
+        rtStr.append(route.dest.ipAddr.toStr());
+        rtStr.append(",");
+        rtStr.append(route.dest.mask.toStr());
+        rtStr.append(",");
+        rtStr.append(QString::number(route.metric));
+        rtStr.append(",");
         for(int as:route.asIDs)
         {
-            ripStr.append(QString::number(as));
-            ripStr.append("-");
+            rtStr.append(QString::number(as));
+            rtStr.append("-");
         }
-        ripStr.append("#");
+        rtStr.append("#");
     }
-    ripStr.append(gateway.ipAddr.toStr());
-    return ripStr;
-}
-
-QString RoutingTable::toStringOSPF(IPv4 gateway)
-{
-    QString ripStr;
-
-    for (Route route : routes)
-    {
-        ripStr.append(route.dest.ipAddr.toStr());
-        ripStr.append(",");
-        ripStr.append(route.dest.mask.toStr());
-        ripStr.append(",");
-        ripStr.append(QString::number(route.metric));
-        ripStr.append(",");
-        for(int as:route.asIDs)
-        {
-            ripStr.append(QString::number(as));
-            ripStr.append("-");
-        }
-        ripStr.append("#");
-    }
-    ripStr.append(gateway.ipAddr.toStr());
-    return ripStr;
+    rtStr.append(gateway.ipAddr.toStr());
+    return routeCount?rtStr:"";
 }
 
 Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric, RouteGate _protocol) :
