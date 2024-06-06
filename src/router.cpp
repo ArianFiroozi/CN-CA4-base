@@ -62,7 +62,7 @@ void Router::getHello(QSharedPointer<Packet> packet)
 
 void Router::processMsg(QSharedPointer<Packet> packet)
 {
-    if (ipVer==IPV6&&packet->getString()=="tunneled")
+    if (ipVer==IPV6&&packet->getString()==TUNNEL_FLAG)
     {
         qDebug() << "got tunneled message on" <<id;
         buffer.append(packet->tunnelPacket);
@@ -163,7 +163,7 @@ void Router::tick(int _time)
 QSharedPointer<Packet> Router::tunnelPacket(QSharedPointer<Packet> packet)
 {
     qDebug() << "tunneling" << id ;
-    QSharedPointer<Packet> tunneledPacket(new Packet("tunneled", packet->getType(), IPV4, packet->getSource(), packet->getDest()));
+    QSharedPointer<Packet> tunneledPacket(new Packet(TUNNEL_FLAG, packet->getType(), IPV4, packet->getSource(), packet->getDest()));
     tunneledPacket->tunnelPacket = packet;
 
     return tunneledPacket;

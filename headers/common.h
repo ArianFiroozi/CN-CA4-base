@@ -22,5 +22,6 @@ const QString MESH_ROUTING_TABLE_PATH ("../resources/routingTables/manualMesh4x4
 const QString RING_STAR_DELAY_PATH("../resources/delays/ringStar/portDelays.csv");
 const QString RING_STAR_ROUTING_TABLE_PATH("../resources/routingTables/manualRingStar/routingTable");
 const QString TORUS_DELAY_PATH("../resources/delays/torus/portDelays.csv");
+const QString TUNNEL_FLAG("tunneled");
 
 #endif // COMMON_H

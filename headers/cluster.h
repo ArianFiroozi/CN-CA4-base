@@ -23,6 +23,7 @@ public:
     Cluster(IPv4* dhcpIP=new IPv4("255.255.255.255", "0.0.0.0"), IPv4* dhcpStart=new IPv4("255.255.255.255", "192.168.20.0"),
             IPv4* dhcpEnd=new IPv4("255.255.255.255", "192.168.20.250"));
     Cluster(DhcpServer*);
+    ~Cluster();
     QVector<Router*> routers;
     Router* getRouter(int id);
     QVector<QThread*> threads;

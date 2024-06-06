@@ -145,15 +145,6 @@ void Network::connectPcTick()
 
 void Network::createSenders()
 {
-    // senders.append(new PC(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(21, 10)));
-    // senders.append(new PC(2, new IPv4("255.255.255.255", "192.168.10.2"), new Port(22, 10)));
-    // senders.append(new PC(3, new IPv4("255.255.255.255", "192.168.10.3"), new Port(23, 10)));
-    // senders.append(new PC(4, new IPv4("255.255.255.255", "192.168.10.4"), new Port(21, 10)));
-    // senders.append(new PC(5, new IPv4("255.255.255.255", "192.168.10.5"), new Port(22, 10)));
-    // senders.append(new PC(6, new IPv4("255.255.255.255", "192.168.30.1"), new Port(31, 10)));
-    // senders.append(new PC(7, new IPv4("255.255.255.255", "192.168.30.2"), new Port(32, 10)));
-    // senders.append(new PC(8, new IPv4("255.255.255.255", "192.168.30.3"), new Port(33, 10)));
-
     senders.append(new PC(1, new Port(21, 10)));
     senders.append(new PC(2, new Port(22, 10)));
     senders.append(new PC(3, new Port(23, 10)));
@@ -171,14 +162,6 @@ void Network::createSenders()
 
 void Network::createReceivers()
 {
-    // receivers.append(new PC(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1, 10)));
-    // receivers.append(new PC(2, new IPv4("255.255.255.255", "192.168.20.2"), new Port(5, 10)));
-    // receivers.append(new PC(3, new IPv4("255.255.255.255", "192.168.20.3"), new Port(1, 10)));
-    // receivers.append(new PC(4, new IPv4("255.255.255.255", "192.168.20.4"), new Port(5, 10)));
-    // receivers.append(new PC(5, new IPv4("255.255.255.255", "192.168.20.5"), new Port(1, 10)));
-    // receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
-    // receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
-    // receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
     receivers.append(new PC(1, new Port(1, 10), IPV6));
     receivers.append(new PC(2, new Port(5, 10), IPV6));
     receivers.append(new PC(3, new Port(1, 10), IPV6));
@@ -370,8 +353,6 @@ void Network::tick(double time)
 {
     if (!running) return;
 
-    // if (time < 50) return;
-    // temporary no message
     if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
     {
         QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();

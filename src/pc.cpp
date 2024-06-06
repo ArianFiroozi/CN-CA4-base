@@ -14,6 +14,7 @@ PC::PC(int _id, IP* _ip, Port* _port, IPVersion _ipVer, QObject *parent)
 }
 
 PC::PC(int _id, Port *_port, IPVersion _ipVer, QObject *parent)
+    : QObject{parent}
 {
     ipVer = _ipVer;
     id = _id;

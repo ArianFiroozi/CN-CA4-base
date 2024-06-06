@@ -76,6 +76,20 @@ Cluster::Cluster(DhcpServer* _dhcpServer)
     dhcpThread->start();
 }
 
+Cluster::~Cluster()
+{
+    dummy->quit();
+    dummy->deleteLater();
+
+    for (auto thread : threads)
+    {
+        thread->quit();
+        thread->deleteLater();
+    }
+    dhcpThread->quit();
+    dhcpThread->deleteLater();
+}
+
 Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
     : Cluster(_dhcpServer)
 {
@@ -112,10 +126,12 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool dela
 
 Mesh::~Mesh()
 {
-    dummy->exit();
+    dummy->quit();
+    dummy->deleteLater();
+
     for (auto thread : threads)
     {
-        thread->exit();
+        thread->quit();
         thread->deleteLater();
     }
 }
@@ -243,10 +259,11 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, 
 
 RingStar::~RingStar()
 {
-    dummy->exit();
+    dummy->quit();
+    dummy->deleteLater();
     for (auto thread : threads)
     {
-        thread->exit();
+        thread->quit();
         thread->deleteLater();
     }
 }

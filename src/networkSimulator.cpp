@@ -14,8 +14,6 @@ NetworkSimulator::NetworkSimulator(QWidget *parent)
 
 void NetworkSimulator::start()
 {
-    // ui->start->setEnabled(false);
-
     eventHandler = new EventHandler(tickDuration, tickCount);
     network = new Network(eventHandler, protocol, lambda);
 
@@ -76,8 +74,6 @@ void NetworkSimulator::tick(int tickNum)
         qDebug() <<"highest waiting time:"<< network->getHighestWait();
         qDebug() <<"highest queue waiting time:"<< network->getHighestQueueWait();
         qDebug() <<"least queue waiting time:"<< network->getLeastQueueWait();
-
-        // delete network;
         exit(0);
     }
 }
