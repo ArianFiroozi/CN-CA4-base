@@ -4,8 +4,8 @@
 #include <QString>
 #include <QMutex>
 
-const int RIP_TIMEOUT = 1800;
-const int RIP_SEND_ROUTING_TABLE = 300;
+const int RIP_TIMEOUT = 18000;
+const int RIP_SEND_ROUTING_TABLE = 3000;
 const int DEFAULT_LAMBDA = 5;
 const int DEFAULT_CYCLE_COUNT = 1000;
 const int DEFAULT_CYCLE_DURATION = 10;
