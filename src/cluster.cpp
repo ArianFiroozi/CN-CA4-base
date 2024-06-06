@@ -91,7 +91,7 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool dela
         {
             IPv4 newIP(netAddrIP.mask, netAddrIP.ipAddr);
             newIP.ipAddr.hostID += i*x + j + 1;
-            routers.append(new Router(i*x+j+1, new IPv4(newIP.mask.toStr(), newIP.ipAddr.toStr()), _protocol));
+            routers.append(new Router(i*x+j+1, new IPv4(newIP.mask.toStr(), newIP.ipAddr.toStr()), _protocol, IPV6));
             connectRouters(i, j);
         }
     }

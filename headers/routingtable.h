@@ -27,13 +27,18 @@ struct Route
     int timeOut;
     QVector<int> asIDs;
     RouteGate protocol;
+    IPVersion ipVer;
 
-    Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric = -1, RouteGate _protocol = IBGP);
+    Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric = -1, RouteGate _protocol = IBGP, IPVersion _ipVer=IPV4);
 
     void print()
     {
         QDebug deb = qDebug();
-        deb << "\t" << dest.getIPStr().toStdString() << "via" << gateway.getIPStr().toStdString();
+        if (ipVer==IPV6)
+            deb << "\t" << IPv6::mapFromIPv4(dest).getIPStr().toStdString() << "via" <<
+                IPv6::mapFromIPv4(gateway).getIPStr().toStdString();
+        else
+            deb << "\t" << dest.getIPStr().toStdString() << "via" << gateway.getIPStr().toStdString();
         deb << "metric =" << metric;
         deb << ((protocol == IBGP)? "iBGP" : "eBGP");
         deb << "AS:";
@@ -58,9 +63,9 @@ public:
     void print();
     void initFromFile(QString address);
     void initFromFile(QString address, Port* port);
-    bool updateFromPacketRIP(QString msg, Port* port, int time);
+    bool updateFromPacketRIP(QString msg, Port* port, int time, IPVersion ipVer);
     QString toString(IPv4 gateway, int portID);
-    bool updateFromPacketOSPF(QString msg, Port* port);
+    bool updateFromPacketOSPF(QString msg, Port* port, IPVersion ipVer);
     void removeTimeOutRoutes(int time);
 };
 

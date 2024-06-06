@@ -11,7 +11,7 @@ void Router::forwardTable()
             continue;
         waitingQueue.append(WaitingQueueLine(port, QSharedPointer<Packet>(
                                                        new Packet(routingTableStr,
-                                                                  protocol == RIP?ROUTING_TABLE_RIP:LSA, IPV4, *ip, *ip)),
+                                                                  protocol == RIP?ROUTING_TABLE_RIP:LSA, ipVer, *ip, *ip)),
                                              1, clk));
     }
 }
@@ -30,16 +30,34 @@ void Router::sendWaiting()
         waitingQueue.remove(i);
 }
 
-Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, int _bufferSize, QThread *parent)
+Router::Router(int _id, IPv4 *_ip, RoutingProtocol _protocol, IPVersion _ipVer, int _bufferSize, QThread *parent)
     : QThread{parent},
     ip(_ip),
     routingTable(RoutingTable(ip))
 {
+    ipVer = _ipVer;
     id = _id;
     protocol = _protocol;
     sendTable = false;
     clk = -1;
     bufferSize = _bufferSize;
+
+    if (ipVer == IPV6)
+    {
+        ip6 = new IPv6(128);
+        *ip6 = ip6->mapFromIPv4(*ip);
+    }
+}
+
+void Router::getHello(QSharedPointer<Packet> packet)
+{
+    if (packet->ipVer == IPV6 && this->ipVer==IPV6)
+        routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, IPv4("255.255.255.255", ip->ipAddr.toStr()),
+                                    this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt(), IBGP, IPV6));
+    else
+        routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, IPv4("255.255.255.255", ip->ipAddr.toStr()),
+                                    this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
+    sendTable = true;
 }
 
 void Router::recievePacket(QSharedPointer<Packet> packet)
@@ -60,18 +78,16 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         buffer.append(packet);
         break;
     case HELLO:
-        routingTable.addRoute(Route(packet->getSource(), packet->getSource().mask, IPv4("255.255.255.255", ip->ipAddr.toStr()),
-                                    this->getPortWithID(portTranslation(packet->getPortID())), packet->getString().toInt()));
-        sendTable = true;
+        getHello(packet);
         break;
     case ROUTING_TABLE_RIP:
         sendTable = routingTable.updateFromPacketRIP(
-                        packet->getString(), getPortWithID(portTranslation(packet->getPortID())), clk)
+                        packet->getString(), getPortWithID(portTranslation(packet->getPortID())), clk, ipVer==IPV4?IPV4:packet->ipVer)
                     || sendTable;
         break;
     case LSA:
         sendTable = routingTable.updateFromPacketOSPF(
-                        packet->getString(), getPortWithID(portTranslation(packet->getPortID())))
+                        packet->getString(), getPortWithID(portTranslation(packet->getPortID())), ipVer==IPV4?IPV4: packet->ipVer)
                     || sendTable;
         // qDebug() << ip->getIPStr() << sendTable << "not to" ;
         break;

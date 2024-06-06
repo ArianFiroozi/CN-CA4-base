@@ -120,7 +120,7 @@ void RoutingTable::initFromFile(QString address, Port* port)
     }
 }
 
-bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
+bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time, IPVersion ipVer)
 {
     int updated = false;
     QVector<QString> routesStr = msg.split("#");
@@ -163,6 +163,7 @@ bool RoutingTable::updateFromPacketRIP(QString msg, Port* port, int time)
         if (metric > RIP_MAX_HOP)
             continue;
 
+        newRoute.ipVer=ipVer;
         bool betterRouteExists = false;
         for (int i=0; i<routes.length();i++)
         {
@@ -198,7 +199,7 @@ void RoutingTable::removeTimeOutRoutes(int time)
             routes.remove(i);
 }
 
-bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
+bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port, IPVersion ipVer)
 {
     // qDebug()  << "in"<< masterIP->ipAddr.toStr()<< msg;
     int updated = false;
@@ -238,6 +239,7 @@ bool RoutingTable::updateFromPacketOSPF(QString msg, Port* port)
             if (newRoute.protocol == EBGP)
                 continue;
 
+        newRoute.ipVer=ipVer;
         bool betterRouteExists = false;
         for (int i=0; i<routes.length();i++)
         {
@@ -287,7 +289,7 @@ QString RoutingTable::toString(IPv4 gateway, int portID)
     return routeCount?rtStr:"";
 }
 
-Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric, RouteGate _protocol) :
+Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric, RouteGate _protocol, IPVersion _ipVer) :
     dest(dest),
     mask(mask),
     gateway(gateway),
@@ -295,4 +297,5 @@ Route::Route(IPv4 dest, const Mask &mask, IPv4 gateway, Port *port, int _metric,
 {
     metric = _metric;
     protocol = _protocol;
+    ipVer = _ipVer;
 }

@@ -32,15 +32,19 @@ class Router : public QThread
 {
     Q_OBJECT
 private:
+    IPVersion ipVer;
     bool sendTable;
     void forwardTable();
     int clk;
     QVector<WaitingQueueLine> waitingQueue;
     int bufferSize;
 
+    void getHello(QSharedPointer<Packet> packet);
+
 public:
-    explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, int _bufferSize=DEFAULT_BUFFER_SIZE, QThread *parent = nullptr);
+    explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, IPVersion=IPV4, int _bufferSize=DEFAULT_BUFFER_SIZE, QThread *parent = nullptr);
     IPv4* ip;
+    IPv6* ip6;
     int id;
     QVector<Port*> ports;
     QVector<QSharedPointer<Packet>> buffer;
