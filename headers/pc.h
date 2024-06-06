@@ -13,8 +13,8 @@ class PC : public QObject
 {
     Q_OBJECT
 public:
-    explicit PC(int _id, IP* _ip, Port* _port,  QObject *parent = nullptr);
-    explicit PC(int _id, Port* _port,  QObject *parent = nullptr);
+    explicit PC(int _id, IP* _ip, Port* _port, IPVersion _ipVer=IPV4, QObject *parent = nullptr);
+    explicit PC(int _id, Port* _port, IPVersion _ipVer=IPV4, QObject *parent = nullptr);
     IP* ip;
     int id;
     Port* port;
@@ -30,6 +30,7 @@ signals:
     void packetReceived(QSharedPointer<Packet> packet);
     void packetSent();
 private:
+    IPVersion ipVer;
     int clk;
     int lastDhcpRq;
     bool dhcp;

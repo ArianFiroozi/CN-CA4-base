@@ -2,9 +2,10 @@
 
 using namespace std;
 
-PC::PC(int _id, IP* _ip, Port* _port, QObject *parent)
+PC::PC(int _id, IP* _ip, Port* _port, IPVersion _ipVer, QObject *parent)
     : QObject{parent}
 {
+    ipVer = _ipVer;
     id = _id;
     ip = _ip;
     port = _port;
@@ -12,8 +13,9 @@ PC::PC(int _id, IP* _ip, Port* _port, QObject *parent)
     ipSet = true;
 }
 
-PC::PC(int _id, Port *_port, QObject *parent)
+PC::PC(int _id, Port *_port, IPVersion _ipVer, QObject *parent)
 {
+    ipVer = _ipVer;
     id = _id;
     port = _port;
     dhcp = true;
@@ -61,6 +63,7 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
 
 void PC::sendPacket(QSharedPointer<Packet> packet)
 {
+    packet->ipVer = ipVer;
     port->write(packet);
     emit packetSent();
 }

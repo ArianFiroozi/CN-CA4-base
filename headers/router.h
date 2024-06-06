@@ -41,6 +41,10 @@ private:
 
     void getHello(QSharedPointer<Packet> packet);
 
+    void processMsg(QSharedPointer<Packet> packet);
+
+    QSharedPointer<Packet> tunnelPacket(QSharedPointer<Packet> packet);
+
 public:
     explicit Router(int _id, IPv4* _ip, RoutingProtocol _protocol = MANUAL, IPVersion=IPV4, int _bufferSize=DEFAULT_BUFFER_SIZE, QThread *parent = nullptr);
     IPv4* ip;

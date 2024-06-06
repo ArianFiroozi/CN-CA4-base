@@ -9,8 +9,6 @@
 
 #include "packet.h"
 
-class Router;
-
 class Port : public QObject
 {
     Q_OBJECT

@@ -159,9 +159,9 @@ void Network::createSenders()
     senders.append(new PC(3, new Port(23, 10)));
     senders.append(new PC(4, new Port(21, 10)));
     senders.append(new PC(5, new Port(22, 10)));
-    senders.append(new PC(6, new Port(31, 10)));
-    senders.append(new PC(7, new Port(32, 10)));
-    senders.append(new PC(8, new Port(33, 10)));
+    senders.append(new PC(6, new Port(31, 10), IPV6));
+    senders.append(new PC(7, new Port(32, 10), IPV6));
+    senders.append(new PC(8, new Port(33, 10), IPV6));
 
 
     for (auto sender: senders)
@@ -179,14 +179,14 @@ void Network::createReceivers()
     // receivers.append(new PC(6, new IPv4("255.255.255.255", "192.168.20.6"), new Port(5, 10)));
     // receivers.append(new PC(7, new IPv4("255.255.255.255", "192.168.20.7"), new Port(1, 10)));
     // receivers.append(new PC(8, new IPv4("255.255.255.255", "192.168.20.8"), new Port(5, 10)));
-    receivers.append(new PC(1, new Port(1, 10)));
-    receivers.append(new PC(2, new Port(5, 10)));
-    receivers.append(new PC(3, new Port(1, 10)));
-    receivers.append(new PC(4, new Port(5, 10)));
-    receivers.append(new PC(5, new Port(1, 10)));
-    receivers.append(new PC(6, new Port(5, 10)));
-    receivers.append(new PC(7, new Port(1, 10)));
-    receivers.append(new PC(8, new Port(5, 10)));
+    receivers.append(new PC(1, new Port(1, 10), IPV6));
+    receivers.append(new PC(2, new Port(5, 10), IPV6));
+    receivers.append(new PC(3, new Port(1, 10), IPV6));
+    receivers.append(new PC(4, new Port(5, 10), IPV6));
+    receivers.append(new PC(5, new Port(1, 10), IPV6));
+    receivers.append(new PC(6, new Port(5, 10), IPV6));
+    receivers.append(new PC(7, new Port(1, 10), IPV6));
+    receivers.append(new PC(8, new Port(5, 10), IPV6));
 
     for (auto receiver: receivers)
         QObject::connect(receiver, &PC::packetReceived,

@@ -60,6 +60,17 @@ void Router::getHello(QSharedPointer<Packet> packet)
     sendTable = true;
 }
 
+void Router::processMsg(QSharedPointer<Packet> packet)
+{
+    if (ipVer==IPV6&&packet->getString()=="tunneled")
+    {
+        qDebug() << "got tunneled message on" <<id;
+        buffer.append(packet->tunnelPacket);
+    }
+    else
+        buffer.append(packet);
+}
+
 void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     if (buffer.size() >= bufferSize && bufferSize != -1)
@@ -75,7 +86,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 
     switch(packet->getType()){
     case MSG:
-        buffer.append(packet);
+        processMsg(packet);
         break;
     case HELLO:
         getHello(packet);
@@ -89,7 +100,6 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         sendTable = routingTable.updateFromPacketOSPF(
                         packet->getString(), getPortWithID(portTranslation(packet->getPortID())), ipVer==IPV4?IPV4: packet->ipVer)
                     || sendTable;
-        // qDebug() << ip->getIPStr() << sendTable << "not to" ;
         break;
     case DHCP_LEASE:
     case DHCP_REQUEST:
@@ -150,6 +160,15 @@ void Router::tick(int _time)
     sendWaiting();
 }
 
+QSharedPointer<Packet> Router::tunnelPacket(QSharedPointer<Packet> packet)
+{
+    qDebug() << "tunneling" << id ;
+    QSharedPointer<Packet> tunneledPacket(new Packet("tunneled", packet->getType(), IPV4, packet->getSource(), packet->getDest()));
+    tunneledPacket->tunnelPacket = packet;
+
+    return tunneledPacket;
+}
+
 bool Router::sendPacket(QSharedPointer<Packet> packet)
 {
     IPv4 dest = packet->getDest();
@@ -160,7 +179,6 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
 
         for (auto port:ports)
             port->write(packet);
-        // waitingQueue.append(WaitingQueueLine(port, packet, port->delay, clk));
 
         return true;
     }
@@ -174,7 +192,10 @@ bool Router::sendPacket(QSharedPointer<Packet> packet)
         return false;
     }
 
-    waitingQueue.append(WaitingQueueLine(sendRoute.port, packet, sendRoute.port->delay, clk));
+    if (sendRoute.ipVer == IPV4 && packet->ipVer == IPV6)
+        waitingQueue.append(WaitingQueueLine(sendRoute.port, tunnelPacket(packet), sendRoute.port->delay, clk));
+    else
+        waitingQueue.append(WaitingQueueLine(sendRoute.port, packet, sendRoute.port->delay, clk));
     return true;
 }
 

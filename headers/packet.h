@@ -5,12 +5,15 @@
 #include <QVector>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QSharedPointer>
 
 #include "ip.h"
 
 enum IPVersion{IPV4, IPV6};
 
 enum PacketType{HELLO, LSA, ROUTING_TABLE_RIP, DHCP_OFFER, DHCP_REQUEST, DHCP_LEASE, MSG};
+
+class Packet;
 
 class Packet
 {
@@ -43,6 +46,8 @@ public:
     PacketType getType() const;
     int getPortID() const;
     void setPortID(int newPortID);
+
+    QSharedPointer<Packet> tunnelPacket;
 };
 
 #endif // PACKET_H
