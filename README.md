@@ -16,6 +16,11 @@ connects GUI to a network, runs the simulation and prints the results.
 ## Network
 a network is where all these objects get created, connected and started. this class has sender PCs, 3 types of clusters, an event handler and a messaging system, each running in a separete QThread. network assignes a subnet to each cluster and connects clusters to other clusters as well as PCs. router IDs and PC IDs are unique inside a subnet and can be used as MAC addresses for DHCP. network class also has the necessary measurments to analysing the results.
 
+network has 3 clusters. a 4x4 Mesh with IPv6, a 3x3 Torus with IPv4 and a RingStar with IPv6 and ring length of 7.
+all PCs are IPv6 and all IPv6 addresses are convertible to IPv4.
+
+![image](https://github.com/ArianFiroozi/CN_CHomeworks_3/assets/126232660/380225b2-a4a7-44f9-a469-7fd7dcf6d6af)
+
 ### PC
   PCs are objects with IP addresses, buffers and IP version. each pc IP can be configured by admin or DHCP server. details of DHCP communication is explained in DHCP server.
   PCs can receive or send packets to other PCs. these events are triggered by a new message arriving or messaging system signaling the PC to send a new packet.
@@ -26,7 +31,7 @@ a network is where all these objects get created, connected and started. this cl
 #### Router
   each router has its own forwarding table, ip address and version, ports, buffer, and routing protocol. it can also broadcast messages if the destination is set to 255.255.255.255 which is the broadcast address. looping is prevented by memorizing the path and broadcast messages do not go through external ports. also broadcast is done with no delay so that OSPF and RIP convergence delay does not get confused with initial broadcasting delays.
 
-1. IP: as previously mentioned, router IPs are configured by code. IPv6 addresses are IPv4 mapped for ease of use.
+1. IP: as previously mentioned, router IPs are configured by code. IPv6 addresses are IPv4 mapped for ease of use and IPv6 is not fully implemented. IPv6 routers tunnel IPv6 packets into IPv4 packets when trying to send over IPv4 routers.
 
 2. Buffer: each buffer has limit which can be changed in 'commons.h' file. a router puts packets inside the buffer before sending it and if out buffer is full, router will become congested and next packets will be dropped. 
 
@@ -36,7 +41,7 @@ a network is where all these objects get created, connected and started. this cl
 
 5. Routing Protocol: simplified iBGP and eBGP are implemented. router forwards packets on internal routes simply by choosing the best metric provided. this metric is route delay (OSPF) or hop count (RIP) for iBGP routes and AS count for eBGP routes. routers add AS ID to a route when it has come from an external route. by checking the as path of a route, router knows if any route has looped back into the AS and refeuses to recognize any paths with loop. for iBGP, loops are not prevented and any path length over 15 is discarded and therefore loops don't make packets stormed over the network. OSPF prevents loops by memorizing the path when routing table is shared and similar to eBGP, router prevents loop by recognizing its own ID in the path.
 
-   RIP and OSPF are implemented in similar fasion: all routing tables get advertise for all ports except the ports that the route is received from. this is quite different from real OSPF implementations which send link state messages to other routers, but since we have a perfect network and delays are always accurate, which ever route has less delay will get transfered to router sooner and other routes that contain the same destination will arive later with worse metrics and will not cause the table to get updated and sent again. this approach creates a Dijkstra algorithm for sharing routing tables.
+   RIP and OSPF are implemented in similar fashion: all routing tables get advertise for all ports except the ports that the route is received from. this is quite different from real OSPF implementations which send link state messages to other routers, but since we have a perfect network and delays are always accurate, which ever route has less delay will get transfered to router sooner and other routes that contain the same destination will arive later with worse metrics and will not cause the table to get updated and sent again. this approach creates a Dijkstra algorithm for sharing routing tables. metric for OSPF is delay in this project since throughput and baseband does not have a meaning in this context.
 
     RIP routes on the other hand, can arrive later and have better metrics since the metric is hop count. this will make the routing table update more than once for a single destination, each new better route being a new itaration it creates a Bellman-Ford algorithm and RIP will converge slower than OSPF. RIP routes also have a timeout and if the route does not arive again after the period, it is considered as an invalid route and gets removed from routing table.
 
@@ -60,10 +65,41 @@ clusters have 3 types according to assignement:
 
   Each PC is connected to a router. upon connecting to network, PC first acquires an IP address from DHCP server and then sends a Hello packet to the router. router recongnizes the PC with this packet and updates its own routing table and PC gets advertized over the network.
 
-## *GUI*
+# *GUI*
 GUI is pretty straight forward: you enter the number of ticks, duration of each tick in microseconds, lambda and select the routing algorithm. then you hit the start button and program gets executed.
 
 ![image](https://github.com/ArianFiroozi/CN_CHomeworks_3/assets/126232660/01dd5070-cead-465c-90eb-9960bf14f5b0)
 
 # *Results*
+logs are printed at terminal when code is running.
 
+these are example results for maximum time and default lambda.
+
+1. OSPF
+after running OSPF reesults are as follows:
+total received packets: 4123
+total sent packets: 4226
+total dropped packets: 49
+average queue waiting time: 4
+average total waiting time: 115
+least waiting time: 75
+highest waiting time: 219
+highest queue waiting time: 25
+least queue waiting time: 0
+
+2. RIP
+total received packets: 1988
+total sent packets: 4933
+total dropped packets: 717
+average queue waiting time: 4
+average total waiting time: 252
+least waiting time: 91
+highest waiting time: 1073
+highest queue waiting time: 41
+least queue waiting time: 0
+
+by comparing these numbers we can see that RIP gets congested and drops packets more often which is a result of periodic routing table messages being sent.
+average waiting time is way better in OSPF since the algorithm is using delay metric instead of hop count.
+also least and highest waiting time in OSPF are much more closer to eachother than RIP.
+
+routing tables were too long so this report does not contain any examples of routing tables generated.
