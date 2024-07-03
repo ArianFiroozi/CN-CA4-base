@@ -42,12 +42,16 @@ Network::~Network()
 {
     delete mesh;
     delete ringStar;
+    delete torus;
+
     for (auto receiver:receivers)
         delete receiver;
     for (auto sender:senders)
         delete sender;
-    delete eventHandler;
-    delete eventThread;
+    // delete eventHandler;
+
+    eventThread->quit();
+    eventThread->deleteLater();
 }
 
 int Network::getPacketsSent() const

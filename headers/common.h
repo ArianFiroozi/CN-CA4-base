@@ -24,4 +24,6 @@ const QString RING_STAR_ROUTING_TABLE_PATH("../resources/routingTables/manualRin
 const QString TORUS_DELAY_PATH("../resources/delays/torus/portDelays.csv");
 const QString TUNNEL_FLAG("tunneled");
 
+static QMutex myMutex;
+
 #endif // COMMON_H

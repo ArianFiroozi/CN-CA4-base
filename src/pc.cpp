@@ -45,9 +45,9 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
             path.append("  ");
         }
 
-        qDebug() <<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
-                 <<" with queue waiting: " << packet->getQueueWaitCycles() << ", total wait: "
-                 << packet->getWaitCycles() <<" through path: "<< path.toStdString();
+        // qDebug() <<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
+        //          <<" with queue waiting: " << packet->getQueueWaitCycles() << ", total wait: "
+        //          << packet->getWaitCycles() <<" through path: "<< path.toStdString();
         emit packetReceived(packet);
     }
     else if (packet->getType() == DHCP_OFFER)

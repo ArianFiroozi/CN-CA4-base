@@ -13,6 +13,7 @@ class Cluster
 private:
     QThread *dhcpThread;
     DhcpServer* dhcpServer;
+
 protected:
     void makeDummyApp();
     QCoreApplication* dummy;
@@ -64,8 +65,7 @@ class Torus : public Mesh
 {
     void connectRouters(int i, int j);
 public:
-    Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol = RIP, bool delayedPorts=false, DhcpServer* _dhcpServer=NULL);
-
+    Torus(int _x, int _y, const IPv4 &netAddIP, RoutingProtocol _protocol=RIP, bool delayedPorts=false, DhcpServer* _dhcpServer=NULL);
 };
 
 #endif // CLUSTER_H

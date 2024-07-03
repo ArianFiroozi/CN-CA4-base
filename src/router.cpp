@@ -75,7 +75,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
 {
     if (buffer.size() >= bufferSize && bufferSize != -1)
     {
-        cout<<"router "<<id<<" dropped message, congested!"<<endl;
+        // cout<<"router "<<id<<" dropped message, congested!"<<endl;
         emit packetDropped();
         return;
     }

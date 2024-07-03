@@ -1,4 +1,7 @@
 #include "./headers/port.h"
+#include "./headers/common.h"
+
+#include <QMutex>
 
 using namespace std;
 
@@ -10,10 +13,10 @@ Port::Port(int _id, int _delay)
 
 void Port::write(QSharedPointer<Packet> _packet)
 {
-    mutex.lock();
+    myMutex.lock();
     _packet->setPortID(id);
     emit getPacket(_packet);
-    mutex.unlock();
+    myMutex.unlock();
 }
 
 void Port::read(QSharedPointer<Packet> _packet)
