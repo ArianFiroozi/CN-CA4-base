@@ -1,6 +1,8 @@
 #include "./headers/packet.h"
 #include "./headers/ip.h"
 
+#include "./headers/common.h"
+
 QVector<QString> Packet::getPath() const
 {
     return path;
@@ -8,8 +10,10 @@ QVector<QString> Packet::getPath() const
 
 void Packet::addToPath(QString newRouterAdd)
 {
-    QMutexLocker lock(&mutex);
+    // QMutexLocker lock(&mutex);
+    myMutex.lock();
     path.append(newRouterAdd);
+    myMutex.unlock();
 }
 
 int Packet::getQueueWaitCycles() const

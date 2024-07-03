@@ -29,8 +29,9 @@ RoutingTable::RoutingTable(IPv4 *_masterIP)
 
 void RoutingTable::addRoute(Route newRoute)
 {
-
+    myMutex.lock();
     routes.append(newRoute);
+    myMutex.unlock();
 }
 
 QVector<Route> RoutingTable::findAllRoutes(IPv4 ip)
@@ -50,7 +51,7 @@ Route RoutingTable::findBestRoute(IPv4 ip)
                      new Port(0));
 
     QVector<Route> minRoutes = findAllRoutes(ip);
-    int minMetric = 10000000000;
+    int minMetric = 1000000000;
     for (Route route : minRoutes)
         if (route.metric < minMetric)
             minMetric = route.metric;

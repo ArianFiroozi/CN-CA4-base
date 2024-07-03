@@ -30,6 +30,8 @@ private slots:
 private:
     Network* network;
     EventHandler* eventHandler;
+    // QThread* networkThread;
+
     int tickDuration;
     int lambda;
     int tickCount;

@@ -17,6 +17,9 @@ void NetworkSimulator::start()
     eventHandler = new EventHandler(tickDuration, tickCount);
     network = new Network(eventHandler, protocol, lambda);
 
+    // networkThread = new QThread();
+    // network->moveToThread(networkThread);
+
     QObject::connect(network, &Network::oneCycleFinished, this, &NetworkSimulator::tick);
     QObject::connect(eventHandler, &EventHandler::tick, network, &Network::tick);
 
@@ -74,6 +77,8 @@ void NetworkSimulator::tick(int tickNum)
         qDebug() <<"highest waiting time:"<< network->getHighestWait();
         qDebug() <<"highest queue waiting time:"<< network->getHighestQueueWait();
         qDebug() <<"least queue waiting time:"<< network->getLeastQueueWait();
+        delete eventHandler;
+        delete network;
         exit(0);
     }
 }

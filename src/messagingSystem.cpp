@@ -16,11 +16,11 @@ MessagingSystem::MessagingSystem(int lambda, const QVector<PC *> &receivers, con
 QVector<QSharedPointer<Packet>> MessagingSystem::generatePackets() {
     packets = QVector<QSharedPointer<Packet>> ();
     int messageNum = numOfPackets();
-    int src = rand() % senders.size();
-    int dest = rand() % receivers.size();
 
     for (int i=0;i<messageNum;i++)
     {
+        int src = rand() % senders.size();
+        int dest = rand() % receivers.size();
         if (receivers[dest]->hasIP() && senders[src]->hasIP())
             packets.append(QSharedPointer<Packet> (new Packet("test", MSG, IPV4, *(IPv4*)(senders[src]->ip), *(IPv4*)(receivers[dest]->ip))));
     }
