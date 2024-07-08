@@ -12,6 +12,7 @@ SOURCES += \
     main.cpp \
     src/cluster.cpp \
     src/dhcp.cpp \
+    src/dialog.cpp \
     src/eventHandler.cpp \
     src/ip.cpp \
     src/messagingSystem.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     headers/cluster.h \
     headers/common.h \
     headers/dhcp.h \
+    headers/dialog.h \
     headers/eventHandler.h \
     headers/ip.h \
     headers/messagingSystem.h \
@@ -51,6 +53,7 @@ HEADERS += \
     test/allTests.h
 
 FORMS += \
+    dialog.ui \
     networksimulator.ui
 
 # Default rules for deployment.

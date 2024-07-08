@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QVector>
 #include "network.h"
+#include "dialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -40,8 +41,11 @@ private:
     RoutingProtocol protocol;
 
     Ui::NetworkSimulator *ui;
+    Dialog *dialogUi;
 
     void tick(int tickNum);
+
+    QString analyseStr();
 
 signals:
     void startNetwork();

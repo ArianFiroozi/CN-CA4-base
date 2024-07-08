@@ -1,10 +1,12 @@
 #include "./headers/networkSimulator.h"
 #include "./ui_networksimulator.h"
+#include "./ui_dialog.h"
 #include <QtConcurrent/QtConcurrent>
 
 NetworkSimulator::NetworkSimulator(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::NetworkSimulator)
+    , dialogUi(new Dialog())
 {
     ui->setupUi(this);
     tickDuration = DEFAULT_CYCLE_DURATION;
@@ -63,6 +65,22 @@ void NetworkSimulator::on_tickCount_sliderMoved(int position)
     ui->tickCountShow->setText(QString::number(position));
 }
 
+QString NetworkSimulator::analyseStr()
+{
+    QString output = "analysis:\n";
+    output += "total received packets: " + QString::number(network->getPacketsReceived()) + "\n";
+    output += "total sent packets: " + QString::number(network->getPacketsSent()) + "\n";
+    output += "total dropped packets: " + QString::number(network->getPacketsDropped()) + "\n";
+    output += "average queue waiting time: " + QString::number(network->getTotalQueueWaitCycles() / network->getPacketsReceived()) + "\n";
+    output += "average total waiting time: " + QString::number(network->getTotalWaitCycles() / network->getPacketsReceived()) + "\n";
+    output += "least waiting time: " + QString::number(network->getLeastWait()) + "\n";
+    output += "highest waiting time: " + QString::number(network->getHighestWait()) + "\n";
+    output += "highest queue waiting time: " + QString::number(network->getHighestQueueWait()) + "\n";
+    output += "least queue waiting time: " + QString::number(network->getLeastQueueWait()) + "\n";
+
+    return output;
+}
+
 void NetworkSimulator::tick(int tickNum)
 {
     if (tickNum >= tickCount)
@@ -72,20 +90,13 @@ void NetworkSimulator::tick(int tickNum)
         disconnect(network, &Network::oneCycleFinished, this, 0);
         network->stop();
         network->printRoutingTables();
-        qDebug() << "analysis:";
-        qDebug() <<"total received packets:"<< network->getPacketsReceived();
-        qDebug() <<"total sent packets:"<< network->getPacketsSent();
-        qDebug() <<"total dropped packets:"<< network->getPacketsDropped();
-        qDebug() <<"average queue waiting time:"<< network->getTotalQueueWaitCycles() / network->getPacketsReceived();
-        qDebug() <<"average total waiting time:"<< network->getTotalWaitCycles() / network->getPacketsReceived();
-        qDebug() <<"least waiting time:"<< network->getLeastWait();
-        qDebug() <<"highest waiting time:"<< network->getHighestWait();
-        qDebug() <<"highest queue waiting time:"<< network->getHighestQueueWait();
-        qDebug() <<"least queue waiting time:"<< network->getLeastQueueWait();
-        // delete eventHandler;
+        QString output = analyseStr();
+        qDebug().noquote()<<output.toStdString();
+
         delete network;
         networkThread->quit();
-        // exit(0);
+        dialogUi->ui->textBrowser->setText(output);
+        dialogUi->show();
     }
     else
     {
