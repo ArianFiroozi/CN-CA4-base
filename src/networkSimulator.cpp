@@ -67,6 +67,8 @@ void NetworkSimulator::tick(int tickNum)
 {
     if (tickNum >= tickCount)
     {
+        this->ui->progressBar->setValue(100);
+
         disconnect(network, &Network::oneCycleFinished, this, 0);
         network->stop();
         network->printRoutingTables();
@@ -82,7 +84,12 @@ void NetworkSimulator::tick(int tickNum)
         qDebug() <<"least queue waiting time:"<< network->getLeastQueueWait();
         // delete eventHandler;
         delete network;
+        networkThread->quit();
         // exit(0);
+    }
+    else
+    {
+        this->ui->progressBar->setValue((float)tickNum/float(tickCount)*100);
     }
 }
 
