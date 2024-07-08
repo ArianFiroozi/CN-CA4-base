@@ -26,10 +26,8 @@ void test()
 int main(int argc, char *argv[])
 {
     // test();
-
     QApplication application(argc, argv);
 
-    // usleep(100000);
     NetworkSimulator networkSimulator;
     networkSimulator.show();
 

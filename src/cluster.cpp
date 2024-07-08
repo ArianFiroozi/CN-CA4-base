@@ -78,8 +78,8 @@ Cluster::Cluster(DhcpServer* _dhcpServer)
 
 Cluster::~Cluster()
 {
-    dummy->quit();
-    dummy->deleteLater();
+    // dummy->quit();
+    // dummy->deleteLater();
 
     for (auto thread : threads)
     {
@@ -93,7 +93,7 @@ Cluster::~Cluster()
 Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
     : Cluster(_dhcpServer)
 {
-    makeDummyApp();
+    // makeDummyApp();
 
     x = _x;
     y = _y;
@@ -126,8 +126,8 @@ Mesh::Mesh(int _x, int _y, IPv4 netAddrIP,  RoutingProtocol _protocol, bool dela
 
 Mesh::~Mesh()
 {
-    dummy->quit();
-    dummy->deleteLater();
+    // dummy->quit();
+    // dummy->deleteLater();
 
     for (auto thread : threads)
     {
@@ -223,7 +223,7 @@ void Mesh::getStaticRoutingTables()
 RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP,  RoutingProtocol _protocol, bool delayedPorts,DhcpServer* _dhcpServer)
     :Cluster(_dhcpServer)
 {
-    makeDummyApp();
+    // makeDummyApp();
 
     ringLen = _ringLen;
     starConnections = _starConnections;
@@ -259,8 +259,8 @@ RingStar::RingStar(int _ringLen, QVector<int> _starConnections, IPv4 netAddrIP, 
 
 RingStar::~RingStar()
 {
-    dummy->quit();
-    dummy->deleteLater();
+    // dummy->quit();
+    // dummy->deleteLater();
     for (auto thread : threads)
     {
         thread->quit();

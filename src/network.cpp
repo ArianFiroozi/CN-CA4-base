@@ -16,6 +16,7 @@ Network::Network(EventHandler* _eventHandler, RoutingProtocol protocol, int lamb
                                      new IPv4("255.255.255.255", "192.168.30.250"), new Port(555, 10)));
 
     eventThread = new QThread();
+    QObject::connect(eventHandler, &EventHandler::tick, this, &Network::tick);
     eventHandler->moveToThread(eventThread);
 
     createSenders();
@@ -48,10 +49,10 @@ Network::~Network()
         delete receiver;
     for (auto sender:senders)
         delete sender;
-    // delete eventHandler;
 
     eventThread->quit();
     eventThread->deleteLater();
+    delete eventHandler;
 }
 
 int Network::getPacketsSent() const

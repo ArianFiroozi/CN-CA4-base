@@ -30,7 +30,7 @@ private slots:
 private:
     Network* network;
     EventHandler* eventHandler;
-    // QThread* networkThread;
+    QThread* networkThread;
 
     int tickDuration;
     int lambda;
@@ -42,6 +42,9 @@ private:
     Ui::NetworkSimulator *ui;
 
     void tick(int tickNum);
+
+signals:
+    void startNetwork();
 };
 
 #endif // NETWORKSIMULATOR_H

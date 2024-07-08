@@ -1,5 +1,6 @@
 #include "./headers/networkSimulator.h"
 #include "./ui_networksimulator.h"
+#include <QtConcurrent/QtConcurrent>
 
 NetworkSimulator::NetworkSimulator(QWidget *parent)
     : QMainWindow(parent)
@@ -10,18 +11,19 @@ NetworkSimulator::NetworkSimulator(QWidget *parent)
     protocol = OSPF;
     lambda = DEFAULT_LAMBDA;
     tickCount = DEFAULT_CYCLE_COUNT;
+
+    networkThread = new QThread();
 }
 
 void NetworkSimulator::start()
 {
-    eventHandler = new EventHandler(tickDuration, tickCount);
-    network = new Network(eventHandler, protocol, lambda);
+    network = new Network(new EventHandler(tickDuration, tickCount), protocol, lambda);
 
-    // networkThread = new QThread();
-    // network->moveToThread(networkThread);
+    QObject::connect(network, &Network::oneCycleFinished,
+                     this, &NetworkSimulator::tick);
 
-    QObject::connect(network, &Network::oneCycleFinished, this, &NetworkSimulator::tick);
-    QObject::connect(eventHandler, &EventHandler::tick, network, &Network::tick);
+    network->moveToThread(networkThread);
+    networkThread->start();
 
     network->start();
 }
@@ -65,6 +67,7 @@ void NetworkSimulator::tick(int tickNum)
 {
     if (tickNum >= tickCount)
     {
+        disconnect(network, &Network::oneCycleFinished, this, 0);
         network->stop();
         network->printRoutingTables();
         qDebug() << "analysis:";
@@ -77,9 +80,9 @@ void NetworkSimulator::tick(int tickNum)
         qDebug() <<"highest waiting time:"<< network->getHighestWait();
         qDebug() <<"highest queue waiting time:"<< network->getHighestQueueWait();
         qDebug() <<"least queue waiting time:"<< network->getLeastQueueWait();
-        delete eventHandler;
+        // delete eventHandler;
         delete network;
-        exit(0);
+        // exit(0);
     }
 }
 
