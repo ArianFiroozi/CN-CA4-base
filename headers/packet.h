@@ -18,7 +18,6 @@ class Packet;
 class Packet
 {
 private:
-    QMutex mutex;
     PacketType type;
     QString string;
     IPv4 source, dest;

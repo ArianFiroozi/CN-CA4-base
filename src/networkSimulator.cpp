@@ -13,12 +13,12 @@ NetworkSimulator::NetworkSimulator(QWidget *parent)
     protocol = OSPF;
     lambda = DEFAULT_LAMBDA;
     tickCount = DEFAULT_CYCLE_COUNT;
-
-    networkThread = new QThread();
 }
 
 void NetworkSimulator::start()
 {
+    networkThread = new QThread();
+
     network = new Network(new EventHandler(tickDuration, tickCount), protocol, lambda);
 
     QObject::connect(network, &Network::oneCycleFinished,
@@ -95,6 +95,8 @@ void NetworkSimulator::tick(int tickNum)
 
         delete network;
         networkThread->quit();
+        networkThread->deleteLater();
+        // delete networkThread;
         dialogUi->ui->textBrowser->setText(output);
         dialogUi->show();
     }

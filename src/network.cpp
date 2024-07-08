@@ -376,4 +376,5 @@ void Network::tick(double time)
 void Network::stop()
 {
     running = false;
+    eventHandler->stop();
 }
