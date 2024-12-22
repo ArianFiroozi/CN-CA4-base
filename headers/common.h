@@ -17,11 +17,11 @@ const int SEND_LEASE = 10000;
 const int LEASE_TIMEOUT = 50000;
 
 const QString BROADCAST_ADDRESS ("255.255.255.255/32");
-const QString MESH_DELAY_PATH ("../resources/delays/mesh4x4/portDelays.csv");
-const QString MESH_ROUTING_TABLE_PATH ("../resources/routingTables/manualMesh4x4/routingTable");
-const QString RING_STAR_DELAY_PATH("../resources/delays/ringStar/portDelays.csv");
-const QString RING_STAR_ROUTING_TABLE_PATH("../resources/routingTables/manualRingStar/routingTable");
-const QString TORUS_DELAY_PATH("../resources/delays/torus/portDelays.csv");
+const QString MESH_DELAY_PATH ("../../resources/delays/mesh4x4/portDelays.csv");
+const QString MESH_ROUTING_TABLE_PATH ("../../resources/routingTables/manualMesh4x4/routingTable");
+const QString RING_STAR_DELAY_PATH("../../resources/delays/ringStar/portDelays.csv");
+const QString RING_STAR_ROUTING_TABLE_PATH("../../resources/routingTables/manualRingStar/routingTable");
+const QString TORUS_DELAY_PATH("../../resources/delays/torus/portDelays.csv");
 const QString TUNNEL_FLAG("tunneled");
 
 static QMutex myMutex;

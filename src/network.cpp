@@ -362,12 +362,14 @@ void Network::tick(double time)
     {
         QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
         for (const QSharedPointer<Packet> &packet:packets)
-            for (PC* sender:senders)
+            for (PC* sender:senders){
+                if (not sender->ip) continue;
                 if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
                 {
                     sender->sendPacket(packet);
                     break;
                 }
+            }
     }
 
     emit oneCycleFinished(time);
