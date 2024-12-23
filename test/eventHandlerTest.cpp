@@ -18,7 +18,7 @@ QString event_handler_with_mesh_cluster_static_init_correct()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), MANUAL);
-    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                                                       IPv4("255.255.255.255", "192.168.20.4")));
     EventHandler* eventHandler = new EventHandler(1);
     QThread* eventThread = new QThread();

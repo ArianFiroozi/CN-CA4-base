@@ -33,7 +33,7 @@ void PC::start()
 
 void PC::recievePacket(QSharedPointer<Packet> packet)
 {
-    if (packet->getType() == MSG)
+    if (packet->getType() == MSG_PACKET)
     {
 
         buffer.append(packet);

@@ -14,7 +14,7 @@ QString mesh_cluster_static_init_correct()
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"));
     // cluster.printRoutingTables();
 
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.20.4")));
 
     PC sender(1, new IPv4("255.255.255.255", "192.168.20.1"), new Port(1));
@@ -48,7 +48,7 @@ QString ring_cluster_static_init_correct()
     RingStar cluster(7, {2, 4, 6, 7}, IPv4("255.255.255.255", "20.0.0.0"));
     // cluster.printRoutingTables();
 
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.10.2")));
 
     PC sender(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(1));
@@ -78,7 +78,7 @@ QString star_cluster_static_init_correct()
     RingStar cluster(7, {2, 4, 6, 7}, IPv4("255.255.255.255", "20.0.0.0"));
     // cluster.printRoutingTables();
 
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.10.2")));
 
     PC sender(1, new IPv4("255.255.255.255", "192.168.10.1"), new Port(1));

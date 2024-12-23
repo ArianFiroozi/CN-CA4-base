@@ -18,7 +18,7 @@ QString simple_rip_on_mesh()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), RIP);
-    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                                                       IPv4("255.255.255.255", "192.168.20.4")));
     EventHandler* eventHandler = new EventHandler(10);
     QThread* eventThread = new QThread();
@@ -67,7 +67,7 @@ QString simple_ospf_on_mesh_with_delay()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     Mesh cluster(4, 4, IPv4("255.255.255.255", "20.0.0.0"), OSPF, true);
-    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack = QSharedPointer<Packet>(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                                                       IPv4("255.255.255.255", "192.168.20.4")));
     EventHandler* eventHandler = new EventHandler(10);
     QThread* eventThread = new QThread();
@@ -116,7 +116,7 @@ QString simple_rip_on_ring_star()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     RingStar cluster(7, {2, 4, 6, 7}, IPv4("255.255.255.255", "20.0.0.0"), RIP);
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.20.2")));
 
     EventHandler* eventHandler = new EventHandler(10);
@@ -166,7 +166,7 @@ QString simple_ospf_on_ring_star_with_delay()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     RingStar cluster(7, {2, 4, 6, 7}, IPv4("255.255.255.255", "20.0.0.0"), OSPF, true);
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "20.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.20.2")));
 
     EventHandler* eventHandler = new EventHandler(10);
@@ -219,7 +219,7 @@ QString mesh_connected_to_ring_star()
     RingStar ringStar(7, {2, 4, 6, 7}, IPv4("255.255.255.0", "10.0.0.0"), OSPF, true);
     Mesh mesh(4, 4, IPv4("255.255.255.0", "20.0.0.0"), OSPF, true);
 
-    QSharedPointer<Packet> myPack(new Packet("hello world", MSG, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
+    QSharedPointer<Packet> myPack(new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.255", "10.0.0.1"),
                                              IPv4("255.255.255.255", "192.168.20.2")));
 
     EventHandler* eventHandler = new EventHandler(10);

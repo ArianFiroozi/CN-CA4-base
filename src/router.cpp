@@ -85,7 +85,7 @@ void Router::recievePacket(QSharedPointer<Packet> packet)
         return;
 
     switch(packet->getType()){
-    case MSG:
+    case MSG_PACKET:
         processMsg(packet);
         break;
     case HELLO:

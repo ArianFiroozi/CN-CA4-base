@@ -16,7 +16,7 @@ QString router_sends_packet_to_another()
     QCoreApplication dummy(dummy_argc, dummy_argv);
 
     QSharedPointer<Packet> myPack = QSharedPointer<Packet>(
-        new Packet("hello world", MSG, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1")));
+        new Packet("hello world", MSG_PACKET, IPV4, IPv4("255.255.255.252", "192.168.20.1"), IPv4("255.255.255.252", "20.0.0.1")));
 
     Router a(1, new IPv4()), b(2, new IPv4());
     a.routingTable.initFromFile("../resources/routingTables/routingTable1.csv");

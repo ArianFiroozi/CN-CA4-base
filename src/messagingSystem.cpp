@@ -22,7 +22,7 @@ QVector<QSharedPointer<Packet>> MessagingSystem::generatePackets() {
         int src = rand() % senders.size();
         int dest = rand() % receivers.size();
         if (receivers[dest]->hasIP() && senders[src]->hasIP())
-            packets.append(QSharedPointer<Packet> (new Packet("test", MSG, IPV4, *(IPv4*)(senders[src]->ip), *(IPv4*)(receivers[dest]->ip))));
+            packets.append(QSharedPointer<Packet> (new Packet("test", MSG_PACKET, IPV4, *(IPv4*)(senders[src]->ip), *(IPv4*)(receivers[dest]->ip))));
     }
 
     return packets;
