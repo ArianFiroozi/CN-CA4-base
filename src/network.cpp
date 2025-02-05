@@ -366,6 +366,8 @@ void Network::tick(double time)
 
 void Network::stop()
 {
+    for (auto receiver:receivers)
+        receiver->writePacketsToFile();
     running = false;
     eventHandler->stop();
 }

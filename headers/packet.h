@@ -20,6 +20,7 @@ class Packet
 private:
     PacketType type;
     QString string;
+    QByteArray payload;
     IPv4 source, dest;
     QVector<QString> path;
     int queueWaitCycles;
@@ -53,6 +54,8 @@ public:
     void setSeqNum(int newSeqNum);
     int getFileSeqNum() const;
     void setFileSeqNum(int newFileSeqNum);
+    QByteArray getPayload() const;
+    void setPayload(const QByteArray &newPayload);
 };
 
 #endif // PACKET_H

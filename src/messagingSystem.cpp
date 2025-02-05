@@ -43,20 +43,19 @@ QVector<QSharedPointer<Packet>> MessagingSystem::generatePackets() {
     int dest = 0;
     int src = 0;
     int fileSeqNum=0;
-    std::cout<<data.length()<<std::endl;
-    for(int i = 0; i < int(data.length()/5); i += 1024)
+    for(int i = 0; i < data.length(); i += 1024)
     {
         while (!(receivers[dest]->hasIP() && senders[src]->hasIP()))
             src = ++src%senders.length();
 
         QByteArray payload = data.mid(i, 1024);
-        QSharedPointer<Packet> newPacket (new Packet(QString(payload), MSG_PACKET, IPV4, *(IPv4*)(senders[src]->ip),
+        QSharedPointer<Packet> newPacket (new Packet(QString("nothing"), MSG_PACKET, IPV4, *(IPv4*)(senders[src]->ip),
                                                     *(IPv4*)(receivers[dest]->ip)));
         newPacket->setFileSeqNum(fileSeqNum++);
+        newPacket->setPayload(payload);
         senders[src]->addPacket(newPacket);
         packets.append(newPacket);
         src = ++src%senders.length();
     }
-    std::cout<<packets.length();
     return packets;
 }

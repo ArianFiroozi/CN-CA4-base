@@ -12,7 +12,7 @@ const int DEFAULT_CYCLE_DURATION = 10;
 const int DEFAULT_EVENT_HANDLER_STOP = 1000000;
 const int MESSAGING_SYSTEM_SEND_PERIOD = 10;
 const int RIP_MAX_HOP = 15;
-const int DEFAULT_BUFFER_SIZE = 10;
+const int DEFAULT_BUFFER_SIZE = 1000;
 const int SEND_LEASE = 10000;
 const int LEASE_TIMEOUT = 50000;
 
@@ -24,6 +24,7 @@ const QString RING_STAR_ROUTING_TABLE_PATH("../../resources/routingTables/manual
 const QString TORUS_DELAY_PATH("../../resources/delays/torus/portDelays.csv");
 const QString TUNNEL_FLAG("tunneled");
 const QString SONG_FILE_PATH("../../resources/song.mp3");
+const QString OUTPUT_FILE_PATH("../../resources/");
 
 static QMutex myMutex;
 

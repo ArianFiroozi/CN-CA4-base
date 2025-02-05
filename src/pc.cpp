@@ -1,4 +1,5 @@
 #include "./headers/pc.h"
+#include <QFile>
 
 using namespace std;
 
@@ -44,7 +45,7 @@ void PC::recievePacket(QSharedPointer<Packet> packet)
             path.append(routerID);
             path.append("  ");
         }
-
+        processPacket(packet);
         // qDebug() <<"pc "<<id<<" recieved msg: "<<packet->getString().toStdString()
         //          <<" with queue waiting: " << packet->getQueueWaitCycles() << ", total wait: "
         //          << packet->getWaitCycles() <<" through path: "<< path.toStdString();
@@ -102,6 +103,7 @@ void PC::addPacket(QSharedPointer<Packet> packet)
 
 void PC::sendTcpPackets()
 {
+
     //TODO: send appropriate packets
     for (const QSharedPointer<Packet> &packet:packets){
         if (not ip) continue;
@@ -131,4 +133,46 @@ void PC::sendLease()
     QSharedPointer<Packet> packet(new Packet(QString::number(id), DHCP_LEASE, IPV4, IPv4("255.255.255.255", "255.255.255.255"),
                                              IPv4("255.255.255.255", "255.255.255.255")));
     port->write(packet);
+}
+
+void PC::processPacket(QSharedPointer<Packet> packet)
+{
+    bool isNotReceivedBefore = true;
+    for (const auto& p : received_packets) {
+        if (p->getFileSeqNum()== packet->getFileSeqNum()) {
+            isNotReceivedBefore = false;
+            break;
+        }
+    }
+
+    if (isNotReceivedBefore) {
+        // std::cout<<"pc received"<<std::endl;
+        received_packets.append(packet);
+    }
+}
+
+void PC::writePacketsToFile()
+{
+    if (!received_packets.length()) return;
+    std::sort(received_packets.begin(), received_packets.end(),
+              [](const QSharedPointer<Packet>& a, const QSharedPointer<Packet>& b) {
+                  return a->getFileSeqNum()< b->getFileSeqNum();
+              });
+
+    QString filename = QString("%1receiver_output.mp3").arg(OUTPUT_FILE_PATH, id);
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning("Could not open file for writing");
+        return;
+    }
+
+    int counter=0;
+    for (const auto& packet : received_packets) {
+        QByteArray byteArray = packet->getPayload();
+        file.write(byteArray);
+        counter++;
+    }
+    std::cout<<counter<<std::endl;
+
+    file.close();
 }
