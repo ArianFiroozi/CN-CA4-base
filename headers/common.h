@@ -23,6 +23,7 @@ const QString RING_STAR_DELAY_PATH("../../resources/delays/ringStar/portDelays.c
 const QString RING_STAR_ROUTING_TABLE_PATH("../../resources/routingTables/manualRingStar/routingTable");
 const QString TORUS_DELAY_PATH("../../resources/delays/torus/portDelays.csv");
 const QString TUNNEL_FLAG("tunneled");
+const QString SONG_FILE_PATH("../../resources/song.mp3");
 
 static QMutex myMutex;
 

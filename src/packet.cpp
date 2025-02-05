@@ -51,6 +51,26 @@ void Packet::setPortID(int newPortID)
     portID = newPortID;
 }
 
+int Packet::getSeqNum() const
+{
+    return seqNum;
+}
+
+void Packet::setSeqNum(int newSeqNum)
+{
+    seqNum = newSeqNum;
+}
+
+int Packet::getFileSeqNum() const
+{
+    return fileSeqNum;
+}
+
+void Packet::setFileSeqNum(int newFileSeqNum)
+{
+    fileSeqNum = newFileSeqNum;
+}
+
 Packet::Packet(QString _string, PacketType _type, IPVersion _ipVer, IPv4 _source, IPv4 _dest)
 {
     type = _type;

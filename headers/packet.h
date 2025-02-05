@@ -25,6 +25,8 @@ private:
     int queueWaitCycles;
     int waitCycles;
     int portID;
+    int seqNum;
+    int fileSeqNum;
 
 public:
     Packet(QString _string="", PacketType _type=MSG_PACKET, IPVersion _ipVer=IPV4, IPv4 _source=IPv4(), IPv4 _dest=IPv4());
@@ -47,6 +49,10 @@ public:
     void setPortID(int newPortID);
 
     QSharedPointer<Packet> tunnelPacket;
+    int getSeqNum() const;
+    void setSeqNum(int newSeqNum);
+    int getFileSeqNum() const;
+    void setFileSeqNum(int newFileSeqNum);
 };
 
 #endif // PACKET_H

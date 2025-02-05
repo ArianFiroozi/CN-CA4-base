@@ -1,5 +1,3 @@
-#include "./test/allTests.h"
-
 #include <iostream>
 #include <QApplication>
 #include <QString>

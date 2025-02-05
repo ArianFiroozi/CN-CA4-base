@@ -23,17 +23,6 @@ SOURCES += \
     src/port.cpp \
     src/router.cpp \
     src/routingtable.cpp \
-    test/allTests.cpp \
-    test/clusterTest.cpp \
-    test/eventHandlerTest.cpp \
-    test/ipTest.cpp \
-    test/messagingSystemTest.cpp \
-    test/networkTest.cpp \
-    test/packetTest.cpp \
-    test/portTest.cpp \
-    test/protocolTest.cpp \
-    test/routerTest.cpp \
-    test/routingTableTest.cpp
 
 HEADERS += \
     headers/cluster.h \
@@ -50,7 +39,6 @@ HEADERS += \
     headers/port.h \
     headers/router.h \
     headers/routingtable.h \
-    test/allTests.h
 
 FORMS += \
     dialog.ui \
