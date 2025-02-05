@@ -78,8 +78,7 @@ void DhcpServer::recievePacket(QSharedPointer<Packet> packet)
     }
     else if (packet->getType() == DHCP_REQUEST)
     {
-        // cout << "received dhcp!" <<endl;
-        qDebug() <<"DhcpServer recieved request from: "<<packet->getString();
+        // qDebug() <<"DhcpServer recieved request from: "<<packet->getString();
         assignIP(packet);
         for(auto row:dhcpTable)
             if (row.id == packet->getString().toInt())
@@ -91,7 +90,7 @@ void DhcpServer::recievePacket(QSharedPointer<Packet> packet)
 void DhcpServer::sendPacket(QSharedPointer<Packet> packet)
 {
     port->write(packet);
-    qDebug() << "sent dhcp Packet" << packet->getString();
+    // qDebug() << "sent dhcp Packet" << packet->getString();
 }
 
 DhcpServer::DhcpTableRow::DhcpTableRow(const IPv4 &ip, int id, int lastLeaseTime) : ip(ip),

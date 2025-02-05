@@ -78,7 +78,7 @@ void PC::sendHello()
 
 void PC::sendDhcpRequest()
 {
-    qDebug() << "sending DHCP req";
+    // qDebug() << "sending DHCP req";
     QSharedPointer<Packet> packet(new Packet(QString::number(id), DHCP_REQUEST, IPV4, IPv4("255.255.255.255", "255.255.255.255"),
                                              IPv4("255.255.255.255", "255.255.255.255")));
     port->write(packet);
