@@ -9,23 +9,8 @@
 
 using namespace std;
 
-void test()
-{
-    QVector<QString> errStrs = run_all_tests();
-    if(errStrs.size() != 0)
-    {
-        cout<<"failed tests:"<<endl;
-        for (const QString &errStr:errStrs)
-            cerr<<errStr.toStdString()<<endl;
-        exit(0);
-    }
-    else
-        cout<<"tests passed!"<<endl;
-}
-
 int main(int argc, char *argv[])
 {
-    // test();
     QApplication application(argc, argv);
 
     NetworkSimulator networkSimulator;
