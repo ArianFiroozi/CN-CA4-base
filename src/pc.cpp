@@ -169,7 +169,6 @@ void PC::writePacketsToFile()
     for (const auto& packet : received_packets) {
         QByteArray byteArray = packet->getPayload();
         file.write(byteArray);
-        counter++;
     }
     cout<<"file saved!\n";
     file.close();
