@@ -50,23 +50,26 @@
    <widget class="QSlider" name="cycleDuration">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>190</x>
       <y>60</y>
       <width>221</width>
       <height>31</height>
      </rect>
     </property>
     <property name="minimum">
-     <number>10</number>
+     <number>1</number>
     </property>
     <property name="maximum">
-     <number>100000</number>
+     <number>50</number>
     </property>
     <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+     <enum>Qt::Orientation::Horizontal</enum>
     </property>
    </widget>
    <widget class="QSpinBox" name="lambda">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>520</x>
@@ -82,11 +85,14 @@
    <widget class="QTextBrowser" name="tickDurationShow">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>320</x>
       <y>20</y>
       <width>81</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="cursorWidth">
+     <number>10</number>
     </property>
     <property name="placeholderText">
      <string>10</string>
@@ -95,7 +101,7 @@
    <widget class="QTextBrowser" name="tickCountShow">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>320</x>
       <y>100</y>
       <width>81</width>
       <height>41</height>
@@ -108,7 +114,7 @@
    <widget class="QSlider" name="tickCount">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>190</x>
       <y>140</y>
       <width>221</width>
       <height>31</height>
@@ -124,13 +130,13 @@
      <number>1000</number>
     </property>
     <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+     <enum>Qt::Orientation::Horizontal</enum>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>190</x>
       <y>30</y>
       <width>81</width>
       <height>28</height>
@@ -143,7 +149,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>190</x>
       <y>100</y>
       <width>91</width>
       <height>28</height>
@@ -186,7 +192,7 @@
      <x>0</x>
      <y>0</y>
      <width>593</width>
-     <height>33</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
