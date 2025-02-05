@@ -166,13 +166,11 @@ void PC::writePacketsToFile()
         return;
     }
 
-    int counter=0;
     for (const auto& packet : received_packets) {
         QByteArray byteArray = packet->getPayload();
         file.write(byteArray);
         counter++;
     }
-    std::cout<<counter<<std::endl;
-
+    cout<<"file saved!\n";
     file.close();
 }
