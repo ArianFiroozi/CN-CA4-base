@@ -7,16 +7,20 @@ routers use simplified versions of iBGP and eBGP as routing protocols and RIP or
 
 # *TODO*
 File read and write is implemented and packet generation is handled. You will need to edit sendTcpPackets function and add tcp ACK to processPackets inside PC.cpp.
+
 For sending control packets, you will possibly need to edit PC::tick as well as creating a new buffer to process control packets separately.
 
 # *UI Elements*
 tick count: controls number of ticks emitted during the execution
+
 tick duration: tick duration
+
 algorithm
+
 lambda: used for generating random packets, depricated
 
 # *Configuration*
-Configuration can be done in the "common.h" file (sorry i don't have a json file"
+Configuration can be done in the "common.h" file (sorry i don't have a json file)
 
 # *Code Structure*
 
