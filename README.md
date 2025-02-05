@@ -1,10 +1,22 @@
-# CN_CHomeworks_3
-### Arian Firoozi 810100196
+# CN_CHomeworks_4_base
 
 this is a network simulator for computer networks course built using cpp and QT6 for linux.
 overall structure consists of routers clustered in different structures and PCs that exchange packets over network.
 
 routers use simplified versions of iBGP and eBGP as routing protocols and RIP or OSPF as routing algorithms. all PCs use IPv6 but some subnets are IPv4 only. router IPs are configured inside code but PCs get their IPs from a DHCP server located inside the subnet. an EventHandler is used to synchronize the entire project. all entities except PC are located in separete QThreads and run simultaneously. a messaging system decides which number of packets sent from each random PC to other. message generation is based on Poisson distribution.
+
+# *TODO*
+File read and write is implemented and packet generation is handled. You will need to edit sendTcpPackets function and add tcp ACK to processPackets inside PC.cpp.
+For sending control packets, you will possibly need to edit PC::tick as well as creating a new buffer to process control packets separately.
+
+# *UI Elements*
+tick count: controls number of ticks emitted during the execution
+tick duration: tick duration
+algorithm
+lambda: used for generating random packets, depricated
+
+# *Configuration*
+Configuration can be done in the "common.h" file (sorry i don't have a json file"
 
 # *Code Structure*
 
@@ -70,36 +82,3 @@ GUI is pretty straight forward: you enter the number of ticks, duration of each 
 
 ![image](https://github.com/ArianFiroozi/CN_CHomeworks_3/assets/126232660/01dd5070-cead-465c-90eb-9960bf14f5b0)
 
-# *Results*
-logs are printed at terminal when code is running.
-
-these are example results for maximum time and default lambda.
-
-1. OSPF
-after running OSPF reesults are as follows:
-total received packets: 4123
-total sent packets: 4226
-total dropped packets: 49
-average queue waiting time: 4
-average total waiting time: 115
-least waiting time: 75
-highest waiting time: 219
-highest queue waiting time: 25
-least queue waiting time: 0
-
-2. RIP
-total received packets: 1988
-total sent packets: 4933
-total dropped packets: 717
-average queue waiting time: 4
-average total waiting time: 252
-least waiting time: 91
-highest waiting time: 1073
-highest queue waiting time: 41
-least queue waiting time: 0
-
-by comparing these numbers we can see that RIP gets congested and drops packets more often which is a result of periodic routing table messages being sent.
-average waiting time is way better in OSPF since the algorithm is using delay metric instead of hop count.
-also least and highest waiting time in OSPF are much more closer to eachother than RIP.
-
-routing tables were too long so this report does not contain any examples of routing tables generated.
