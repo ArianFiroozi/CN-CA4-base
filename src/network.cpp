@@ -358,19 +358,8 @@ void Network::tick(double time)
 {
     if (!running) return;
 
-    if ((int)time%MESSAGING_SYSTEM_SEND_PERIOD == 0)
-    {
-        QVector<QSharedPointer<Packet>> packets = messagingSystem->generatePackets();
-        for (const QSharedPointer<Packet> &packet:packets)
-            for (PC* sender:senders){
-                if (not sender->ip) continue;
-                if (sender->ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
-                {
-                    sender->sendPacket(packet);
-                    break;
-                }
-            }
-    }
+    if ((int)time==MESSAGING_SYSTEM_SEND_PERIOD)
+        packets = messagingSystem->generatePackets();
 
     emit oneCycleFinished(time);
 }

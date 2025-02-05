@@ -44,6 +44,8 @@ private:
     void packetDropped();
     
     void connectPcTick();
+    QVector<QSharedPointer<Packet>> packets;
+    
 public:
     QVector<PC*> senders, receivers;
 

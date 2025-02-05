@@ -95,6 +95,24 @@ void PC::connectTick(EventHandler *eventHandler)
                      this, &PC::tick, Qt::ConnectionType::QueuedConnection);
 }
 
+void PC::addPacket(QSharedPointer<Packet> packet)
+{
+    packets.append(packet);
+}
+
+void PC::sendTcpPackets()
+{
+    //TODO: send appropriate packets
+    for (const QSharedPointer<Packet> &packet:packets){
+        if (not ip) continue;
+        if (ip->ipAddr.addrToNum() == packet->getSource().ipAddr.addrToNum())
+        {
+            sendPacket(packet);
+            break;
+        }
+    }
+}
+
 void PC::tick(int time)
 {
     clk = time;
@@ -102,7 +120,10 @@ void PC::tick(int time)
         sendDhcpRequest();
     if (hasIP() && time % SEND_LEASE == 0)
         sendLease();
-    //TODO: forward packets
+
+    if (((int)time%MESSAGING_SYSTEM_SEND_PERIOD)==0 && time!=0) {
+        sendTcpPackets();
+    }
 }
 
 void PC::sendLease()

@@ -25,6 +25,8 @@ public:
     void start();
     bool hasIP();
     void connectTick(EventHandler* eventHandler);
+    void addPacket(QSharedPointer<Packet> packet);
+    void sendTcpPackets();
 
 signals:
     void packetReceived(QSharedPointer<Packet> packet);
@@ -39,6 +41,7 @@ private:
     void sendDhcpRequest();
     void tick(int time);
     void sendLease();
+    QVector<QSharedPointer<Packet>> packets;
 };
 
 #endif // PC_H
